@@ -1,13 +1,9 @@
 "use strict";
 
 class TwistyPuzzle {
-	constructor(orbitList) {
+	constructor() {
 		log("Creating new puzzle.");
-		if (orbitList) {
-			this.orbitList = orbitList;
-		} else {
-			this.orbitList = [];
-		}
+		this.orbitList = undefined;
 	};
 	getOrbitList = () => {
 		return this.orbitList;
@@ -15,20 +11,14 @@ class TwistyPuzzle {
 }
 
 class Cube extends TwistyPuzzle {
-	constructor(orbitList) {
-		super(orbitList);
-	};
-	static getDefaultColorScheme = () => {
-		return ["w", "g", "r", "y", "b", "o"];
+	constructor() {
+		super();
 	};
 }
 
 class Cube1x1x1 extends Cube {
-	constructor () {
-		let slotList = [];
-		for (let color of Cube.getDefaultColorScheme()) {
-			slotList.push(new Slot(new Sticker(color)));
-		}
-		super([new Orbit(slotList, "cubeCenter")]);
+	constructor (options) {
+		super();
+		this.orbitList = [new CenterCubeOrbit(options.getColorScheme())];
 	};
 }

@@ -5,8 +5,24 @@ const log = message => {
 };
 
 const createCube = () => {
-	let cube1x1x1 = new Cube1x1x1();
+	let options = new Options({
+		puzzle: "cube1x1x1",
+		puzzleType: "cube",
+		colorScheme: undefined
+	});
+	let cube1x1x1 = new Cube1x1x1(options);
 	log(cube1x1x1.getOrbitList()[0].getSlotList()[4].getContent().getColor());
+};
+
+const applySequence = () => {
+	let options = new Options({
+		puzzle: "cube1x1x1",
+		puzzleType: "cube",
+		colorScheme: undefined
+	});
+	let cube1x1x1 = new Cube1x1x1(options);
+	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ");
+	log(moveSequenceStringList);
 };
 
 const createSvg = () => {
