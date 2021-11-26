@@ -21,8 +21,12 @@ const applySequence = () => {
 		colorScheme: undefined
 	});
 	let cube1x1x1 = new Cube1x1x1(options);
-	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ");
+	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ").filter(move => move !== "");
 	log(moveSequenceStringList);
+	log(cube1x1x1.getOrbitList()[0].getSlotList()[4].getContent().getColor());
+	let xMove1x1x1 = new Move([new Cycle([0, 4, 3, 1], "centerCubeOrbit")]);
+	xMove1x1x1.applyOnPuzzle(cube1x1x1);
+	log(cube1x1x1.getOrbitList()[0].getSlotList()[4].getContent().getColor());
 };
 
 const createSvg = () => {

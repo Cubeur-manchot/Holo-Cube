@@ -8,6 +8,8 @@
 		<script src="./slot.js"></script>
 		<script src="./orbit.js"></script>
 		<script src="./puzzle.js"></script>
+		<script src="./cycle.js"></script>
+		<script src="./move.js"></script>
 		<script src="./script.js"></script>
 	</head>
 	<body onload="log('Load ok !'); createCube();">
@@ -16,6 +18,6 @@
 		<input type="button" value="Apply" onclick="applySequence();">
 		<div id="container" style="margin: 20px; border: 1px solid green; display: inline-block; height: 200px; width: 200px;"></div>
 		<br/>
-		<div id="logs" style="margin: 20px; border: 1px solid red; display: inline-block; height: 200px; width: 1000px;"></div>
+		<div id="logs" style="margin: 20px; border: 1px solid red; display: inline-block; height: 200px; width: 1000px; overflow: scroll;"></div>
     </body>
 </html>
