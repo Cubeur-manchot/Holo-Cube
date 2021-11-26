@@ -4,29 +4,47 @@ const log = message => {
 	document.querySelector("div#logs").innerHTML += message + "<br/>";
 };
 
-const createCube = () => {
-	let options = new Options({
-		puzzle: "cube1x1x1",
-		puzzleType: "cube",
+const getClassFromPuzzle = puzzle => {
+	switch(puzzle) {
+		case "cube1x1x1": return Cube1x1x1;
+		case "cube2x2x2": return Cube2x2x2;
+		case "cube3x3x3": return Cube3x3x3;
+		default: return CubeBig;
+	}
+};
+
+const getOptionsFromInputs = () => {
+	let puzzleShape = document.querySelector("select#puzzleShape").value;
+	let puzzleSize = parseInt(document.querySelector("input[type=text]#puzzleSize").value);
+	if (puzzleShape !== "cube") {
+		throw "Error : Non-cubic puzzles are not supported.";
+	}
+	return new Options({
+		puzzle: `cube${puzzleSize}x${puzzleSize}x${puzzleSize}`,
+		puzzleType: puzzleShape,
+		puzzleSize: puzzleSize,
 		colorScheme: undefined
 	});
-	let cube1x1x1 = new Cube1x1x1(options);
-	log(cube1x1x1.getOrbitList()[0].getSlotList()[4].getContent().getColor());
+};
+
+const getMoveSequenceFromInputs = options => {
+	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ").filter(move => move !== "");
+	let moveSequence = [];
+	for (let moveString of moveSequenceStringList) {
+		let parsedMove = CubeMoveParser.parseMove(moveString, options.getPuzzleSize());
+		let move = new CubeMove(parsedMove.face, parsedMove.sliceBegin, parsedMove.sliceEnd, parsedMove.turnCount, options.getPuzzleSize());
+		moveSequence.push(move);
+	}
+	return moveSequence;
 };
 
 const applySequence = () => {
-	let options = new Options({
-		puzzle: "cube1x1x1",
-		puzzleType: "cube",
-		colorScheme: undefined
-	});
-	let cube1x1x1 = new Cube1x1x1(options);
-	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ").filter(move => move !== "");
-	log(moveSequenceStringList);
-	log(cube1x1x1.getOrbitList()[0].getSlotList()[4].getContent().getColor());
-	let xMove1x1x1 = new Move([new Cycle([0, 4, 3, 1], "centerCubeOrbit")]);
-	xMove1x1x1.applyOnPuzzle(cube1x1x1);
-	log(cube1x1x1.getOrbitList()[0].getSlotList()[4].getContent().getColor());
+	let options = getOptionsFromInputs();
+	let cube = new (getClassFromPuzzle(options.getPuzzle()))(options);
+	let moveSequence = getMoveSequenceFromInputs(options);
+	for (let move of moveSequence) {
+		move.applyOnPuzzle(cube);
+	}
 };
 
 const createSvg = () => {

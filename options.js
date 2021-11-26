@@ -7,6 +7,7 @@ class Options {
 		}
 		this.puzzle = optionsObject.puzzle;
 		this.puzzleType = optionsObject.puzzleType;
+		this.puzzleSize = optionsObject.puzzleSize;
 		this.colorScheme = optionsObject.colorScheme ?? defaultColorSchemeFromPuzzleType[optionsObject.puzzleType];
 	};
 	getPuzzle = () => {
@@ -17,6 +18,9 @@ class Options {
 	};
 	getColorScheme = () => {
 		return this.colorScheme;
+	};
+	getPuzzleSize = () => {
+		return this.puzzleSize;
 	};
 }
 
