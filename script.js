@@ -30,9 +30,17 @@ const getOptionsFromInputs = () => {
 const getMoveSequenceFromInputs = options => {
 	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ").filter(move => move !== "");
 	let moveSequence = [];
+	let cubeMoveParser = new CubeMoveParser(options.getPuzzleSize());
 	for (let moveString of moveSequenceStringList) {
-		let parsedMove = CubeMoveParser.parseMove(moveString, options.getPuzzleSize());
-		let move = new CubeMove(parsedMove.face, parsedMove.sliceBegin, parsedMove.sliceEnd, parsedMove.turnCount, options.getPuzzleSize());
+		let parsedMove = cubeMoveParser.parseMove(moveString);
+		let move = new CubeMove(
+			parsedMove.face,
+			parsedMove.sliceBegin,
+			parsedMove.sliceEnd,
+			parsedMove.turnCount,
+			options.getPuzzleSize(),
+			cubeMoveParser
+		);
 		moveSequence.push(move);
 	}
 	return moveSequence;
