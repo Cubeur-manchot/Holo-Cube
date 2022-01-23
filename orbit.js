@@ -76,6 +76,7 @@ class CenterBigCubeOrbit extends CubeOrbit {
 		super();
 		this.slotList = Orbit.buildSlotList(colorScheme, 4);
 		this.ranks = ranks;
+		this.type = "centerBigCubeOrbit";
 	};
 	getRanks = () => {
 		return this.ranks;

@@ -1,7 +1,9 @@
 "use strict";
 
 const log = message => {
-	document.querySelector("div#logs").innerHTML += message + "<br/>";
+	let divLogs = document.querySelector("div#logs");
+	divLogs.innerHTML += message + "<br/>";
+	divLogs.scrollTop = divLogs.scrollHeight;
 };
 
 const getClassFromPuzzle = puzzle => {
@@ -27,29 +29,15 @@ const getOptionsFromInputs = () => {
 	});
 };
 
-const getMoveSequenceFromInputs = options => {
-	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(" ").filter(move => move !== "");
-	let moveSequence = [];
-	let cubeMoveParser = new CubeMoveParser(options.getPuzzleSize());
-	for (let moveString of moveSequenceStringList) {
-		let parsedMove = cubeMoveParser.parseMove(moveString);
-		let move = new CubeMove(
-			parsedMove.face,
-			parsedMove.sliceBegin,
-			parsedMove.sliceEnd,
-			parsedMove.turnCount,
-			options.getPuzzleSize(),
-			cubeMoveParser
-		);
-		moveSequence.push(move);
-	}
-	return moveSequence;
+const getMoveSequenceFromInputs = puzzle => {
+	return new MoveSequenceParser(puzzle).parseMoveSequenceString(document.querySelector("input[type=text]#moveSequence").value);
 };
 
 const applySequence = () => {
+	log("----------------------");
 	let options = getOptionsFromInputs();
 	let cube = new (getClassFromPuzzle(options.getPuzzle()))(options);
-	let moveSequence = getMoveSequenceFromInputs(options);
+	let moveSequence = getMoveSequenceFromInputs(cube);
 	for (let move of moveSequence) {
 		move.applyOnPuzzle(cube);
 	}

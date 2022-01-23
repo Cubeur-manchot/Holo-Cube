@@ -2,9 +2,14 @@
 
 // Represents one cycle of permutation on an orbit
 class Cycle {
-	constructor(cycle, orbitType) {
+	constructor(cycle, orbitType, orbitRanks) {
 		this.slotIndexList = cycle;
 		this.orbitType = orbitType;
+		if (typeof orbitRanks === "number") {
+			this.orbitRank = orbitRanks;
+		} else if (orbitRanks?.length) {
+			this.orbitRanks = orbitRanks;
+		}
 	};
 	getOrbitType = () => {
 		return this.orbitType;
@@ -18,6 +23,12 @@ class Cycle {
 	getLastSlot = () => {
 		let slotList = this.getSlotIndexList();
 		return slotList[this.getLength() - 1];
+	};
+	getOrbitRank = () => {
+		return this.getOrbitRank;
+	};
+	getOrbitRanks = () => {
+		return this.getOrbitRanks;
 	};
 	applyOnOrbit = orbit => {
 		if (!this.getLength()) {
