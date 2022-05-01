@@ -1,108 +1,137 @@
 "use strict";
 
+// Represents the information of a twisty puzzle.
+// Every puzzle class inherits a "blank" puzzle class, which contains no orbit.
+
 class TwistyPuzzle {
-	constructor() {
-		log("Creating new puzzle.");
+	constructor(run) {
+		this.run = run;
+		this.run.log("Creating new Puzzle.", 3);
+		this.fullName = this.run.puzzle.fullName;
 		this.orbitList = [];
+		this.orbitTypes = [];
 	};
-	getOrbitList = () => {
-		return this.orbitList;
+	addOrbit = orbit => {
+		this.orbitList.push(orbit);
 	};
-	getPuzzleType = () => {
-		return this.puzzleType;
-	}; 
 	hasOrbitType = orbitType => {
-		return false;
+		return this.orbitTypes.includes(orbitType);
+	};
+	static getBlankParentClass = childClass => {
+		return Object.getPrototypeOf(childClass);
 	};
 }
 
 class Cube extends TwistyPuzzle {
-	constructor() {
-		super();
-		this.puzzleType = "cube";
+	constructor(run) {
+		super(run);
+		this.run.log("Creating new Cube.", 3);
+		this.shape = Cube.shape;
 	};
-	getPuzzleSize = () => {
-		return this.puzzleSize;
-	};
-	computeSlices = () => {
-		let cubeSize = this.getPuzzleSize();
-		return {
-			maxRankWithoutMiddle: Math.max(0, Math.floor(cubeSize / 2) - 1),
-			maxRankWithMiddle: Math.ceil(cubeSize / 2) - 1,
-			middleSlice: cubeSize % 1 ? (cubeSize + 1) / 2 : null
-		};
-	};
+	static shape = "cube";
 }
 
-class Cube1x1x1 extends Cube {
-	constructor(options) {
-		log("Creating 1x1.");
-		super();
-		this.orbitList = [new CenterCubeOrbit(options.getColorScheme())];
+class BlankCube1x1x1 extends Cube {
+	constructor(run) {
+		super(run);
 		this.puzzleSize = 1;
-	};
-	hasOrbitType = orbitType => {
-		return orbitType === "centerCubeOrbit";
+		this.orbitTypes = [CenterCubeOrbit.type];
 	};
 }
 
-class Cube2x2x2 extends Cube {
-	constructor(options) {
-		log("Creating 2x2.");
-		super();
-		this.orbitList = [new CornerCubeOrbit(options.getColorScheme())];
+class Cube1x1x1 extends BlankCube1x1x1 {
+	constructor(run) {
+		super(run);
+		this.run.log("Creating new Cube1x1x1.", 1);
+		this.addOrbit(new CenterCubeOrbit(this.run));
+	};
+}
+
+class BlankCube2x2x2 extends Cube {
+	constructor(run) {
+		super(run);
 		this.puzzleSize = 2;
-	};
-	hasOrbitType = orbitType => {
-		return orbitType === "cornerCubeOrbit";
+		this.orbitTypes = [CornerCubeOrbit.type];
 	};
 }
 
-class Cube3x3x3 extends Cube {
-	constructor(options) {
-		log("Creating 3x3.");
-		super();
-		this.orbitList = [
-			new CenterCubeOrbit(options.getColorScheme()),
-			new MidgeCubeOrbit(options.getColorScheme()),
-			new CornerCubeOrbit(options.getColorScheme())
-		];
+class Cube2x2x2 extends BlankCube2x2x2 {
+	constructor(run) {
+		super(run);
+		this.run.log("Creating new Cube2x2x2.", 1);
+		this.addOrbit(new CornerCubeOrbit(this.run));
+	};
+}
+
+class BlankCube3x3x3 extends Cube {
+	constructor(run) {
+		super(run);
 		this.puzzleSize = 3;
-	};
-	hasOrbitType = orbitType => {
-		return orbitType === "cornerCubeOrbit"
-			|| orbitType === "midgeCubeOrbit"
-			|| orbitType === "centerCubeOrbit";
+		this.orbitTypes = [CenterCubeOrbit.type, MidgeCubeOrbit.type, CornerCubeOrbit.type];
 	};
 }
 
-class CubeBig extends Cube {
-	constructor(options) {
-		super();
-		let puzzleSize = options.getPuzzleSize();
-		log(`Creating big cube (${puzzleSize}x${puzzleSize}).`);
-		this.puzzleSize = puzzleSize;
-		let {maxRankWithoutMiddle, maxRankWithMiddle} = this.computeSlices();
-		this.orbitList = [
-			new CornerCubeOrbit(options.getColorScheme())
-		];
-		if (options.getPuzzleSize() % 1) {
-			this.orbitList.push(new MidgeCubeOrbit(options.getColorScheme()));
-			this.orbitList.push(new CenterCubeOrbit(options.getColorScheme()));
+class Cube3x3x3 extends BlankCube3x3x3 {
+	constructor(run) {
+		super(run);
+		this.run.log("Creating new Cube3x3x3.", 1);
+		this.addOrbit(new CenterCubeOrbit(this.run));
+		this.addOrbit(new MidgeCubeOrbit(this.run));
+		this.addOrbit(new CornerCubeOrbit(this.run));
+	};
+}
+
+class BlankCubeBig extends Cube {
+	constructor(run) {
+		super(run);
+		this.puzzleSize = this.run.puzzle.size;
+		this.orbitTypes = [CornerCubeOrbit.type, WingCubeOrbit.type, CenterBigCubeOrbit.type];
+		if (this.puzzleSize % 2) { // puzzle is odd
+			this.middleSlice = (this.puzzleSize + 1) / 2;
+			this.maxRankWithoutMiddle = (this.puzzle - 3) / 2;
+			this.maxRankWithMiddle = (this.puzzle - 1) / 2;
+			this.orbitTypes.push(MidgeCubeOrbit.type);
+			this.orbitTypes.push(CenterCubeOrbit.type);
+		} else { // puzzle is even
+			this.middleSlice = null;
+			this.maxRankWithoutMiddle = this.puzzleSize / 2 - 1;
+			this.maxRankWithMiddle = this.puzzleSize / 2 - 1;
 		}
-		for (let wingRank = 1; wingRank <= maxRankWithoutMiddle; wingRank++) {
-			this.orbitList.push(new WingCubeOrbit(options.getColorScheme(), wingRank));
+	};
+}
+
+class CubeBig extends BlankCubeBig {
+	constructor(run) {
+		super(run);
+		this.run.log(`Creating new CubeBig (puzzleSize = ${this.puzzleSize}).`, 1);
+		this.addOrbit(new CornerCubeOrbit(this.run));
+		if (this.puzzleSize % 2) { // puzzle is odd
+			this.addOrbit(new MidgeCubeOrbit(this.run));
+			this.addOrbit(new CenterCubeOrbit(this.run));
 		}
-		for (let centerRankFirst = 1; centerRankFirst <= maxRankWithoutMiddle; centerRankFirst++) {
-			for (let centerRankSecond = 1; centerRankSecond <= maxRankWithMiddle; centerRankSecond++) {
-				this.orbitList.push(new CenterBigCubeOrbit(options.getColorScheme(), [centerRankFirst, centerRankSecond]));
+		for (let wingRank = 1; wingRank <= this.maxRankWithoutMiddle; wingRank++) {
+			this.addOrbit(new WingCubeOrbit(this.run, wingRank));
+		}
+		for (let centerRankFirst = 1; centerRankFirst <= this.maxRankWithoutMiddle; centerRankFirst++) {
+			for (let centerRankSecond = 1; centerRankSecond <= this.maxRankWithMiddle; centerRankSecond++) {
+				this.addOrbit(new CenterBigCubeOrbit(this.run, [centerRankFirst, centerRankSecond]));
 			}
 		}
 	};
-	hasOrbitType = orbitType => {
-		return orbitType === "cornerCubeOrbit"
-			|| orbitType === "wingCubeOrbit"
-			|| orbitType === "centerBigCubeOrbit"
-			|| this.puzzleSize % 1 && (orbitType === "midgeCubeOrbit" || orbitType === "centerCubeOrbit");
+}
+
+class Pyramid extends TwistyPuzzle {
+	constructor(run) {
+		super(run);
+		this.shape = Pyramid.shape;
 	};
+	static shape = "pyramid";
+}
+
+class Dodecahedron extends TwistyPuzzle {
+	constructor(run) {
+		super(run);
+		this.shape = Dodecahedron.shape;
+	};
+	static shape = "dodecahedron";
 }

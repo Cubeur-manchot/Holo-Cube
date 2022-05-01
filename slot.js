@@ -1,13 +1,10 @@
 "use strict";
 
-// Represents a location of one colored side of a piece
+// Represents a location of one colored side of a piece.
+
 class Slot {
 	constructor(sticker) {
-		if (sticker) {
-			this.content = sticker;
-		} else {
-			this.content = undefined;
-		}
+		this.content = sticker;
 	};
 	getContent = () => {
 		return this.content;

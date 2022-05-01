@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Test</title>
-		<script src="./options.js"></script>
+		<script src="./color.js"></script>
 		<script src="./sticker.js"></script>
 		<script src="./slot.js"></script>
 		<script src="./orbit.js"></script>
@@ -12,9 +12,10 @@
 		<script src="./moveParser.js"></script>
 		<script src="./move.js"></script>
 		<script src="./drawer.js"></script>
+		<script src="./run.js"></script>
 		<script src="./script.js"></script>
 	</head>
-	<body onload="log('Load ok !');">
+	<body>
 		<label>Puzzle shape :</label>
 		<select id="puzzleShape">
 			<option value="cube">Cube</option>
@@ -23,10 +24,10 @@
 		<label>Puzzle size :</label>
 		<input id="puzzleSize" type="text"/>
 		<br/>
-		<label>Sequence to apply :</label>
+		<label>Sequences to apply (separator = ",") :</label>
 		<input id="moveSequence" type="text"/>
 		<br/>
-		<input type="button" value="Apply" onclick="applySequence();">
+		<input type="button" value="Apply" onclick="runHoloCube();">
 		<!--<div id="container" style="margin: 20px; border: 1px solid green; display: inline-block; height: 200px; width: 200px;"></div>-->
 		<br/>
 		<div id="logs" style="margin: 20px; border: 1px solid red; display: inline-block; height: 400px; width: 1000px; overflow: scroll;"></div>
