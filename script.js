@@ -1,32 +1,26 @@
 "use strict";
 
-const runHoloCube = () => {
-	let cubeSize = document.querySelector("input[type=text]#puzzleSize").value;
-	let moveSequenceStringList = document.querySelector("input[type=text]#moveSequence").value.split(",");
-	let moveSequence = undefined, moveSequenceList = undefined;
-	if (moveSequenceStringList.length === 1) {
-		moveSequence = moveSequenceStringList[0];
-	} else {
-		moveSequenceList = moveSequenceStringList;
+const checkJsonFormatting = () => {
+	let textareaTag = document.querySelector("textarea#jsonInput");
+	let buttonTag = document.querySelector("input[type=button]");
+	try {
+		JSON.parse(textareaTag.value);
+		textareaTag.style.borderColor = "green";
+		buttonTag.disabled = false;
+		return true;
+	} catch (exception) {
+		let divLogs = document.querySelector("div#logs");
+		let exceptionString = exception.toString().split("\n")[0];
+		divLogs.innerHTML += `[${new Date().toTimeString().substring(0,8)}] Bad json formatting (${exceptionString}).<br/>`;
+		divLogs.scrollTop = divLogs.scrollHeight;
+		textareaTag.style.borderColor = "red";
+		buttonTag.disabled = true;
+		return false;
 	}
-	return new Run({
-		puzzle: {
-			fullName: `cube${cubeSize}x${cubeSize}x${cubeSize}`,
-			stage: undefined,
-			colorScheme: undefined
-		},
-		moveSequence: moveSequence,
-		moveSequenceList: moveSequenceList,
-		drawingOptions: {
-			imageHeight: undefined,
-			imageWidth: undefined,
-			imageScale: undefined,
-			imageBackgroundColor: undefined,
-			puzzleHeight: undefined,
-			puzzleWidth: undefined,
-			puzzleScale: undefined,
-			puzzleColor: undefined
-		},
-		verbosity: 1
-	}).run();
 };
+
+const runHoloCube = () => {
+	if (checkJsonFormatting()) {
+		return new Run(JSON.parse(document.querySelector("textarea#jsonInput").value)).run();
+	}
+}

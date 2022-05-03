@@ -14,22 +14,54 @@
 		<script src="./drawer.js"></script>
 		<script src="./run.js"></script>
 		<script src="./script.js"></script>
+		<style>
+			p { margin: 0; }
+			p.firstLevel { padding-left: 20px; }
+			p.secondLevel { padding-left: 40px; }
+			p.mandatory { font-weight: bold; }
+			p.moveSequence { color: blue; }
+			p.optional { color: grey; }
+			span.comment { color: green; margin-left: 10px; }
+		</style>
 	</head>
 	<body>
-		<label>Puzzle shape :</label>
-		<select id="puzzleShape">
-			<option value="cube">Cube</option>
-		</select>
-		<br/>
-		<label>Puzzle size :</label>
-		<input id="puzzleSize" type="text"/>
-		<br/>
-		<label>Sequences to apply (separator = ",") :</label>
-		<input id="moveSequence" type="text"/>
-		<br/>
-		<input type="button" value="Apply" onclick="runHoloCube();">
-		<!--<div id="container" style="margin: 20px; border: 1px solid green; display: inline-block; height: 200px; width: 200px;"></div>-->
-		<br/>
-		<div id="logs" style="margin: 20px; border: 1px solid red; display: inline-block; height: 400px; width: 1000px; overflow: scroll;"></div>
+		<div style="width: 50%; margin: 0; display: inline-block; vertical-align: top; padding: 10px;">
+			<div>
+				<label style="vertical-align: top;">Json input :</label>
+				<br/>
+				<textarea id="jsonInput" onchange="checkJsonFormatting();" style="border-radius: 4px; max-width: 100%;"></textarea>
+			</div>
+			<div>
+				<input type="button" value="Apply" onclick="runHoloCube();" disabled>
+			</div>
+			<p style="margin-top: 20px;">Object structure to give :</p>
+			<p class="mandatory">{</p>
+			<p class="firstLevel mandatory">puzzle: {</p>
+			<p class="secondLevel mandatory">fullName: string,<span class="comment">// example : cube3x3x3</span></p>
+			<p class="secondLevel optional">stage: string,<span class="comment">// stage to show (OLL, PLL, CMLL, F2L, ...)</span></p>
+			<p class="secondLevel optional">colorScheme: array of colors</p>
+			<p class="firstLevel mandatory">},</p>
+			<p class="firstLevel moveSequence">moveSequence: string or array of strings,<span class="comment">// sequence to apply on one puzzle</span></p>
+			<p class="firstLevel moveSequence">moveSequenceList: array of strings,<span class="comment">// sequences to apply, each one on a different puzzle</span></p>
+			<p class="firstLevel optional">drawingOptions: {</p>
+			<p class="secondLevel optional">imageHeight: number,<span class="comment">// height of the image in px, default value is 100</span></p>
+			<p class="secondLevel optional">imageWidth: number,<span class="comment">// width of the image in px, default value is 100</span></p>
+			<p class="secondLevel optional">imageScale: number,<span class="comment">// scale to apply to both height and width of the image, default is 1</span></p>
+			<p class="secondLevel optional">imageBackgroundColor: color,<span class="comment">// background color of the image (white, transparent, ...)</span></p>
+			<p class="secondLevel optional">puzzleHeight: number,<span class="comment">// height of the puzzle in px, default value is 100</span></p>
+			<p class="secondLevel optional">puzzleWidth: number,<span class="comment">// width of the puzzle in px, default value is 100</span></p>
+			<p class="secondLevel optional">puzzleScale: number,<span class="comment">// scale to apply to both height and width of the puzzle, default is 1</span></p>
+			<p class="secondLevel optional">puzzleColor: color<span class="comment">// color of the cube, excluding the stickers (black, primary, stickerless, transparent, ...)</span></p>
+			<p class="firstLevel optional">},</p>
+			<p class="firstLevel optional">verbosity: int<span class="comment">// level of verbosity for the logs (0 = errors only, 1 = general, 2 = advanced, 3 = debug), default value is 1</span></p>
+			<p class="mandatory">}</p>
+			<br/>
+			<p class="mandatory">puzzle.fullName is mandatory</p>
+			<p class="moveSequence">moveSequence XOR moveSequenceList is mandatory</p>
+			<p class="optional">other inputs are optional</p>
+		</div>
+		<div style="width: 45%; margin: 0; display: inline-block; vertical-align: top; padding: 10px;">
+			<div id="logs" style="margin: 20px; border: 1px solid red; display: inline-block; height: 400px; width: 1000px; overflow: scroll;"/>
+		</div>
     </body>
 </html>
