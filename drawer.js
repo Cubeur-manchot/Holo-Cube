@@ -1,112 +1,156 @@
 "use strict";
 
+// Represent the information of an SVG object.
+
 class SVG {
-	createNode = (type, fields) => {
+	static createNode = (type, fields) => {
 		let node = document.createElementNS("http://www.w3.org/2000/svg", type);
 		for (let property in fields) {
 			node.setAttributeNS(null, property, fields[property]);
 		}
 		return node;
 	};
-	createSvgRootNode = (height, width, fillingColor) => {
-		return createNode("svg", {id: "svgRoot", height: height, width: width, fill: fillingColor});
+	static createSvgRootNode = (height, width) => {
+		return SVG.createNode("svg", {
+			id: "svgRoot",
+			height: height,
+			width: width,
+			viewbox: `${-width/2} ${-height/2} ${width} ${height}`
+		});
 	};
-	createRectNode = (horizontalPosition, verticalPosition, height, width, fillingColor, id) => {
-		return createNode("rect", {x: horizontalPosition, y: verticalPosition, height: height, width: width, fill: fillingColor, id: id});
+	static createRectNode = (horizontalPosition, verticalPosition, height, width, fillingColor, borderRadius, id) => {
+		return SVG.createNode("rect", {
+			id: id,
+			x: horizontalPosition,
+			y: verticalPosition,
+			height: height,
+			width: width,
+			rx: borderRadius,
+			ry: borderRadius,
+			fill: fillingColor.getRgbHex6(),
+			"fill-opacity": fillingColor.getAlpha()
+		});
 	};
-	createGroupNode = id => {
-		return createNode("g", {id: id});
+	static createPathNode = () => {
+		//todo
 	};
-}
-
-// Draws puzzle image
-class PuzzleDrawer {
-	constructor(options) {
-		log("Initializing puzzle drawer.", 1);
-		this.puzzleColor = options.puzzleColor;
-		this.puzzleImageHeight = options.puzzleImageHeight;
-		this.puzzleImageWidth = options.puzzleImageWidth;
-		this.imageHeight = options.puzzleHeight;
-		this.imageWidth = options.imageWidth;
-		this.imageBackgroundColor = options.imageBackgroundColor;
-		this.currentSvg = null;
-		this.faces = null;
+	static createGroupNode = properties => {
+		return SVG.createNode("g", properties);
 	};
-	createImage = () => {
-		log("Creating puzzle image with background.", 1);
-		this.currentSvg = SVG.createSvgRootNode(this.imageHeight, this.imageWidth, this.imageBackgroundColor);
-	};
-	drawPuzzle = puzzle => {
-		log("Drawing puzzle.", 1);
-		this.currentSvg.appendChild(SVG.createGroupNode("puzzle"));
+	static clone = svgNode => {
+		return svgNode.cloneNode(true);
 	};
 }
 
-class CubeDrawer extends PuzzleDrawer {
-	constructor(options) {
-		super(options);
-		this.cubeSize = options.puzzleSize;
-	};
-	drawPuzzle = cube => {
-		this.super(cube);
-		this.drawFacesBackground();
-		this.drawOrbits();
-	};
-	drawFacesBackground = () => {
-		for (let face of ["U", "F", "R", "D", "B", "L"]) {
-			let faceBackground = SVG.createRectNode(0, 0, 100, 100, this.puzzleColor, `FaceBackground_${face}`);
-			let svgFace = SVG.createGroupNode(`Face_${face}`);
-			svgFace.appendChild(faceBackground);
-			this.currentSvg.appendChild(svgFace);
+// Represents the information of a puzzle image drawer.
+
+class TwistyPuzzleDrawer {
+	constructor(run) {
+		this.run = run;
+		this.run.log("Creating puzzle drawer.", 1);
+		this.options = this.run.drawingOptions;
+		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
+			if (!this.options[drawingOptionColorProperty] instanceof Color) {
+				if ([null, undefined].includes(this.options[drawingOptionColorProperty])) {
+					this.run.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionColorProperty}.`);
+				} else {
+					this.run.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionColorProperty}.`);
+				}
+			}
 		}
-	};
-	drawOrbits = () => {
-		for (let orbit of cube.getOrbitList()) {
-			switch(orbit.type) {
-				case "cornerCubeOrbit": this.drawCornerCubeOrbit(orbit); break;
-				case "centerCubeOrbit": this.drawCenterCubeOrbit(orbit); break;
-				case "midgeCubeOrbit": this.drawMidgeCubeOrbit(orbit); break;
-				case "wingCubeOrbit": this.drawWingCubeOrbit(orbit); break;
-				case "centerBigCubeOrbit": this.drawCenterBigCubeOrbit(orbit); break;
+		for (let drawingOptionNumericProperty of ["puzzleHeight", "puzzleWidth", "imageHeight", "imageWidth"]) {
+			if (typeof this.options[drawingOptionNumericProperty] !== "number") {
+				if (this.options[drawingOptionNumericProperty]) {
+					this.run.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionNumericProperty}.`);
+				} else {
+					this.run.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionNumericProperty}.`);
+				}
 			}
 		}
 	};
-	/*drawCornerCubeOrbit = orbit => {
-		// TODO
-		let cubeSize = this.cubeSize;
-		let faces = ["U", "F", "R", "D", "B", "L"];
-		for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
-			this.currentSvg.querySelector("g#Face_orbit.slotList[6 * faceIndex]
-		}
-	};*/
-	drawCenterCubeOrbit = orbit => {
-		// TODO
-	};
-	drawMidgeCubeOrbit = orbit => {
-		// TODO
-	};
-	drawWingCubeOrbit = orbit => {
-		// TODO
-	};
-	drawCenterBigCubeOrbit = orbit => {
-		// TODO
+}
+
+class CubeDrawer extends TwistyPuzzleDrawer {
+	constructor(run) {
+		super(run);
+		this.blankPuzzle = this.run.blankPuzzle;
+		this.cubeSize = this.run.puzzle.size;
 	};
 }
 
 class CubeIsometricDrawer extends CubeDrawer {
-	constructor(options) {
-		super();
+	constructor(run) {
+		super(run);
+	};
+	createSvgSkeletton = () => { // todo
+		this.run.log("CubeIsometricDrawer skeletton", 3);
 	};
 }
 
 class CubePlanDrawer extends CubeDrawer {
-	constructor(options) {
-		super();
+	constructor(run) {
+		super(run);
+	};
+	createSvgSkeletton = () => {
+		this.run.log("CubePlanDrawer skeletton", 3);
+		let svg = SVG.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
+		let background = SVG.createRectNode(
+			-this.options.imageHeight / 2,
+			-this.options.imageWidth / 2,
+			this.options.imageHeight,
+			this.options.imageWidth,
+			this.options.imageBackgroundColor,
+			0,
+			"background");
+		svg.appendChild(background);
+		let puzzleGroup = SVG.createGroupNode({
+			id: "puzzle",
+			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
+		});
+		
+		
+		puzzleGroup.appendChild(this.createSvgUFaceSkeletton());
+		/*svg.appendChild(this.createSvgAdjacentFaceSkeletton("F", "", 4));
+		svg.appendChild(this.createSvgAdjacentFaceSkeletton("R", "rotate(-90 0 0)", 8));
+		svg.appendChild(this.createSvgAdjacentFaceSkeletton("B", "rotate(180 0 0)", 16));
+		svg.appendChild(this.createSvgAdjacentFaceSkeletton("L", "rotate(90 0 0)", 20));*/
+		
+		
+		svg.appendChild(puzzleGroup);
+		this.skeletton = svg;
+	};
+	createSvgUFaceSkeletton = () => {
+		let svgFace = SVG.createGroupNode({id: "face_U", transform: `scale(0.8, 0.8)`}); // todo scale should depend on puzzle size
+		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) {
+			//svgFace.appendChild(SVG.createRectNode(0, 0, 100, 100
+		}
+		//svgFace.appendChild(SVG.createRectNode(0, 0, 100, 100, this.options.puzzleColor, 5, "face_U_background"));
+		svgFace.appendChild(SVG.createRectNode(
+			-this.options.puzzleWidth / 2, -this.options.puzzleHeight / 2,
+			this.options.puzzleWidth, this.options.puzzleHeight,
+			this.options.puzzleColor, 5, "face_U_background"));
+		return svgFace;
+	};
+	createSvgAdjacentFaceSkeletton = (faceName, transform, indexStart) => {
+		let svgFaceContainer = SVG.createGroupNode({id: "face_" + faceName + "_container", style: "perspective: 100px"})
+		let svgFace = SVG.createGroupNode({id: "face_" + faceName, transform: "rotateX(45deg)"});
+		svgFace.appendChild(SVG.createRectNode(0, 0, 30, 100, this.options.puzzleColor, 5, `face_${faceName}_background`));
+		// todo add stickers depending on orbit types
+		svgFaceContainer.appendChild(svgFace);
+		return svgFaceContainer;
+	};
+	drawPuzzle = puzzle => {
+		let svg = SVG.clone(this.skeletton);
+		// todo simply apply colors on stickers
+		return svg;
 	};
 }
 
 class CubeNetDrawer extends CubeDrawer {
-	constructor(options) {
-		super();
+	constructor(run) {
+		super(run);
+	};
+	createSvgSkeletton = () => { // todo
+		this.run.log("CubeNetDrawer skeletton", 3);
 	};
 }

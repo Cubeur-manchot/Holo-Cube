@@ -150,7 +150,7 @@ class CubeMove extends Move {
 			this.run.throwError("Creating move with sliceBegin > sliceEnd.");
 		}
 		if (this.sliceBegin === 1) { // first layer
-			this.treatFirstLayer(isBigCube);
+			this.treatFirstLayer(isBigCube); // todo fix bug : 1x1 might not be working
 		}
 		if (isBigCube && this.sliceEnd > 1) { // between first layer and middle layer
 			this.treatBetweenFirstAndMiddleLayer(Math.max(1, this.sliceBegin - 1), Math.min(this.sliceEnd - 1, this.cube.maxRankWithoutMiddle));

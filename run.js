@@ -20,7 +20,8 @@ Object structure to give to Run class :
 		puzzleHeight: number, // height of the puzzle in px, default value is 100
 		puzzleWidth: number, // width of the puzzle in px, default value is 100
 		puzzleScale: number, // scale to apply to both height and width of the puzzle, default is 1
-		puzzleColor: color // color of the cube, excluding the stickers (black, primary, stickerless, transparent, ...)
+		puzzleColor: color // color of the cube, excluding the stickers, (black, primary, stickerless, transparent, ...)
+		view: string // view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"
 	},
 	verbosity: int // level of verbosity for the logs (0 = errors only, 1 = general, 2 = advanced, 3 = debug), default value is 1
 }
@@ -33,18 +34,21 @@ other inputs are optional
 class Run {
 	constructor(inputObject) {
 		this.setVerbosity(inputObject);
-		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
+		this.setPuzzle(inputObject);
 		this.setMoveSequenceList(inputObject);
-		this.drawingOptions = new DrawingOptionsRunInput(inputObject.drawingOptions, this);
-		this.output = null; // todo fill with SVG results
-		this.puzzleClass = this.getClassFromPuzzle(this.puzzle);
-		this.blankPuzzle = new (TwistyPuzzle.getBlankParentClass(this.puzzleClass))(this); // instance of blank (parent) class
-		this.moveSequenceParser = new MoveSequenceParser(this);
+		this.setDrawingOptions(inputObject);
+		this.setPuzzleClass();
+		this.setBlankPuzzle();
+		this.setMoveSequenceParser();
+		this.setPuzzleDrawer();
 	};
 	run = () => {
+		let svgOutputList = [];
 		for (let moveSequence of this.moveSequenceList) {
-			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(new this.puzzleClass(this));
+			let puzzle = this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(new this.puzzleClass(this));
+			svgOutputList.push(this.puzzleDrawer.drawPuzzle(puzzle));
 		}
+		return svgOutputList;
 	};
 	log = (message, verboseLevel) => {
 		if (verboseLevel <= this.verbosity) {
@@ -59,17 +63,6 @@ class Run {
 	};
 	warningLog = message => {
 		this.log("[WARNING] " + message, 0);
-	};
-	getClassFromPuzzle = puzzle => {
-		switch(puzzle.shape) {
-			case "cube": switch(puzzle.fullName) {
-				case "cube1x1x1": return Cube1x1x1;
-				case "cube2x2x2": return Cube2x2x2;
-				case "cube3x3x3": return Cube3x3x3;
-				default: return CubeBig;
-			}
-			default: this.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
-		}
 	};
 	setVerbosity = inputObject => {
 		this.verbosity = 1; // default value
@@ -86,6 +79,9 @@ class Run {
 			}
 			this.verbosity = inputObject.verbosity;
 		}
+	};
+	setPuzzle = inputObject => {
+		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
 	};
 	setMoveSequenceList = inputObject => {
 		if (inputObject.moveSequence) {
@@ -110,6 +106,41 @@ class Run {
 				}
 			}
 			this.moveSequenceList = inputObject.moveSequenceList;
+		}
+	};
+	setDrawingOptions = inputObject => {
+		this.drawingOptions = new DrawingOptionsRunInput(inputObject.drawingOptions, this);
+	};
+	setPuzzleClass = () => {
+		switch(this.puzzle.shape) {
+			case "cube": switch(this.puzzle.fullName) {
+				case "cube1x1x1": this.puzzleClass = Cube1x1x1; return;
+				case "cube2x2x2": this.puzzleClass = Cube2x2x2; return;
+				case "cube3x3x3": this.puzzleClass = Cube3x3x3; return;
+				default: this.puzzleClass = CubeBig;
+			}
+			default: this.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
+		}
+	};
+	setBlankPuzzle = () => { // blank puzzle is an instance of the blank parent class, which has the same structure without the orbits
+		this.blankPuzzle = new (TwistyPuzzle.getBlankParentClass(this.puzzleClass))(this);
+	};
+	setMoveSequenceParser = () => {
+		this.moveSequenceParser = new MoveSequenceParser(this);
+	};
+	setPuzzleDrawer = () => {
+		let puzzleDrawerClass = this.getPuzzleDrawerClass();
+		this.puzzleDrawer = new puzzleDrawerClass(this);
+		this.puzzleDrawer.createSvgSkeletton();
+	};
+	getPuzzleDrawerClass = () => {
+		switch(this.puzzle.shape) {
+			case "cube": switch(this.drawingOptions.view) {
+				case "plan": return CubePlanDrawer;
+				case "isometric": return CubeIsometricDrawer;
+				case "net": return CubeNetDrawer;
+			}
+			default: this.throwError("Getting puzzle drawer class for a non-cubic shaped puzzle.");
 		}
 	};
 }
@@ -204,7 +235,8 @@ class DrawingOptionsRunInput {
 		imageBackgroundColor: "transparent",
 		puzzleHeight: 100,
 		puzzleWidth: 100,
-		puzzleColor: "black"
+		puzzleColor: "black",
+		view: "plan"
 	};
 	constructor(drawingOptionsObject, run) {
 		this.run = run;
@@ -223,6 +255,17 @@ class DrawingOptionsRunInput {
 					this[imageOrPuzzle + "height"] *= drawingOptionsObject[imageOrPuzzle + "scale"];
 					this[imageOrPuzzle + "width"] *= drawingOptionsObject[imageOrPuzzle + "scale"];
 				}
+			}
+			if (![undefined, null].includes(drawingOptionsObject.view)) {
+				if (typeof drawingOptionsObject.view !== "string") {
+					this.run.throwError("Property drawingOptions.view must be a string.");
+				} else if (!["plan", "isometric", "net"].includes(drawingOptionsObject.view)) {
+					this.run.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
+				} else {
+					this.view = drawingOptionsObject.view;
+				}
+			} else {
+				this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
 			}
 			for (let dimension of ["Height", "Width"]) {
 				if (Math.abs(this["puzzle" + dimension]) > Math.abs(this["image" + dimension])) {
@@ -249,12 +292,13 @@ class DrawingOptionsRunInput {
 		}
 	};
 	setAllValuesFromDefault = () => {
-		for (let drawingOptionsProperty of ["imageHeight", "imageWidth", "puzzleHeight", "puzzleWidth"]) {
-			this.setNumericValueFromDefault(drawingOptionsProperty);
+		for (let drawingOptionsNumericProperty of ["imageHeight", "imageWidth", "puzzleHeight", "puzzleWidth"]) {
+			this.setNumericValueFromDefault(drawingOptionsNumericProperty);
 		}
-		for (let drawingOptionsProperty of ["imageBackgroundColor", "puzzleColor"]) {
-			this.setColorValueFromDefault(drawingOptionsProperty);
+		for (let drawingOptionsColorProperty of ["imageBackgroundColor", "puzzleColor"]) {
+			this.setColorValueFromDefault(drawingOptionsColorProperty);
 		}
+		this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
 	};
 	setNumericValueFromDefault = propertyName => {
 		this[propertyName] = DrawingOptionsRunInput.defaultDrawingOptions[propertyName];
