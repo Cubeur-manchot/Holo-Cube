@@ -15,7 +15,7 @@ class SVG {
 			id: "svgRoot",
 			height: height,
 			width: width,
-			viewbox: `${-width/2} ${-height/2} ${width} ${height}`
+			viewBox: `${-width/2} ${-height/2} ${width} ${height}`
 		});
 	};
 	static createRectNode = (horizontalPosition, verticalPosition, height, width, fillingColor, borderRadius, id) => {
@@ -27,8 +27,8 @@ class SVG {
 			width: width,
 			rx: borderRadius,
 			ry: borderRadius,
-			fill: fillingColor.getRgbHex6(),
-			"fill-opacity": fillingColor.getAlpha()
+			fill: fillingColor?.getRgbHex6() ?? "none",
+			"fill-opacity": fillingColor?.getAlpha() ?? 1
 		});
 	};
 	static createPathNode = () => {
@@ -121,14 +121,17 @@ class CubePlanDrawer extends CubeDrawer {
 	};
 	createSvgUFaceSkeletton = () => {
 		let svgFace = SVG.createGroupNode({id: "face_U", transform: `scale(0.8, 0.8)`}); // todo scale should depend on puzzle size
-		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) {
-			//svgFace.appendChild(SVG.createRectNode(0, 0, 100, 100
+		svgFace.appendChild(SVG.createRectNode(-50, -50, 100, 100, this.options.puzzleColor, 5, "face_U_background")); // face background
+		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
+			svgFace.appendChild(SVG.createRectNode(
+				- 50 / this.cubeSize,
+				- 50 / this.cubeSize,
+				90 / this.cubeSize,
+				90 / this.cubeSize,
+				undefined,
+				20 / this.cubeSize,
+				`sticker_${CenterCubeOrbit.type}_0`));
 		}
-		//svgFace.appendChild(SVG.createRectNode(0, 0, 100, 100, this.options.puzzleColor, 5, "face_U_background"));
-		svgFace.appendChild(SVG.createRectNode(
-			-this.options.puzzleWidth / 2, -this.options.puzzleHeight / 2,
-			this.options.puzzleWidth, this.options.puzzleHeight,
-			this.options.puzzleColor, 5, "face_U_background"));
 		return svgFace;
 	};
 	createSvgAdjacentFaceSkeletton = (faceName, transform, indexStart) => {

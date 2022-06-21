@@ -114,11 +114,11 @@ class Run {
 	setPuzzleClass = () => {
 		switch(this.puzzle.shape) {
 			case "cube": switch(this.puzzle.fullName) {
-				case "cube1x1x1": this.puzzleClass = Cube1x1x1; return;
-				case "cube2x2x2": this.puzzleClass = Cube2x2x2; return;
-				case "cube3x3x3": this.puzzleClass = Cube3x3x3; return;
+				case "cube1x1x1": this.puzzleClass = Cube1x1x1;
+				case "cube2x2x2": this.puzzleClass = Cube2x2x2;
+				case "cube3x3x3": this.puzzleClass = Cube3x3x3;
 				default: this.puzzleClass = CubeBig;
-			}
+			}; break;
 			default: this.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
 		}
 	};

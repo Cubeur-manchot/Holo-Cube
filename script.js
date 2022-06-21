@@ -1,10 +1,7 @@
 "use strict";
 
 const test = () => {
-	let svg = SVG.createSvgRootNode(100, 100);
-	let rect = SVG.createRectNode(-50, -50, 100, 100, new Color("black"), 10, "rectangle");
-	svg.appendChild(rect);
-	document.querySelector("div#svgResults").appendChild(svg);
+	alert("No action.");
 };
 
 const runHoloCube = () => {
