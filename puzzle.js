@@ -88,8 +88,8 @@ class BlankCubeBig extends Cube {
 		this.orbitTypes = [CornerCubeOrbit.type, WingCubeOrbit.type, CenterBigCubeOrbit.type];
 		if (this.puzzleSize % 2) { // puzzle is odd
 			this.middleSlice = (this.puzzleSize + 1) / 2;
-			this.maxRankWithoutMiddle = (this.puzzle - 3) / 2;
-			this.maxRankWithMiddle = (this.puzzle - 1) / 2;
+			this.maxRankWithoutMiddle = (this.puzzleSize - 3) / 2;
+			this.maxRankWithMiddle = (this.puzzleSize - 1) / 2;
 			this.orbitTypes.push(MidgeCubeOrbit.type);
 			this.orbitTypes.push(CenterCubeOrbit.type);
 		} else { // puzzle is even
@@ -112,9 +112,9 @@ class CubeBig extends BlankCubeBig {
 		for (let wingRank = 1; wingRank <= this.maxRankWithoutMiddle; wingRank++) {
 			this.addOrbit(new WingCubeOrbit(this.run, wingRank));
 		}
-		for (let centerRankFirst = 1; centerRankFirst <= this.maxRankWithoutMiddle; centerRankFirst++) {
-			for (let centerRankSecond = 1; centerRankSecond <= this.maxRankWithMiddle; centerRankSecond++) {
-				this.addOrbit(new CenterBigCubeOrbit(this.run, [centerRankFirst, centerRankSecond]));
+		for (let centerFirstRank = 1; centerFirstRank <= this.maxRankWithoutMiddle; centerFirstRank++) {
+			for (let centerSecondRank = 1; centerSecondRank <= this.maxRankWithMiddle; centerSecondRank++) {
+				this.addOrbit(new CenterBigCubeOrbit(this.run, [centerFirstRank, centerSecondRank]));
 			}
 		}
 	};

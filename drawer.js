@@ -18,18 +18,27 @@ class SVG {
 			viewBox: `${-width/2} ${-height/2} ${width} ${height}`
 		});
 	};
-	static createRectNode = (horizontalPosition, verticalPosition, height, width, fillingColor, borderRadius, id) => {
-		return SVG.createNode("rect", {
+	static createSquareNode = (id, horizontalPosition, verticalPosition, size, cornerRadius, fillingColor) => {
+		return SVG.createRectNode(id, horizontalPosition, verticalPosition, size, size, cornerRadius, fillingColor);
+	};
+	static createRectNode = (id, horizontalPosition, verticalPosition, height, width, borderRadius, fillingColor) => {
+		let rectObject = {
 			id: id,
 			x: horizontalPosition,
 			y: verticalPosition,
 			height: height,
 			width: width,
 			rx: borderRadius,
-			ry: borderRadius,
-			fill: fillingColor?.getRgbHex6() ?? "none",
-			"fill-opacity": fillingColor?.getAlpha() ?? 1
-		});
+			ry: borderRadius
+		};
+		if (fillingColor) {
+			rectObject.fill = fillingColor.getRgbHex6();
+			let alpha = fillingColor.getAlpha();
+			if (alpha !== 1) {
+				rectObject["fill-opacity"] = alpha;
+			}
+		}
+		return SVG.createNode("rect", rectObject);
 	};
 	static createPathNode = () => {
 		//todo
@@ -90,18 +99,27 @@ class CubeIsometricDrawer extends CubeDrawer {
 class CubePlanDrawer extends CubeDrawer {
 	constructor(run) {
 		super(run);
+		this.options.faceCornerRadius = 30 / this.cubeSize;
+		this.options.stickerSize = 90 / this.cubeSize;
+		this.options.stickerCornerRadius = 20 / this.cubeSize;
+		let stickerMargin = 10 / (this.cubeSize + 1);
+		this.options.startingValues = [];
+		for (let rank = 0; rank < this.cubeSize; rank++) {
+			this.options.startingValues.push(- 50 + stickerMargin + rank * (this.options.stickerSize + stickerMargin));
+		}
+		
 	};
 	createSvgSkeletton = () => {
 		this.run.log("CubePlanDrawer skeletton", 3);
 		let svg = SVG.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
 		let background = SVG.createRectNode(
+			"background",
 			-this.options.imageHeight / 2,
 			-this.options.imageWidth / 2,
 			this.options.imageHeight,
 			this.options.imageWidth,
-			this.options.imageBackgroundColor,
 			0,
-			"background");
+			this.options.imageBackgroundColor);
 		svg.appendChild(background);
 		let puzzleGroup = SVG.createGroupNode({
 			id: "puzzle",
@@ -119,25 +137,85 @@ class CubePlanDrawer extends CubeDrawer {
 		svg.appendChild(puzzleGroup);
 		this.skeletton = svg;
 	};
+	createUFaceSticker = (id, gridStartingX, gridStartingY) => {
+		return SVG.createSquareNode(
+			id,
+			this.options.startingValues[gridStartingX],
+			this.options.startingValues[gridStartingY],
+			this.options.stickerSize,
+			this.options.stickerCornerRadius,
+			new Color("white"));
+	};
 	createSvgUFaceSkeletton = () => {
 		let svgFace = SVG.createGroupNode({id: "face_U", transform: `scale(0.8, 0.8)`}); // todo scale should depend on puzzle size
-		svgFace.appendChild(SVG.createRectNode(-50, -50, 100, 100, this.options.puzzleColor, 5, "face_U_background")); // face background
+		svgFace.appendChild(SVG.createSquareNode( // face background
+			"face_U_background",
+			-50,
+			-50,
+			100,
+			this.options.faceCornerRadius,
+			this.options.puzzleColor));
+		
 		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
-			svgFace.appendChild(SVG.createRectNode(
-				- 50 / this.cubeSize,
-				- 50 / this.cubeSize,
-				90 / this.cubeSize,
-				90 / this.cubeSize,
-				undefined,
-				20 / this.cubeSize,
-				`sticker_${CenterCubeOrbit.type}_0`));
+			let startingValueIndex = (this.cubeSize - 1) / 2;
+			svgFace.appendChild(this.createUFaceSticker(`sticker_${CenterCubeOrbit.type}_0`, startingValueIndex, startingValueIndex));
+		}
+		if (this.blankPuzzle.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
+			let highIndex = this.cubeSize - 1;
+			let idBegin = `sticker_${CornerCubeOrbit.type}_`;
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, 0, 0));
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}1`, highIndex, 0));
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}2`, highIndex, highIndex));
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}3`, 0, highIndex));
+		}
+		if (this.blankPuzzle.hasOrbitType(MidgeCubeOrbit.type)) { // stickers of type MidgeCubeOrbit
+			let middleIndex = (this.cubeSize - 1) / 2;
+			let highIndex = this.cubeSize - 1;
+			let idBegin = `sticker_${MidgeCubeOrbit.type}_`;
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, middleIndex, 0));
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}1`, highIndex, middleIndex));
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}2`, middleIndex, highIndex));
+			svgFace.appendChild(this.createUFaceSticker(`${idBegin}3`, 0, middleIndex));
+		}
+		if (this.blankPuzzle.hasOrbitType(WingCubeOrbit.type)) { // stickers of type WingCubeOrbit
+			let lowValue = this.options.startingValues[0];
+			let highIndex = this.cubeSize - 1;
+			let highValue = this.options.startingValues[this.cubeSize - 1];
+			let wingMaxIndex = this.blankPuzzle.maxRankWithoutMiddle;
+			for (let wingRank = 1; wingRank <= wingMaxIndex; wingRank++) {
+				let idBegin = `sticker_${WingCubeOrbit.type}_${wingRank}_`;
+				let middleComplementaryIndex = this.cubeSize - wingRank - 1;
+				
+				
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, wingRank, 0));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}1`, middleComplementaryIndex, 0));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}2`, highIndex, wingRank));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}3`, highIndex, middleComplementaryIndex));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}4`, middleComplementaryIndex, highIndex));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}5`, wingRank, highIndex));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}6`, 0, wingRank));
+				svgFace.appendChild(this.createUFaceSticker(`${idBegin}7`, 0, middleComplementaryIndex));
+			}
+		}
+		if (this.blankPuzzle.hasOrbitType(CenterBigCubeOrbit.type)) { // stickers of type CenterBigCubeOrbit
+			for (let firstRank = 1; firstRank <= this.blankPuzzle.maxRankWithoutMiddle; firstRank++) {
+				let firstComplementaryIndex = this.cubeSize - firstRank - 1;
+				for (let secondRank = 1; secondRank <= this.blankPuzzle.maxRankWithMiddle; secondRank++) {
+					let idBegin = `sticker_${CenterBigCubeOrbit.type}_${firstRank}_${secondRank}_`;
+					let secondComplementaryIndex = this.cubeSize - secondRank - 1;
+					svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, secondRank, firstRank));
+					svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, firstComplementaryIndex, secondRank));
+					svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, secondComplementaryIndex, firstComplementaryIndex));
+					svgFace.appendChild(this.createUFaceSticker(`${idBegin}0`, firstRank, secondComplementaryIndex));
+				}
+			}
 		}
 		return svgFace;
 	};
 	createSvgAdjacentFaceSkeletton = (faceName, transform, indexStart) => {
 		let svgFaceContainer = SVG.createGroupNode({id: "face_" + faceName + "_container", style: "perspective: 100px"})
 		let svgFace = SVG.createGroupNode({id: "face_" + faceName, transform: "rotateX(45deg)"});
-		svgFace.appendChild(SVG.createRectNode(0, 0, 30, 100, this.options.puzzleColor, 5, `face_${faceName}_background`));
+		svgFace.appendChild(SVG.createRectNode(`face_${faceName}_background`, 0, 0, 30, 100, 5, this.options.puzzleColor));
 		// todo add stickers depending on orbit types
 		svgFaceContainer.appendChild(svgFace);
 		return svgFaceContainer;

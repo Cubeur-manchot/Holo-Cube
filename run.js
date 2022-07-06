@@ -84,8 +84,10 @@ class Run {
 		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
 	};
 	setMoveSequenceList = inputObject => {
-		if (inputObject.moveSequence) {
-			if (inputObject.moveSequenceList) {
+		let isMoveSequenceDefined = ![undefined, null].includes(inputObject.moveSequence);
+		let isMoveSequenceListDefined = ![undefined, null].includes(inputObject.moveSequenceList);
+		if (isMoveSequenceDefined) {
+			if (isMoveSequenceListDefined) {
 				this.throwError("Both properties moveSequence and moveSequenceList were provided, please set one of them to null or undefined.");
 			}
 			if (typeof inputObject.moveSequence !== "string") {
@@ -93,7 +95,7 @@ class Run {
 			}
 			this.moveSequenceList = [inputObject.moveSequence];
 		} else {
-			if (!inputObject.moveSequenceList) {
+			if (isMoveSequenceListDefined) {
 				this.throwError("Property moveSequence or moveSequenceList must be provided.");
 			}
 			if (typeof inputObject.moveSequenceList !== "object") {
@@ -114,9 +116,9 @@ class Run {
 	setPuzzleClass = () => {
 		switch(this.puzzle.shape) {
 			case "cube": switch(this.puzzle.fullName) {
-				case "cube1x1x1": this.puzzleClass = Cube1x1x1;
-				case "cube2x2x2": this.puzzleClass = Cube2x2x2;
-				case "cube3x3x3": this.puzzleClass = Cube3x3x3;
+				case "cube1x1x1": this.puzzleClass = Cube1x1x1; break;
+				case "cube2x2x2": this.puzzleClass = Cube2x2x2; break;
+				case "cube3x3x3": this.puzzleClass = Cube3x3x3; break;
 				default: this.puzzleClass = CubeBig;
 			}; break;
 			default: this.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
