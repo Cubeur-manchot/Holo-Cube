@@ -175,7 +175,9 @@ class PuzzleRunInput {
 		this.fullName = puzzle.fullName;
 		this.shape = "cube";
 		this.size = parseInt(puzzle.fullName.match(/\d+$/)[0]);
-		if (this.size > 13) {
+		if (this.size === 0) {
+			this.run.throwError(`Creating cube with no layer.`);
+		} else if (this.size > 13) {
 			this.run.warningLog(`Creating cube image with large number of layers (${this.size}).`);
 		}
 	};
