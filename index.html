@@ -22,15 +22,16 @@
 			p.moveSequence { color: blue; }
 			p.optional { color: grey; }
 			span.comment { color: green; margin-left: 10px; }
+			textarea#jsonInput { border-radius: 4px; max-width: 100%; }
 			div#svgResults svg { margin-top: 10px; margin-left: 10px; }
 		</style>
 	</head>
 	<body>
 		<div style="width: 50%; margin: 0; display: inline-block; vertical-align: top; padding: 10px;">
-			<div>
+			<div id="inputContainer">
 				<label style="vertical-align: top;">Json input :</label>
 				<br/>
-				<textarea id="jsonInput" onchange="checkJsonFormatting();" style="border-radius: 4px; max-width: 100%;"></textarea>
+				<textarea id="jsonInput" onchange="checkJsonFormatting();"></textarea>
 			</div>
 			<div>
 				<input type="button" id="prefill" value="Prefill" onclick="prefillWithExample();">
