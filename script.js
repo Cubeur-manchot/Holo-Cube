@@ -41,7 +41,7 @@ const inputIsKo = (textareaTag, exception) => {
 
 const prefillWithExample = () => {
 	let textareaTag = document.querySelector("textarea#jsonInput");
-	textareaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube4x4x4"\n    },\n    "moveSequence": "Fw"\n,    "verbosity": 1\n}';
+	textareaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube4x4x4"\n    },\n    "moveSequence": "Rw U R\' U\' 2R\' U R U\' R\'",\n    "verbosity": 1\n}';
 	inputIsOk(textareaTag);
 };
 
