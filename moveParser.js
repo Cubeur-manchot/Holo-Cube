@@ -91,7 +91,9 @@ class CubeMoveParser extends MoveParser {
 			}
 		} else if (new RegExp(`^\\d*${faceListSubRegExp}w${directionListSubRegExp}$`).test(moveString)) { // Rw, Uw', 3Fw2, ...
 			let numberOfSlices = moveString.match(new RegExp("^\\d*"))[0];
-			if (numberOfSlices < this.cubeSize) {
+			if (numberOfSlices <= 1) {
+				this.run.throwError(`Applying a wide move with less than 2 layers (${numberOfSlices}).`);
+			} else if (numberOfSlices < this.cubeSize) {
 				return new CubeMove({
 					face: this.parseFace(moveString),
 					sliceBegin: 1,
