@@ -1,5 +1,19 @@
 "use strict";
 
+// Defines all known colors.
+
+class ColorCollection {
+	static transparent = {r: 0, g: 0, b: 0, a: 0};
+	static white = {r: 255, g: 255, b: 255, a: 1};
+	static black = {r: 0, g: 0, b: 0, a: 1};
+	static green = {r: 0, g: 216, b: 0, a: 1};
+	static red = {r: 255, g: 0, b: 0, a: 1};
+	static yellow = {r: 255, g: 255, b: 0, a: 1};
+	static orange = {r: 255, g: 127, b: 0, a: 1};
+	static blue = {r: 0, g: 0, b: 255, a: 1};
+}
+
+
 // Represents the information of a color, including opacity.
 
 class Color {
@@ -64,14 +78,15 @@ class Color {
 		return true;
 	};
 	static knownColors = {
-		transparent: {r: 0, g: 0, b: 0, a: 0},
-		black: {r: 0, g: 0, b: 0, a: 1},
-		white: {r: 255, g: 255, b: 255, a: 1},
-		green: {r: 0, g: 216, b: 0, a: 1},
-		red: {r: 255, g: 0, b: 0, a: 1},
-		yellow: {r: 255, g: 255, b: 0, a: 1},
-		orange: {r: 255, g: 127, b: 0, a: 1},
-		blue: {r: 0, g: 0, b: 255, a: 1}
+		transparent: ColorCollection.transparent, t: ColorCollection.transparent,
+		black: ColorCollection.black,            bl: ColorCollection.black,
+		white: ColorCollection.white,             w: ColorCollection.white,
+		green: ColorCollection.green,             g: ColorCollection.green,
+		red: ColorCollection.red,                 r: ColorCollection.red,
+		yellow: ColorCollection.yellow,           y: ColorCollection.yellow,
+		orange: ColorCollection.orange,           o: ColorCollection.orange,
+		blue: ColorCollection.blue,               b: ColorCollection.blue
+		// todo add remaining colors (megaminx)
 	};
 	static isKnownColor = colorString => {
 		return Color.knownColors[colorString] !== undefined;

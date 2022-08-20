@@ -49,6 +49,8 @@ class CubeMove extends Move {
 	static externalMode = "external";
 	static internalMode = "internal";
 	static semiExternalMode = "semiExternal";
+	static internalDirectMode = "internalDirect";
+	static internalIndirectMode = "internalIndirect";
 	static elementaryCycles = {
 		centerCubeOrbit: {
 			internal: {
@@ -63,7 +65,7 @@ class CubeMove extends Move {
 		cornerCubeOrbit: {
 			external: {
 				U: [[], [[ 0,  1,  2,  3]], [[ 0,  2], [ 1,  3]], [[ 0,  3,  2,  1]]],
-				F: [[], [[ 2, 11, 12, 21]], [[ 4,  6], [ 5,  7]], [[ 4,  7,  6,  5]]],
+				F: [[], [[ 4,  5,  6,  7]], [[ 4,  6], [ 5,  7]], [[ 4,  7,  6,  5]]],
 				R: [[], [[ 8,  9, 10, 11]], [[ 8, 10], [ 9, 11]], [[ 8, 11, 10,  9]]],
 				D: [[], [[12, 13, 14, 15]], [[12, 14], [13, 15]], [[12, 15, 14, 13]]],
 				B: [[], [[16, 17, 18, 19]], [[16, 18], [17, 19]], [[16, 19, 18, 17]]],
@@ -75,7 +77,7 @@ class CubeMove extends Move {
 				R: [[], [[ 1, 19, 13,  5], [ 2, 16, 14,  6]], [[ 1, 13], [ 2, 14], [ 5, 19], [ 6, 16]], [[ 1,  5, 13, 19], [ 2,  6, 14, 16]]],
 				D: [[], [[ 6, 10, 18, 22], [ 7, 11, 19, 23]], [[ 6, 18], [ 7, 19], [10, 22], [11, 23]], [[ 6, 22, 18, 10], [ 7, 23, 19, 11]]],
 				B: [[], [[ 0, 23, 14,  9], [ 1, 20, 15, 10]], [[ 0, 14], [ 1, 15], [ 9, 23], [10, 20]], [[ 0,  9, 14, 23], [ 1, 10, 15, 20]]],
-				L: [[], [[ 0,  4, 12, 17], [ 3,  7, 15, 16]], [[ 0, 12], [ 3, 15], [ 4, 17], [ 7, 16]], [[ 0, 17, 12,  4], [ 3, 16, 15,  7]]]
+				L: [[], [[ 0,  4, 12, 18], [ 3,  7, 15, 17]], [[ 0, 12], [ 3, 15], [ 4, 18], [ 7, 17]], [[ 0, 18, 12,  4], [ 3, 17, 15,  7]]]
 			}
 		},
 		midgeCubeOrbit: {
@@ -126,8 +128,26 @@ class CubeMove extends Move {
 				F: [[], [[ 3, 21, 26, 44], [ 6, 16, 31, 41]], [[ 3, 26], [ 6, 31], [16, 41], [21, 44]], [[ 3, 44, 26, 21], [ 6, 41, 31, 16]]],
 				R: [[], [[ 1, 37, 25,  9], [ 4, 32, 28, 12]], [[ 1, 25], [ 4, 28], [ 9, 37], [12, 32]], [[ 1,  9, 25, 37], [ 4, 12, 28, 32]]],
 				D: [[], [[11, 19, 35, 43], [14, 22, 38, 46]], [[11, 35], [14, 38], [19, 43], [22, 46]], [[11, 43, 35, 19], [14, 46, 38, 22]]],
-				B: [[], [[ 2, 40, 30, 20], [ 7, 45, 27, 17]], [[ 2, 30], [ 7, 27], [17, 45], [20, 40]], [[ 2, 20, 30, 40], [ 7, 17, 27, 35]]],
+				B: [[], [[ 2, 40, 30, 20], [ 7, 45, 27, 17]], [[ 2, 30], [ 7, 27], [17, 45], [20, 40]], [[ 2, 20, 30, 40], [ 7, 17, 27, 45]]],
 				L: [[], [[ 0,  8, 24, 36], [ 5, 13, 29, 33]], [[ 0, 24], [ 5, 29], [ 8, 36], [13, 33]], [[ 0, 36, 24,  8], [ 5, 33, 29, 13]]]
+			}
+		},
+		centerBigCubeOrbit: {
+			internalDirect: {
+				U: [[], [[ 7, 23, 19, 11]], [[ 7, 19], [11, 23]], [[ 7, 11, 19, 23]]],
+				F: [[], [[ 1, 10, 15, 20]], [[ 1, 15], [10, 20]], [[ 1, 20, 15, 10]]],
+				R: [[], [[ 0, 18, 12,  4]], [[ 0, 12], [ 4, 18]], [[ 0,  4, 12, 18]]],
+				D: [[], [[ 5,  9, 17, 21]], [[ 5, 17], [ 9, 21]], [[ 5, 21, 17,  9]]],
+				B: [[], [[ 3, 22, 13,  8]], [[ 3, 13], [ 8, 22]], [[ 3,  8, 13, 22]]],
+				L: [[], [[ 2,  6, 14, 16]], [[ 2, 14], [ 6, 16]], [[ 2, 16, 14,  6]]]
+			},
+			internalIndirect: {
+				U: [[], [[ 5, 21, 17,  9]], [[ 5, 17], [ 9, 21]], [[ 5,  9, 17, 21]]],
+				F: [[], [[ 3,  8, 13, 22]], [[ 3, 13], [ 8, 22]], [[ 3, 22, 13,  8]]],
+				R: [[], [[ 2, 16, 14,  6]], [[ 2, 14], [ 6, 16]], [[ 2,  6, 14, 16]]],
+				D: [[], [[ 7, 11, 19, 23]], [[ 7, 19], [11, 23]], [[ 7, 23, 19, 11]]],
+				B: [[], [[ 1, 20, 15, 10]], [[ 1, 15], [10, 20]], [[ 1, 10, 15, 20]]],
+				L: [[], [[ 0,  4, 12, 18]], [[ 0, 12], [ 4, 18]], [[ 0, 18, 12,  4]]]
 			}
 		}
 	};
@@ -139,7 +159,7 @@ class CubeMove extends Move {
 		this.sliceEnd = sliceEnd;
 		this.turnCount = turnCount;
 		this.cube = this.run.blankPuzzle;
-		let isBigCube = this.cube instanceof CubeBig;
+		let isBigCube = this.cube instanceof BlankCubeBig;
 		if (this.sliceBegin < 1) {
 			this.run.throwError("Creating move with sliceBegin < 1.");
 		}
@@ -174,7 +194,11 @@ class CubeMove extends Move {
 			for (let firstRank = 1; firstRank <= this.cube.maxRankWithoutMiddle; firstRank++) {
 				this.addWingElementaryCycles(CubeMove.externalMode, firstRank);
 				for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
-					this.addCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
+					if (firstRank === secondRank) {
+						this.addXCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
+					} else {
+						this.addCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
+					}
 				}
 			}
 		}
@@ -183,16 +207,25 @@ class CubeMove extends Move {
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) { // between first layer and middle layer
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank);
 			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalMode, [firstRank, secondRank]);
+				if (firstRank === secondRank) {
+					this.addXCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank]);
+				} else if (firstRank > secondRank) {
+					this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [firstRank, secondRank]);
+					this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [secondRank, firstRank]);
+				} else {
+					this.addCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank]);
+					this.addCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [secondRank, firstRank]);
+				}
 			}
 		}
 	};
 	treatMiddleLayer = isBigCube => {
 		this.addCenterElementaryCycles();
-		this.addMidgeElementaryCycles(CubeMove.externalMode);
+		this.addMidgeElementaryCycles(CubeMove.internalMode);
 		if (isBigCube) {
 			for (let centerRank = 1; centerRank <= this.cube.maxRankWithoutMiddle; centerRank++) {
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalMode, [centerRank, this.middleSlice - 1]);
+				this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [centerRank, this.cube.middleSlice - 1]);
+				this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [centerRank, this.cube.middleSlice - 1]);
 			}
 		}
 	};
@@ -202,7 +235,15 @@ class CubeMove extends Move {
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) {
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank, oppositeFace, oppositeTurnCount);
 			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
+				if (firstRank === secondRank) {
+					this.addXCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
+				} else if (firstRank > secondRank) {
+					this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
+					this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [secondRank, firstRank], oppositeFace, oppositeTurnCount);
+				} else {
+					this.addCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
+					this.addCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [secondRank, firstRank], oppositeFace, oppositeTurnCount);
+				}
 			}
 		}
 	};
@@ -215,7 +256,11 @@ class CubeMove extends Move {
 			for (let firstRank = 1; firstRank <= this.cube.maxRankWithoutMiddle; firstRank++) {
 				this.addWingElementaryCycles(CubeMove.externalMode, firstRank, oppositeFace, oppositeTurnCount);
 				for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
-					this.addCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
+					if (firstRank === secondRank) {
+						this.addXCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
+					} else {
+						this.addCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
+					}
 				}
 			}
 		}
@@ -247,16 +292,17 @@ class CubeMove extends Move {
 			}	
 		}
 	};
+	addXCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {
+		if (this.cube.hasOrbitType(CenterBigCubeOrbit.type)) {
+			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
+		}
+	};
 	addCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {
 		if (this.cube.hasOrbitType(CenterBigCubeOrbit.type)) {
-			if (centerMode === CubeMove.externalMode) {
-				this.pushCycles(CubeMove.elementaryCycles[MidgeCubeOrbit.type][CubeMove.externalMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
-			} else if (centerMode === CubeMove.internalMode) {
-				this.pushCycles(
-					centerRanks[0] === centerRanks[1] ? CubeMove.elementaryCycles[CornerCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount]
-					: centerRanks[0] > centerRanks[1] ? CubeMove.elementaryCycles[MidgeCubeOrbit.type][CubeMove.internalMode][face][turnCount]
-					: CubeMove.elementaryCycles[MidgeCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount],
-					CenterBigCubeOrbit.type, centerRanks);
+			if (centerMode === CubeMove.internalDirectMode || centerMode === CubeMove.internalIndirectMode) {
+				this.pushCycles(CubeMove.elementaryCycles[CenterBigCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
+			} else {
+				this.pushCycles(CubeMove.elementaryCycles[MidgeCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
 			}
 		}
 	};

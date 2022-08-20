@@ -45,7 +45,8 @@ class Run {
 	run = () => {
 		let svgOutputList = [];
 		for (let moveSequence of this.moveSequenceList) {
-			let puzzle = this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(new this.puzzleClass(this));
+			let puzzle = new this.puzzleClass(this);
+			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
 			svgOutputList.push(this.puzzleDrawer.drawPuzzle(puzzle));
 		}
 		return svgOutputList;

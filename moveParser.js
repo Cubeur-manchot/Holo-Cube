@@ -53,7 +53,7 @@ class CubeMoveParser extends MoveParser {
 				run: this.run
 			});
 		} else if (this.cubeSize === 1) {
-			this.run.throwError("Applying a non-rotation move on 1x1x1 cube.");
+			this.run.throwError("Applying an incorrect move on a 1x1x1 cube.");
 		} else if (new RegExp(`^${faceListSubRegExp}${directionListSubRegExp}$`).test(moveString)) { // R, U', F2, ...
 			return new CubeMove({
 				face: moveString[0],
@@ -63,7 +63,7 @@ class CubeMoveParser extends MoveParser {
 				run: this.run
 			});
 		} else if (this.cubeSize === 2) {
-			this.run.throwError("Applying a inner slice move or a move involving at least 2 layers on a 2x2x2 cube.");
+			this.run.throwError("Applying an incorrect move on a 2x2x2 cube.");
 		} else if (new RegExp(`^${faceListSubRegExp.toLowerCase()}${directionListSubRegExp}$`).test(moveString)) { // r, u', f2
 			return new CubeMove({
 				face: this.parseFace(moveString[0]),
@@ -73,7 +73,8 @@ class CubeMoveParser extends MoveParser {
 				run: this.run
 			});
 		} else if (new RegExp(`^\\d*[MES]${directionListSubRegExp}$`, "i").test(moveString)) { // M, E', S2
-			let middleSliceCount = moveString.match(/\d+/)[0] ?? 1;
+			let middleSliceCountMatch = moveString.match(/^\d*/)[0];
+			let middleSliceCount = middleSliceCountMatch === "" ? 1 : parseInt(middleSliceCountMatch);
 			if ((middleSliceCount + this.cubeSize) % 2) {
 				this.run.throwError(`Wrong structure for CubeMove (${this.cubeSize % 2 ? "odd" : "even"} cube size and ${this.cubeSize % 2 ? "even" : "odd"}`
 				+ " number of slices for middle slice move).");
@@ -89,7 +90,7 @@ class CubeMoveParser extends MoveParser {
 				this.run.throwError(`Applying an inner slice move involving ${middleSliceCount} slices on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
 			}
 		} else if (new RegExp(`^\\d*${faceListSubRegExp}w${directionListSubRegExp}$`).test(moveString)) { // Rw, Uw', 3Fw2, ...
-			let numberOfSlices = moveString.match(new RegExp("^\d*"))[0];
+			let numberOfSlices = moveString.match(new RegExp("^\\d*"))[0];
 			if (numberOfSlices < this.cubeSize) {
 				return new CubeMove({
 					face: this.parseFace(moveString),

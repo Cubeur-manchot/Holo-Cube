@@ -1,7 +1,7 @@
 "use strict";
 
 const test = () => {
-	alert("No action.");
+	alert("Prout.");
 };
 
 const runHoloCube = () => {
@@ -41,7 +41,7 @@ const inputIsKo = (textareaTag, exception) => {
 
 const prefillWithExample = () => {
 	let textareaTag = document.querySelector("textarea#jsonInput");
-	textareaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube3x3x3"\n    },\n    "moveSequence": "R U R\' U\'"\n}';
+	textareaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube4x4x4"\n    },\n    "moveSequence": "Fw"\n,    "verbosity": 1\n}';
 	inputIsOk(textareaTag);
 };
 

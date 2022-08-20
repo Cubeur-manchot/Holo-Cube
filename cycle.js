@@ -21,42 +21,41 @@ class Cycle {
 	};
 	applyOnOrbit = orbit => {
 		if (!this.getLength()) {
-			throwError("Applying cycle of length 0.");
+			this.run.throwError("Applying cycle of length 0.");
 		}
 		if (this.getLength() === 1) {
-			log("Ignoring cycle of length 1.", 2);
+			this.run.log("Ignoring cycle of length 1.", 2);
 			return;
 		}
 		if (!orbit) {
-			throwError("Applying cycle on undefined orbit.");
+			this.run.throwError("Applying cycle on undefined orbit.");
 		}
 		if (!this.checkOrbitTypeAndRanks(orbit)) {
-			log("Ignoring cycle because type cycle orbit type and orbit type are different ("
+			this.run.log("Ignoring cycle because type cycle orbit type and orbit type are different ("
 				+ this.orbitType
 					+ (this.orbitRank ? ` (rank = ${this.orbitRank})` : "")
 					+ (this.orbitRanks ? ` (ranks = [${this.orbitRanks.join(", ")}])` : "")
 				+ ", " + orbit.type
-					+ (orbit.rank ? ` (rank = ${orbit.orbitRank})` : "")
-					+ (orbit.ranks ? ` (ranks = [${orbit.orbitRanks.join(", ")}])` : "")
+					+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
+					+ (orbit.ranks ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
 				+ ").", 2);
 			return;
 		}
 		if (!orbit.getSize()) {
-			throwError("Applying cycle on orbit of size 0.");
+			this.run.throwError("Applying cycle on orbit of size 0.");
 		}
 		if (!orbit.slotList) {
-			throwError("Applying cycle on a cycle with no slot list.");
+			this.run.throwError("Applying cycle on a cycle with no slot list.");
 		}
 		this.run.log(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
 			+ ".", 2);
-		let cycleSlotIndexList = this.slotIndexList;
-		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()];
+		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()].getContent();
 		for (let cycleElementIndex = this.getLength() - 1; cycleElementIndex > 0; cycleElementIndex--) {
-			orbit.slotList[cycleSlotIndexList[cycleElementIndex]].setContent(orbit.slotList[cycleSlotIndexList[cycleElementIndex - 1]].getContent());
+			orbit.slotList[this.slotIndexList[cycleElementIndex]].setContent(orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].getContent());
 		}
-		orbit.slotList[cycleSlotIndexList[0]].setContent(cycleEndSlotContent);
+		orbit.slotList[this.slotIndexList[0]].setContent(cycleEndSlotContent);
 	};
 	checkOrbitTypeAndRanks = orbit => {
 		if (this.orbitType !== orbit.type) {
