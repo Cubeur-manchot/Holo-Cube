@@ -184,7 +184,7 @@ class CubeMove extends Move {
 				Math.min(this.cube.puzzleSize - this.sliceBegin, this.cube.maxRankWithoutMiddle));
 		}
 		if (this.sliceEnd === this.cube.puzzleSize) { // last layer
-			this.treatLastLayer();
+			this.treatLastLayer(isBigCube);
 		}
 	};
 	treatFirstLayer = isBigCube => {
@@ -291,7 +291,7 @@ class CubeMove extends Move {
 			this.pushCycles(CubeMove.elementaryCycles[WingCubeOrbit.type][wingMode][face][turnCount], WingCubeOrbit.type, wingRank);
 			if (wingMode === CubeMove.externalMode) {
 				this.pushCycles(CubeMove.elementaryCycles[WingCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], WingCubeOrbit.type, wingRank);
-			}	
+			}
 		}
 	};
 	addXCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {

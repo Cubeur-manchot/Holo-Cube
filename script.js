@@ -1,7 +1,7 @@
 "use strict";
 
 const test = () => {
-	alert("Prout.");
+	alert("Brouette.");
 };
 
 const runHoloCube = () => {
@@ -47,7 +47,7 @@ const prefillWithExample = () => {
 	inputContainerTag.appendChild(newTextAreaTag);
 	newTextAreaTag.id = "jsonInput";
 	newTextAreaTag.onchange="checkJsonFormatting()";
-	newTextAreaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube4x4x4"\n    },\n    "moveSequence": "Rw U R\' U\' 2R\' U R U\' R\'",\n    "verbosity": 1\n}';
+	newTextAreaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube4x4x4"\n    },\n    "moveSequence": "x",\n    "verbosity": 1\n}';
 	inputIsOk(textareaTag);
 };
 
