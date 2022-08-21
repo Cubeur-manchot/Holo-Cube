@@ -11,6 +11,13 @@ class ColorCollection {
 	static yellow = {r: 255, g: 255, b: 0, a: 1};
 	static orange = {r: 255, g: 127, b: 0, a: 1};
 	static blue = {r: 0, g: 0, b: 255, a: 1};
+	static grey = {r: 153, g: 153, b: 153};
+	static lightGreen = {r: 119, g: 238, b: 0};
+	static purple = {r: 136, g: 17, b: 255};
+	static lightYellow = {r: 255, g: 255, b: 187};
+	static lightBlue = {r: 136, g: 221, b: 255};
+	static brown = {r: 255, g: 136, b: 51};
+	static pink = {r: 255, g: 153, b: 255};
 }
 
 
@@ -78,15 +85,21 @@ class Color {
 		return true;
 	};
 	static knownColors = {
-		transparent: ColorCollection.transparent, t: ColorCollection.transparent,
-		black: ColorCollection.black,            bl: ColorCollection.black,
-		white: ColorCollection.white,             w: ColorCollection.white,
-		green: ColorCollection.green,             g: ColorCollection.green,
-		red: ColorCollection.red,                 r: ColorCollection.red,
-		yellow: ColorCollection.yellow,           y: ColorCollection.yellow,
-		orange: ColorCollection.orange,           o: ColorCollection.orange,
-		blue: ColorCollection.blue,               b: ColorCollection.blue
-		// todo add remaining colors (megaminx)
+		transparent: ColorCollection.transparent,  t: ColorCollection.transparent,
+		black:       ColorCollection.black,       bl: ColorCollection.black,
+		white:       ColorCollection.white,        w: ColorCollection.white,
+		green:       ColorCollection.green,        g: ColorCollection.green,
+		red:         ColorCollection.red,          r: ColorCollection.red,
+		yellow:      ColorCollection.yellow,       y: ColorCollection.yellow,
+		blue:        ColorCollection.blue,         b: ColorCollection.blue,
+		orange:      ColorCollection.orange,       o: ColorCollection.orange,
+		purple:      ColorCollection.purple,      pu: ColorCollection.purple,
+		grey:        ColorCollection.grey,        gy: ColorCollection.grey,
+		lightGreen:  ColorCollection.lightGreen,  lg: ColorCollection.lightGreen,
+		lightYellow: ColorCollection.lightYellow, ly: ColorCollection.lightYellow,
+		lightBlue:   ColorCollection.lightBlue,   lb: ColorCollection.lightBlue,
+		brown:       ColorCollection.brown,       br: ColorCollection.brown,
+		pink:        ColorCollection.pink,        pi: ColorCollection.pink,
 	};
 	static isKnownColor = colorString => {
 		return Color.knownColors[colorString] !== undefined;
