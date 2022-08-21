@@ -59,7 +59,7 @@ class SVG {
 					dElements.push(`H ${pathElement.x}`); break;
 				case SVG.pathElementVerticalLineTo:
 					dElements.push(`V ${pathElement.y}`); break;
-				case SVG.pathElementArc: // todo
+				case SVG.pathElementArc:
 					dElements.push(`A ${pathElement.rx} ${pathElement.ry} ${pathElement.rotation ?? 0} ${pathElement.large ? 1 : 0} ${pathElement.sweep} ${pathElement.x} ${pathElement.y}`); break;
 				case SVG.pathElementClose:
 					dElements.push("Z"); break;
@@ -181,7 +181,14 @@ class CubePlanDrawer extends CubeDrawer {
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
 		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
 			let startingValueIndex = (this.cubeSize - 1) / 2;
-			uFace.appendChild(this.createUFaceSticker(`sticker_${CenterCubeOrbit.type}_0`, startingValueIndex, startingValueIndex));
+			let idBegin = `sticker_${CenterCubeOrbit.type}_`;
+			uFace.appendChild(this.createUFaceSticker(`${idBegin}0`, startingValueIndex, startingValueIndex));
+			if (this.blankPuzzle instanceof BlankCube1x1x1) {
+				fFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}1`, 0));
+				rFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}2`, 0));
+				bFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}4`, 0));
+				lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}5`, 0));
+			}
 		}
 		if (this.blankPuzzle.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
 			let highIndex = this.cubeSize - 1;
@@ -308,7 +315,7 @@ class CubePlanDrawer extends CubeDrawer {
 			switch (orbit.type) {
 				case CornerCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 20, 21]; break;
 				case MidgeCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 8, 16, 20]; break;
-				case CenterCubeOrbit.type: slotIndexList = [0]; break;
+				case CenterCubeOrbit.type: slotIndexList = this.blankPuzzle instanceof BlankCube1x1x1 ? [0, 1, 2, 4, 5] : [0]; break;
 				case WingCubeOrbit.type:
 					slotIndexList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 17, 32, 33, 40, 41];
 					selectorBegin += `${orbit.rank}_`;
