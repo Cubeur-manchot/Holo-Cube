@@ -96,7 +96,7 @@ class Run {
 			}
 			this.moveSequenceList = [inputObject.moveSequence];
 		} else {
-			if (isMoveSequenceListDefined) {
+			if (!isMoveSequenceListDefined) {
 				this.throwError("Property moveSequence or moveSequenceList must be provided.");
 			}
 			if (typeof inputObject.moveSequenceList !== "object") {
