@@ -46,9 +46,18 @@ const prefillWithExample = () => {
 	let newTextAreaTag = document.createElement("textarea");
 	inputContainerTag.appendChild(newTextAreaTag);
 	newTextAreaTag.id = "jsonInput";
-	newTextAreaTag.onchange="checkJsonFormatting()";
-	newTextAreaTag.innerHTML = '{\n    "puzzle": {\n        "fullName": "cube4x4x4"\n    },\n    "moveSequenceList": ["x", "3Rw"]\n,    "verbosity": 1\n}';
-	inputIsOk(textareaTag);
+	newTextAreaTag.innerHTML =
+		  '{\n'
+		+ '    "puzzle": {\n'
+		+ '        "fullName": "cube4x4x4"\n'
+		+ '    },\n'
+		+ '    "moveSequence": "Rw F",\n'
+		+ '    "drawingOptions": {\n'
+		+ '        "imageHeight": 100\n'
+		+ '    }\n'
+		+ '}';
+	checkJsonFormatting();
+	newTextAreaTag.addEventListener("change", checkJsonFormatting);
 };
 
 const showSvgResults = svgList => {

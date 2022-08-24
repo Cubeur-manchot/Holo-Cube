@@ -246,19 +246,23 @@ class DrawingOptionsRunInput {
 	constructor(drawingOptionsObject, run) {
 		this.run = run;
 		if (drawingOptionsObject) {
-			for (let drawingOptionsProperty of ["imageHeight", "imageWidth", "puzzleHeight", "puzzleWidth"]) {
-				if (![undefined, null].includes(drawingOptionsObject[drawingOptionsProperty])) {
-					this.checkNumberNotZero(drawingOptionsObject[drawingOptionsProperty], drawingOptionsProperty);
-					this[drawingOptionsProperty] = drawingOptionsObject[drawingOptionsProperty];
-				} else {
-					this.setNumericValueFromDefault(drawingOptionsProperty);
-				}
-			}
+			let heightWidthList = ["Height", "Width"];
 			for (let imageOrPuzzle of ["image", "puzzle"]) {
-				if (![undefined, null].includes(drawingOptionsObject[imageOrPuzzle + "scale"])) {
-					this.checkNumberNotZero(drawingOptionsObject[imageOrPuzzle + "scale"], imageOrPuzzle + "scale");
-					this[imageOrPuzzle + "height"] *= drawingOptionsObject[imageOrPuzzle + "scale"];
-					this[imageOrPuzzle + "width"] *= drawingOptionsObject[imageOrPuzzle + "scale"];
+				for (let heightOrWidth of heightWidthList) {
+					let dimensionProperty = imageOrPuzzle + heightOrWidth;
+					if (![undefined, null].includes(drawingOptionsObject[dimensionProperty])) {
+						this.checkNumberNotZero(drawingOptionsObject[dimensionProperty], dimensionProperty);
+						this[dimensionProperty] = drawingOptionsObject[dimensionProperty];
+					} else {
+						this.setNumericValueFromDefault(dimensionProperty);
+					}
+				}
+				let scaleProperty = imageOrPuzzle + "Scale";
+				if (![undefined, null].includes(drawingOptionsObject[scaleProperty])) {
+					this.checkNumberNotZero(drawingOptionsObject[scaleProperty], scaleProperty);
+					for (let heightOrWidth of heightWidthList) {
+						this[imageOrPuzzle + heightOrWidth] *= drawingOptionsObject[scaleProperty];
+					}
 				}
 			}
 			if (![undefined, null].includes(drawingOptionsObject.view)) {
