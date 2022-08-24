@@ -185,6 +185,9 @@ class PuzzleRunInput {
 		if (![undefined, null].includes(puzzle.stage)) {
 			if (typeof puzzle.stage !== "string") {
 				this.run.throwError("Property puzzle.stage must be a string.");
+			} else {
+				this.run.warningLog("Stage option is not yet supported, current mode shows all stickers.");
+				this.stage = puzzle.stage;
 			}
 		}
 		this.stage = puzzle.stage ?? "full";
@@ -271,7 +274,8 @@ class DrawingOptionsRunInput {
 				} else if (!["plan", "isometric", "net"].includes(drawingOptionsObject.view)) {
 					this.run.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
 				} else {
-					this.view = drawingOptionsObject.view;
+					this.run.warningLog("View option is not yet supported, using plan view by default");
+					this.view = DrawingOptionsRunInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
 				}
 			} else {
 				this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;

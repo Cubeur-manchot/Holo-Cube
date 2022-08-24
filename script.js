@@ -49,11 +49,13 @@ const prefillWithExample = () => {
 	newTextAreaTag.innerHTML =
 		  '{\n'
 		+ '    "puzzle": {\n'
-		+ '        "fullName": "cube4x4x4"\n'
+		+ '        "fullName": "cube4x4x4",\n'
+		+ '        "stage": "tralala"\n'
 		+ '    },\n'
 		+ '    "moveSequence": "Rw F",\n'
 		+ '    "drawingOptions": {\n'
-		+ '        "imageHeight": 100\n'
+		+ '        "imageHeight": 100,\n'
+		+ '        "view": "isometric"\n'
 		+ '    }\n'
 		+ '}';
 	checkJsonFormatting();
