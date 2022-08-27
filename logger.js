@@ -11,16 +11,17 @@
 class Logger { // doesn't write any log
 	static consoleLog = console.log;
 	resultLog = message => {
-		this.resultLog += message + "\n";
+		this.run.logs += message + "\n";
 	};
 	htmlLog = message => {
 		this.logHtmlTag.innerHTML += message + "<br/>";
 	};
 	constructor (mode, run, htmlTag) {
 		this.run = run;
+		this.mode = mode;
 		switch (mode) {
-			case "console": this.log = Logger.consoleLog; break;
-			case "result": this.resultLog = ""; this.log = this.resultLog; break;
+			case "console":this.log = Logger.consoleLog; break;
+			case "result": this.run.logs = ""; this.log = this.resultLog; break;
 			case "htmlTag": this.logHtmlTag = htmlTag; this.log = this.htmlLog; break;
 			default: this.run.throwError(`Invalid log mode ${mode}.`);
 			// todo probably add Google Sheet cell as a mode

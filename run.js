@@ -1,5 +1,7 @@
 "use strict";
 
+// todo : ensure logs are exhaustive
+
 // Represents the information of a run (input, working, output).
 
 /*
@@ -25,7 +27,8 @@ Object structure to give to Run class :
 	},
 	logger: {
 		verbosity: int, // level of verbosity for the logs (-1 = no logs, 0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1
-		mode: string // how the logs will be written ("console"|"result"|"htmlTag"), default value is "console"
+		mode: string, // how the logs will be written ("console"|"result"|"htmlTag"), default value is "console"
+		htmlTagSelector: string // selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected
 	}
 }
 
@@ -46,18 +49,23 @@ class Run {
 		this.setPuzzleDrawer();
 	};
 	run = () => {
-		let svgOutputList = [];
+		let result = {
+			svgList: []
+		};
 		for (let moveSequence of this.moveSequenceList) {
 			let puzzle = new this.puzzleClass(this);
 			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
-			svgOutputList.push(this.puzzleDrawer.drawPuzzle(puzzle));
+			result.svgList.push(this.puzzleDrawer.drawPuzzle(puzzle));
 		}
-		return svgOutputList;
+		if (this.logger.mode === "result") {
+			result.logs = this.logs;
+		}
+		return result;
 	};
 	throwError = message => {
 		let errorMessage = `[ERROR] ${message}`;
 		Logger.consoleLog(errorMessage); // always display errors in the console
-		if (this.logger && this.logger.log !== Logger.consoleLog) {
+		if (this.logger && this.logger.mode === "console") {
 			this.logger.errorLog(message);
 		}
 		throw errorMessage;

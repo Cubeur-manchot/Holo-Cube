@@ -7,8 +7,8 @@ const test = () => {
 const runHoloCube = () => {
 	if (checkJsonFormatting()) {
 		let run = new Run(JSON.parse(document.querySelector("textarea#jsonInput").value));
-		let svgList = run.run();
-		showSvgResults(svgList);
+		let runResult = run.run();
+		showSvgResults(runResult.svgList);
 	}
 };
 
