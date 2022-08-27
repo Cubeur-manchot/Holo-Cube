@@ -6,7 +6,7 @@
 class TwistyPuzzle {
 	constructor(run) {
 		this.run = run;
-		this.run.log("Creating new Puzzle.", 3);
+		this.run.logger.debugLog("Creating new Puzzle.");
 		this.fullName = this.run.puzzle.fullName;
 		this.orbitList = [];
 		this.orbitTypes = [];
@@ -25,7 +25,7 @@ class TwistyPuzzle {
 class Cube extends TwistyPuzzle {
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new Cube.", 3);
+		this.run.logger.debugLog("Creating new Cube.");
 		this.shape = Cube.shape;
 	};
 	static shape = "cube";
@@ -42,7 +42,7 @@ class BlankCube1x1x1 extends Cube {
 class Cube1x1x1 extends BlankCube1x1x1 {
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new Cube1x1x1.", 1);
+		this.run.logger.generalLog("Creating new Cube1x1x1.");
 		this.addOrbit(new CenterCubeOrbit(this.run));
 	};
 }
@@ -58,7 +58,7 @@ class BlankCube2x2x2 extends Cube {
 class Cube2x2x2 extends BlankCube2x2x2 {
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new Cube2x2x2.", 1);
+		this.run.logger.generalLog("Creating new Cube2x2x2.");
 		this.addOrbit(new CornerCubeOrbit(this.run));
 	};
 }
@@ -74,7 +74,7 @@ class BlankCube3x3x3 extends Cube {
 class Cube3x3x3 extends BlankCube3x3x3 {
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new Cube3x3x3.", 1);
+		this.run.logger.generalLog("Creating new Cube3x3x3.");
 		this.addOrbit(new CenterCubeOrbit(this.run));
 		this.addOrbit(new MidgeCubeOrbit(this.run));
 		this.addOrbit(new CornerCubeOrbit(this.run));
@@ -103,7 +103,7 @@ class BlankCubeBig extends Cube {
 class CubeBig extends BlankCubeBig {
 	constructor(run) {
 		super(run);
-		this.run.log(`Creating new CubeBig (puzzleSize = ${this.puzzleSize}).`, 1);
+		this.run.logger.generalLog(`Creating new CubeBig (puzzleSize = ${this.puzzleSize}).`);
 		this.addOrbit(new CornerCubeOrbit(this.run));
 		if (this.puzzleSize % 2) { // puzzle is odd
 			this.addOrbit(new MidgeCubeOrbit(this.run));

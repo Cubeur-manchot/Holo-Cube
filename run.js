@@ -23,7 +23,10 @@ Object structure to give to Run class :
 		puzzleColor: color // color of the cube, excluding the stickers, (black, primary, stickerless, transparent, ...)
 		view: string // view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"
 	},
-	verbosity: int // level of verbosity for the logs (0 = errors only, 1 = general, 2 = advanced, 3 = debug), default value is 1
+	logger: {
+		verbosity: int, // level of verbosity for the logs (-1 = no logs, 0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1
+		mode: string // how the logs will be written ("console"|"result"|"htmlTag"), default value is "console"
+	}
 }
 
 puzzle.fullName is mandatory
@@ -33,7 +36,7 @@ other inputs are optional
 
 class Run {
 	constructor(inputObject) {
-		this.setVerbosity(inputObject);
+		this.setLogger(inputObject);
 		this.setPuzzle(inputObject);
 		this.setMoveSequenceList(inputObject);
 		this.setDrawingOptions(inputObject);
@@ -51,35 +54,48 @@ class Run {
 		}
 		return svgOutputList;
 	};
-	log = (message, verboseLevel) => {
-		if (verboseLevel <= this.verbosity) {
-			let divLogs = document.querySelector("div#logs");
-			divLogs.innerHTML += `[${new Date().toTimeString().substring(0,8)}] ${message}<br/>`;
-			divLogs.scrollTop = divLogs.scrollHeight;
-		}
-	};
 	throwError = message => {
-		this.log("[ERROR] " + message, 0);
-		throw message;
-	};
-	warningLog = message => {
-		this.log("[WARNING] " + message, 0);
-	};
-	setVerbosity = inputObject => {
-		this.verbosity = 1; // default value
-		if ([undefined, null].includes(inputObject)) {
-			this.throwError("Creating Input with empty input object.");
-		} else if (typeof inputObject !== "object") {
-			this.throwError("Input object must be an object.");
+		let errorMessage = `[ERROR] ${message}`;
+		Logger.consoleLog(errorMessage); // always display errors in the console
+		if (this.logger && this.logger.log !== Logger.consoleLog) {
+			this.logger.errorLog(message);
 		}
-		if (![undefined, null].includes(inputObject.verbosity)) {
-			if (typeof inputObject.verbosity !== "number") {
-				this.throwError("Property verbosity must be a number.");
-			} else if (![0, 1, 2, 3].includes(inputObject.verbosity)) {
-				this.throwError(`Property verbosity only accept values 0, 1, 2 and 3 (received value = ${verbosity}).`);
+		throw errorMessage;
+	};
+	setLogger = inputObject => {
+		let verbosity = 1; // default value
+		let mode = "console"; // default value
+		let htmlTag = undefined;
+		if (![undefined, null].includes(inputObject.logger)) {
+			if (![undefined, null].includes(inputObject.logger.verbosity)) { // check verbosity
+				if (typeof inputObject.logger.verbosity !== "number") {
+					this.throwError("Property verbosity must be a number.");
+				} else if (![-1, 0, 1, 2, 3].includes(inputObject.logger.verbosity)) {
+					this.throwError(`Property verbosity only accept values -1, 0, 1, 2 and 3 (received value = ${inputObject.logger.verbosity}).`);
+				}
+				verbosity = inputObject.logger.verbosity;
 			}
-			this.verbosity = inputObject.verbosity;
+			if (verbosity !== -1 && ![undefined, null].includes(inputObject.logger.mode)) { // check mode
+				if (typeof inputObject.logger.mode !== "string") {
+					this.throwError("Property mode must be a string.");
+				} else if (!["console", "result", "htmlTag"].includes(inputObject.logger.mode)) {
+					this.throwError(`Property mode only accept values "console", "result" and "htmlTag" (received value = ${inputObject.logger.mode}).`);
+				}
+				mode = inputObject.logger.mode;
+				if (mode === "htmlTag") { // htmlTag mode is chosen, the HTML tag is required
+					if ([undefined, null].includes(inputObject.logger.htmlTagSelector)) {
+						this.throwError("Property logger.htmlTagSelector is required when mode is \"htmlTag\".");
+					} else if (typeof inputObject.logger.htmlTagSelector !== "string") {
+						this.throwError("Property htmlTagSelector must be a string.");
+					}
+					htmlTag = document.querySelector(inputObject.logger.htmlTagSelector);
+					if (htmlTag === null) {
+						this.throwError(`No HTML tag was found with selector ${inputObject.logger.htmlTagSelector}.`);
+					}
+				}
+			}
 		}
+		this.logger = new (this.getLoggerClass(verbosity))(mode, this, htmlTag);
 	};
 	setPuzzle = inputObject => {
 		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
@@ -146,6 +162,15 @@ class Run {
 			default: this.throwError("Getting puzzle drawer class for a non-cubic shaped puzzle.");
 		}
 	};
+	getLoggerClass = verbosity => {
+		switch(verbosity) {
+			case -1: return Logger;
+			case 0: return ErrorLogger;
+			case 1: return GeneralLogger;
+			case 2: return DetailedLogger;
+			case 3: return DebugLogger;
+		}
+	};
 }
 
 // Represents the information of a puzzle as an input of a run.
@@ -178,7 +203,7 @@ class PuzzleRunInput {
 		if (this.size === 0) {
 			this.run.throwError(`Creating cube with no layer.`);
 		} else if (this.size > 13) {
-			this.run.warningLog(`Creating cube image with large number of layers (${this.size}).`);
+			this.run.logger.warningLog(`Creating cube image with large number of layers (${this.size}).`);
 		}
 	};
 	setStage = puzzle => {
@@ -186,7 +211,7 @@ class PuzzleRunInput {
 			if (typeof puzzle.stage !== "string") {
 				this.run.throwError("Property puzzle.stage must be a string.");
 			} else {
-				this.run.warningLog("Stage option is not yet supported, current mode shows all stickers.");
+				this.run.logger.warningLog("Stage option is not yet supported, current mode shows all stickers.");
 				this.stage = puzzle.stage;
 			}
 		}
@@ -274,7 +299,7 @@ class DrawingOptionsRunInput {
 				} else if (!["plan", "isometric", "net"].includes(drawingOptionsObject.view)) {
 					this.run.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
 				} else {
-					this.run.warningLog("View option is not yet supported, using plan view by default");
+					this.run.logger.warningLog("View option is not yet supported, using plan view by default");
 					this.view = DrawingOptionsRunInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
 				}
 			} else {
@@ -285,7 +310,7 @@ class DrawingOptionsRunInput {
 					this.run.throwError(`Puzzle is larger than image (puzzle${dimension} = this["puzzle" + dimension], image${dimension} = this["image" + dimension]).`);
 				}
 				if (Math.abs(this["image" + dimension]) > 2000) {
-					this.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
+					this.run.logger.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
 				}
 			}
 			for (let drawingOptionsProperty of ["imageBackgroundColor", "puzzleColor"]) {
@@ -315,11 +340,11 @@ class DrawingOptionsRunInput {
 	};
 	setNumericValueFromDefault = propertyName => {
 		this[propertyName] = DrawingOptionsRunInput.defaultDrawingOptions[propertyName];
-		this.run.log(`Property drawingOptions.${propertyName} was not provided, using default value ${this[propertyName]}.`, 3);
+		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${this[propertyName]}.`);
 	};
 	setColorValueFromDefault = propertyName => {
 		this[propertyName] = new Color(DrawingOptionsRunInput.defaultDrawingOptions[propertyName]);
-		this.run.log(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunInput.defaultDrawingOptions[propertyName]}.`, 3);
+		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunInput.defaultDrawingOptions[propertyName]}.`);
 	};
 	checkNumberNotZero = (variableValue, variableName) => {
 		if (typeof variableValue !== "number") {

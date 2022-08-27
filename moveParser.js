@@ -5,18 +5,18 @@
 class MoveSequenceParser {
 	constructor(run) {
 		this.run = run;
-		this.run.log("Creating new MoveSequenceParser.", 1);
+		this.run.logger.generalLog("Creating new MoveSequenceParser.");
 		switch(this.run.blankPuzzle.shape) {
 			case Cube.shape:
 				this.moveParser = new CubeMoveParser(this.run);
-				this.run.log("Attaching CubeMoveParser to MoveSequenceParser.", 3);
+				this.run.logger.debugLog("Attaching CubeMoveParser to MoveSequenceParser.");
 				break;
 			default:
-				this.run.throwError(`Cannot parse move sequence for puzzle type ${this.run.blankPuzzle.shape}.`);
+				this.run.throwError(`Cannot parse move sequence for puzzle type "${this.run.blankPuzzle.shape}."`);
 		}
 	};
 	parseMoveSequence = moveSequenceInput => {
-		this.run.log(`Parsing sequence ${moveSequenceInput}.`, 1);
+		this.run.logger.generalLog(`Parsing sequence ${moveSequenceInput}.`);
 		let moveSequence = new MoveSequence([], this.run);
 		for (let moveToParse of typeof moveSequenceInput === "string" ? moveSequenceInput.split(" ").filter(move => move !== "") : moveSequenceInput) {
 			moveSequence.appendMove(this.moveParser.parseMove(moveToParse));
@@ -30,7 +30,7 @@ class MoveSequenceParser {
 class MoveParser {
 	constructor(run) {
 		this.run = run;
-		this.run.log("Creating new MoveParser.", 3);
+		this.run.logger.debugLog("Creating new MoveParser.");
 		this.blankPuzzle = run.blankPuzzle;
 	};
 }
@@ -38,7 +38,7 @@ class MoveParser {
 class CubeMoveParser extends MoveParser {
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new CubeMoveParser.", 1);
+		this.run.logger.generalLog("Creating new CubeMoveParser.");
 		this.cubeSize = this.blankPuzzle.puzzleSize;
 	};
 	parseMove = moveString => {

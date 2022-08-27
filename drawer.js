@@ -90,7 +90,7 @@ class SVG {
 class TwistyPuzzleDrawer {
 	constructor(run) {
 		this.run = run;
-		this.run.log("Creating puzzle drawer.", 1);
+		this.run.logger.debugLog("Creating puzzle drawer.");
 		this.options = this.run.drawingOptions;
 		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
 			if (!this.options[drawingOptionColorProperty] instanceof Color) {
@@ -126,13 +126,13 @@ class CubeIsometricDrawer extends CubeDrawer {
 		super(run);
 	};
 	createSvgSkeletton = () => { // todo
-		this.run.log("CubeIsometricDrawer skeletton", 3);
 	};
 }
 
 class CubePlanDrawer extends CubeDrawer {
 	constructor(run) {
 		super(run);
+		this.run.logger.generalLog("Creating new CubePlanDrawer.");
 		this.options.faceCornerRadius = 20 / this.cubeSize;
 		this.options.stickerSize = 90 / this.cubeSize;
 		this.options.stickerCornerRadius = 20 / this.cubeSize;
@@ -145,7 +145,7 @@ class CubePlanDrawer extends CubeDrawer {
 		
 	};
 	createSvgSkeletton = () => {
-		this.run.log("CubePlanDrawer skeletton", 3);
+		this.run.logger.debugLog("CubePlanDrawer skeletton");
 		let svg = SVG.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
 		let background = SVG.createRectNode(
 			"background",
@@ -341,6 +341,5 @@ class CubeNetDrawer extends CubeDrawer {
 		super(run);
 	};
 	createSvgSkeletton = () => { // todo
-		this.run.log("CubeNetDrawer skeletton", 3);
 	};
 }

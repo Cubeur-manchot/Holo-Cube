@@ -1,7 +1,7 @@
 "use strict";
 
 const test = () => {
-	alert("Brouette.");
+	alert("Attention ! Derrière toi !");
 };
 
 const runHoloCube = () => {
@@ -56,6 +56,10 @@ const prefillWithExample = () => {
 		+ '    "drawingOptions": {\n'
 		+ '        "imageHeight": 100,\n'
 		+ '        "view": "isometric"\n'
+		+ '    },\n'
+		+ '    "logger": {\n'
+		+ '        "mode": "htmlTag",\n'
+		+ '        "htmlTagSelector": "div#logs"\n'
 		+ '    }\n'
 		+ '}';
 	checkJsonFormatting();

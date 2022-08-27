@@ -12,6 +12,7 @@
 		<script src="./moveParser.js"></script>
 		<script src="./move.js"></script>
 		<script src="./drawer.js"></script>
+		<script src="./logger.js"></script>
 		<script src="./run.js"></script>
 		<script src="./script.js"></script>
 		<style>
@@ -59,7 +60,10 @@
 			<p class="secondLevel optional">"puzzleColor": color,<span class="comment">// color of the puzzle, excluding the stickers (black, primary, stickerless, transparent, ...), default value is "black"</span></p>
 			<p class="secondLevel notSupported">"view": string<span class="comment">// view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"</span></p>
 			<p class="firstLevel optional">},</p>
-			<p class="firstLevel optional">"verbosity": int<span class="comment">// level of verbosity for the logs (0 = errors only, 1 = general, 2 = advanced, 3 = debug), default value is 1</span></p>
+			<p class="firstLevel optional">"logger": {</p>
+			<p class="secondLevel optional">"mode": string,<span class="comment">// mode of logs ("console"|"result"|"htmlTag"|"off"), default value is "console"</span></p>
+			<p class="secondLevel optional">"verbosity": int<span class="comment">// level of verbosity for the logs (0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1</span></p>
+			<p class="firstLevel optional">},</p>
 			<p class="mandatory">}</p>
 			<br/>
 			<p class="mandatory">puzzle.fullName is mandatory</p>

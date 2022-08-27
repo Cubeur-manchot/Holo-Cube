@@ -5,14 +5,14 @@
 class MoveSequence {
 	constructor(moves, run) {
 		this.run = run;
-		this.run.log("Creating new MoveSequence.", 1);
+		this.run.logger.generalLog("Creating new MoveSequence.");
 		this.moveList = moves ?? [];
 	};
 	appendMove = move => {
 		this.moveList.push(move);
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.log(`Applying move sequence on puzzle "${puzzle.fullName}".`, 1);
+		this.run.logger.generalLog("Applying move sequence on a solved puzzle.");
 		this.moveList.forEach(move => move.applyOnPuzzle(puzzle));
 	};
 };
@@ -22,7 +22,7 @@ class MoveSequence {
 class Move {
 	constructor(run) {
 		this.run = run;
-		this.run.log("Creating new Move.", 3);
+		this.run.logger.detailedLog("Creating new Move.");
 		this.cycles = [];
 	};
 	getCycleList = () => {
@@ -34,7 +34,7 @@ class Move {
 		}
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.log(`Applying move on puzzle "${puzzle.fullName}".`, 1);
+		this.run.logger.detailedLog("Applying move on puzzle.");
 		for (let cycle of this.getCycleList()) {
 			for (let orbit of puzzle.orbitList) {
 				if (cycle.orbitType === orbit.type) {
@@ -153,7 +153,7 @@ class CubeMove extends Move {
 	};
 	constructor({face, sliceBegin, sliceEnd, turnCount, run}) {
 		super(run);
-		this.run.log("Creating new CubeMove.", 1);
+		this.run.logger.detailedLog("Creating new CubeMove.");
 		this.face = face;
 		this.sliceBegin = sliceBegin;
 		this.sliceEnd = sliceEnd;

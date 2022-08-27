@@ -24,21 +24,21 @@ class Cycle {
 			this.run.throwError("Applying cycle of length 0.");
 		}
 		if (this.getLength() === 1) {
-			this.run.log("Ignoring cycle of length 1.", 2);
+			this.run.logger.debugLog("Ignoring cycle of length 1.");
 			return;
 		}
 		if (!orbit) {
 			this.run.throwError("Applying cycle on undefined orbit.");
 		}
 		if (!this.checkOrbitTypeAndRanks(orbit)) {
-			this.run.log("Ignoring cycle because type cycle orbit type and orbit type are different ("
+			this.run.logger.debugLog("Ignoring cycle because type cycle orbit type and orbit type are different ("
 				+ this.orbitType
 					+ (this.orbitRank ? ` (rank = ${this.orbitRank})` : "")
 					+ (this.orbitRanks ? ` (ranks = [${this.orbitRanks.join(", ")}])` : "")
 				+ ", " + orbit.type
 					+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 					+ (orbit.ranks ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
-				+ ").", 2);
+				+ ").");
 			return;
 		}
 		if (!orbit.getSize()) {
@@ -47,10 +47,10 @@ class Cycle {
 		if (!orbit.slotList) {
 			this.run.throwError("Applying cycle on a cycle with no slot list.");
 		}
-		this.run.log(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
+		this.run.logger.detailedLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
-			+ ".", 2);
+			+ ".");
 		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()].getContent();
 		for (let cycleElementIndex = this.getLength() - 1; cycleElementIndex > 0; cycleElementIndex--) {
 			orbit.slotList[this.slotIndexList[cycleElementIndex]].setContent(orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].getContent());

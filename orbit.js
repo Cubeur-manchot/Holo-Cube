@@ -3,9 +3,10 @@
 // Represents the state of one type of pieces.
 
 class Orbit {
+	static type = "unknown";
 	constructor(run) {
 		this.run = run;
-		this.run.log("Creating new Orbit.", 3);
+		this.run.logger.debugLog("Creating new Orbit.");
 		this.slotList = undefined;
 		this.type = Orbit.type;
 	};
@@ -21,64 +22,63 @@ class Orbit {
 		}
 		return slotList;
 	};
-	static type = "unknown";
 }
 
 class CubeOrbit extends Orbit {
 	constructor (run) {
 		super(run);
-		this.run.log("Creating new CubeOrbit.", 3);
+		this.run.logger.debugLog("Creating new CubeOrbit.");
 	};
 }
 
 class CenterCubeOrbit extends CubeOrbit {
+	static type = "centerCubeOrbit";
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new CenterCubeOrbit.", 2);
+		this.run.logger.detailedLog("Creating new CenterCubeOrbit.");
 		this.slotList = this.buildSlotList(1);
 		this.type = CenterCubeOrbit.type;
 	};
-	static type = "centerCubeOrbit";
 }
 
 class CornerCubeOrbit extends CubeOrbit {
+	static type = "cornerCubeOrbit";
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new CornerCubeOrbit.", 2);
+		this.run.logger.detailedLog("Creating new CornerCubeOrbit.");
 		this.slotList = this.buildSlotList(4);
 		this.type = CornerCubeOrbit.type;
 	};
-	static type = "cornerCubeOrbit";
 }
 
 class MidgeCubeOrbit extends CubeOrbit {
+	static type = "midgeCubeOrbit";
 	constructor(run) {
 		super(run);
-		this.run.log("Creating new MidgeCubeOrbit.", 2);
+		this.run.logger.detailedLog("Creating new MidgeCubeOrbit.");
 		this.slotList = this.buildSlotList(4);
 		this.type = MidgeCubeOrbit.type;
 	};
-	static type = "midgeCubeOrbit";
 }
 
 class WingCubeOrbit extends CubeOrbit {
+	static type = "wingCubeOrbit";
 	constructor(run, rank) {
 		super(run);
-		this.run.log(`Creating new WingCubeOrbit (rank = ${rank}).`, 2);
+		this.run.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
 		this.slotList = this.buildSlotList(8);
 		this.rank = rank;
 		this.type = WingCubeOrbit.type;
 	};
-	static type = "wingCubeOrbit";
 }
 
 class CenterBigCubeOrbit extends CubeOrbit {
+	static type = "centerBigCubeOrbit";
 	constructor(run, ranks) {
 		super(run);
-		this.run.log(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`, 2);
+		this.run.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
 		this.slotList = this.buildSlotList(4);
 		this.ranks = ranks;
 		this.type = CenterBigCubeOrbit.type;
 	};
-	static type = "centerBigCubeOrbit";
 }
