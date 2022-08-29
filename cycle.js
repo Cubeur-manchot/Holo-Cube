@@ -30,15 +30,16 @@ class Cycle {
 		if (!orbit) {
 			this.run.throwError("Applying cycle on undefined orbit.");
 		}
-		if (!this.checkOrbitTypeAndRanks(orbit)) {
-			this.run.logger.debugLog("Ignoring cycle because type cycle orbit type and orbit type are different ("
-				+ this.orbitType
-					+ (this.orbitRank ? ` (rank = ${this.orbitRank})` : "")
-					+ (this.orbitRanks ? ` (ranks = [${this.orbitRanks.join(", ")}])` : "")
-				+ ", " + orbit.type
-					+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
-					+ (orbit.ranks ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
-				+ ").");
+		if (this.orbitType !== orbit.type) {
+		this.run.logger.debugLog(`Ignoring cycle because cycle orbit type (${this.orbitType}) and orbit type ({orbit.type}) are different.`);
+			return;
+		}
+		if (orbit instanceof WingCubeOrbit && this.orbitRank !== orbit.rank) {
+			this.run.logger.debugLog(`Ignoring cycle because cyle orbit rank (${this.orbitRank}) and orbit rank (${orbit.rank}) are different.`);
+			return;
+		}
+		if (orbit instanceof CenterBigCubeOrbit && !(this.orbitRanks[0] === orbit.ranks[0] && this.orbitRanks[1] === orbit.ranks[1])) {
+			this.run.logger.debugLog(`Ignoring cycle because cyle orbit ranks (${this.orbitRanks.join(", ")}) and orbit rank (${orbit.ranks.join(", ")}) are different.`);
 			return;
 		}
 		if (!orbit.getSize()) {
@@ -56,16 +57,5 @@ class Cycle {
 			orbit.slotList[this.slotIndexList[cycleElementIndex]].setContent(orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].getContent());
 		}
 		orbit.slotList[this.slotIndexList[0]].setContent(cycleEndSlotContent);
-	};
-	checkOrbitTypeAndRanks = orbit => {
-		if (this.orbitType !== orbit.type) {
-			return false;
-		} else if (orbit instanceof WingCubeOrbit) { 
-			return this.orbitRank === orbit.rank;
-		} else if (orbit instanceof CenterBigCubeOrbit) {
-			return this.orbitRanks[0] === orbit.ranks[0] && this.orbitRanks[1] === orbit.ranks[1];
-		} else {
-			return true;
-		}
 	};
 }
