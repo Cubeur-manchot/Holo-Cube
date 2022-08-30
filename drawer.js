@@ -90,7 +90,7 @@ class SVG {
 class TwistyPuzzleDrawer {
 	constructor(run) {
 		this.run = run;
-		this.run.logger.debugLog("Creating puzzle drawer.");
+		this.run.logger.debugLog("Creating new TwistyPuzzleDrawer.");
 		this.options = this.run.drawingOptions;
 		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
 			if (!this.options[drawingOptionColorProperty] instanceof Color) {
@@ -116,6 +116,7 @@ class TwistyPuzzleDrawer {
 class CubeDrawer extends TwistyPuzzleDrawer {
 	constructor(run) {
 		super(run);
+		this.run.logger.debugLog("Creating new CubeDrawer.");
 		this.blankPuzzle = this.run.blankPuzzle;
 		this.cubeSize = this.run.puzzle.size;
 	};
@@ -133,6 +134,7 @@ class CubePlanDrawer extends CubeDrawer {
 	constructor(run) {
 		super(run);
 		this.run.logger.generalLog("Creating new CubePlanDrawer.");
+		this.run.logger.debugLog("Initializing dimensions.");
 		this.options.faceCornerRadius = 20 / this.cubeSize;
 		this.options.stickerSize = 90 / this.cubeSize;
 		this.options.stickerCornerRadius = 20 / this.cubeSize;
@@ -145,7 +147,7 @@ class CubePlanDrawer extends CubeDrawer {
 		
 	};
 	createSvgSkeletton = () => {
-		this.run.logger.debugLog("CubePlanDrawer skeletton");
+		this.run.logger.debugLog("Creating puzzle image skeletton");
 		let svg = SVG.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
 		let background = SVG.createRectNode(
 			"background",
@@ -161,6 +163,7 @@ class CubePlanDrawer extends CubeDrawer {
 			id: "puzzle",
 			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
 		});
+		this.run.logger.debugLog("Creating faces skeletton.");
 		let scale = this.cubeSize / (this.cubeSize + 1);
 		let uFace = SVG.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
 		uFace.appendChild(SVG.createSquareNode( // face background
@@ -180,6 +183,7 @@ class CubePlanDrawer extends CubeDrawer {
 		let lFace = SVG.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
 		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
+			this.run.logger.debugLog("Creating centers stickers skeletton.");
 			let startingValueIndex = (this.cubeSize - 1) / 2;
 			let idBegin = `sticker_${CenterCubeOrbit.type}_`;
 			uFace.appendChild(this.createUFaceSticker(`${idBegin}0`, startingValueIndex, startingValueIndex));
@@ -191,6 +195,7 @@ class CubePlanDrawer extends CubeDrawer {
 			}
 		}
 		if (this.blankPuzzle.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
+			this.run.logger.debugLog("Creating corners stickers skeletton.");
 			let highIndex = this.cubeSize - 1;
 			let idBegin = `sticker_${CornerCubeOrbit.type}_`;
 			uFace.appendChild(this.createUFaceSticker(`${idBegin}0`, 0, 0));
@@ -207,6 +212,7 @@ class CubePlanDrawer extends CubeDrawer {
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}21`, highIndex));
 		}
 		if (this.blankPuzzle.hasOrbitType(MidgeCubeOrbit.type)) { // stickers of type MidgeCubeOrbit
+			this.run.logger.debugLog("Creating midges stickers skeletton.");
 			let middleIndex = (this.cubeSize - 1) / 2;
 			let highIndex = this.cubeSize - 1;
 			let idBegin = `sticker_${MidgeCubeOrbit.type}_`;
@@ -220,6 +226,7 @@ class CubePlanDrawer extends CubeDrawer {
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}20`, middleIndex));
 		}
 		if (this.blankPuzzle.hasOrbitType(WingCubeOrbit.type)) { // stickers of type WingCubeOrbit
+			this.run.logger.debugLog("Creating wings stickers skeletton.");
 			let lowValue = this.options.startingValues[0];
 			let highIndex = this.cubeSize - 1;
 			let highValue = this.options.startingValues[this.cubeSize - 1];
@@ -246,6 +253,7 @@ class CubePlanDrawer extends CubeDrawer {
 			}
 		}
 		if (this.blankPuzzle.hasOrbitType(CenterBigCubeOrbit.type)) { // stickers of type CenterBigCubeOrbit
+			this.run.logger.debugLog("Creating big cube centers stickers skeletton.");
 			for (let firstRank = 1; firstRank <= this.blankPuzzle.maxRankWithoutMiddle; firstRank++) {
 				let firstComplementaryIndex = this.cubeSize - firstRank - 1;
 				for (let secondRank = 1; secondRank <= this.blankPuzzle.maxRankWithMiddle; secondRank++) {
@@ -308,8 +316,14 @@ class CubePlanDrawer extends CubeDrawer {
 		);
 	};
 	drawPuzzle = puzzle => { // clone skeletton and apply colors on each displayed sticker
+		this.run.logger.generalLog("Drawing puzzle.");
+		this.run.logger.debugLog("Cloning skeletton.");
 		let svg = SVG.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
+			this.run.logger.detailedLog(`Coloring stickers of orbit type ${orbit.type}`
+				+ (orbit.type === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
+				+ (orbit.type === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
+				+ ".");
 			let slotIndexList = [];
 			let selectorBegin = `rect#sticker_${orbit.type}_`;
 			switch (orbit.type) {
