@@ -48,7 +48,7 @@ class Cycle {
 		if (!orbit.slotList) {
 			this.run.throwError("Applying cycle on a cycle with no slot list.");
 		}
-		this.run.logger.detailedLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
+		this.run.logger.debugLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
 			+ ".");
