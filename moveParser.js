@@ -59,6 +59,7 @@ class CubeMoveParser extends MoveParser {
 		this.cubeSize = this.blankPuzzle.puzzleSize;
 	};
 	parseMove = moveString => {
+		this.run.logger.detailedLog(`Parsing move ${moveString}.`);
 		let faceListSubRegExp = "[UFRDBL]";
 		let directionListSubRegExp = "('?\\d*|\\d+')"; // empty, ', 2, 2', '2
 		if (new RegExp(`^[xyz]${directionListSubRegExp}$`).test(moveString)) { // x, y', z2, ...
@@ -168,7 +169,7 @@ class CubeMoveParser extends MoveParser {
 				});
 			}
 		} else {
-			this.run.throwError("Wrong structure for CubeMove.");
+			this.run.throwError(`Wrong structure for CubeMove : ${moveString}.`);
 		}
 	};
 }
