@@ -34,6 +34,7 @@ class Cube extends TwistyPuzzle {
 class BlankCube1x1x1 extends Cube {
 	constructor(run) {
 		super(run);
+		this.run.logger.debugLog("Creating new BlankCube1x1x1.");
 		this.puzzleSize = 1;
 		this.orbitTypes = [CenterCubeOrbit.type];
 	};
@@ -50,6 +51,7 @@ class Cube1x1x1 extends BlankCube1x1x1 {
 class BlankCube2x2x2 extends Cube {
 	constructor(run) {
 		super(run);
+		this.run.logger.debugLog("Creating new BlankCube2x2x2.");
 		this.puzzleSize = 2;
 		this.orbitTypes = [CornerCubeOrbit.type];
 	};
@@ -66,6 +68,7 @@ class Cube2x2x2 extends BlankCube2x2x2 {
 class BlankCube3x3x3 extends Cube {
 	constructor(run) {
 		super(run);
+		this.run.logger.debugLog("Creating new BlankCube3x3x3.");
 		this.puzzleSize = 3;
 		this.orbitTypes = [CenterCubeOrbit.type, MidgeCubeOrbit.type, CornerCubeOrbit.type];
 	};
@@ -85,6 +88,7 @@ class BlankCubeBig extends Cube {
 	constructor(run) {
 		super(run);
 		this.puzzleSize = this.run.puzzle.size;
+		this.run.logger.debugLog(`Creating new BlankCubeBig (puzzleSize = ${this.puzzleSize}).`);
 		this.orbitTypes = [CornerCubeOrbit.type, WingCubeOrbit.type, CenterBigCubeOrbit.type];
 		if (this.puzzleSize % 2) { // puzzle is odd
 			this.middleSlice = (this.puzzleSize + 1) / 2;
