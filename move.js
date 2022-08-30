@@ -12,7 +12,7 @@ class MoveSequence {
 		this.moveList.push(move);
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.logger.generalLog("Applying move sequence on a solved puzzle.");
+		this.run.logger.generalLog(`Applying move sequence of length ${this.moveList.length} on a solved puzzle.`);
 		this.moveList.forEach(move => move.applyOnPuzzle(puzzle));
 	};
 };

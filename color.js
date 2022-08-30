@@ -20,7 +20,6 @@ class ColorCollection {
 	static pink = {r: 255, g: 153, b: 255};
 }
 
-
 // Represents the information of a color, including opacity.
 
 class Color {
