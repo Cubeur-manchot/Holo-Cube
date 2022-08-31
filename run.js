@@ -1,8 +1,6 @@
 "use strict";
 
-// todo : ensure logs are exhaustive
-
-// Represents the information of a run (input, working, output).
+// Represents the information of a run (input, working, output). This is the entry point for everything related to Holo-Cube.
 
 /*
 Object structure to give to Run class :
@@ -40,6 +38,7 @@ other inputs are optional
 class Run {
 	constructor(inputObject) {
 		this.setLogger(inputObject);
+		this.logger.generalLog("Creating new Run.");
 		this.setPuzzle(inputObject);
 		this.setMoveSequenceList(inputObject);
 		this.setDrawingOptions(inputObject);
@@ -104,11 +103,14 @@ class Run {
 			}
 		}
 		this.logger = new (this.getLoggerClass(verbosity))(mode, this, htmlTag);
+		this.logger.detailedLog("Logger is created.");
 	};
 	setPuzzle = inputObject => {
+		this.logger.detailedLog("Reading input : puzzle.");
 		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
 	};
 	setMoveSequenceList = inputObject => {
+		this.logger.detailedLog("Reading input : move sequence(s).");
 		let isMoveSequenceDefined = ![undefined, null].includes(inputObject.moveSequence);
 		let isMoveSequenceListDefined = ![undefined, null].includes(inputObject.moveSequenceList);
 		if (isMoveSequenceDefined) {
@@ -136,6 +138,7 @@ class Run {
 		}
 	};
 	setDrawingOptions = inputObject => {
+		this.logger.detailedLog("Reading input : drawingOptions.");
 		this.drawingOptions = new DrawingOptionsRunInput(inputObject.drawingOptions, this);
 	};
 	setPuzzleClass = () => {
@@ -150,6 +153,7 @@ class Run {
 		}
 	};
 	setBlankPuzzle = () => { // blank puzzle is an instance of the blank parent class, which has the same structure without the orbits
+		this.logger.debugLog("Creating blank puzzle.");
 		this.blankPuzzle = new (TwistyPuzzle.getBlankParentClass(this.puzzleClass))(this);
 	};
 	setMoveSequenceParser = () => {
@@ -186,6 +190,7 @@ class Run {
 class PuzzleRunInput {
 	constructor(puzzle, run) {
 		this.run = run;
+		this.run.logger.debugLog("Creating new PuzzleRunInput");
 		if ([undefined, null].includes(puzzle)) {
 			this.run.throwError("Property puzzle is required.");
 		} else if (typeof puzzle !== "object") {
@@ -281,6 +286,7 @@ class DrawingOptionsRunInput {
 	};
 	constructor(drawingOptionsObject, run) {
 		this.run = run;
+		this.run.logger.debugLog("Creating new DrawingOptionsRunInput");
 		if (drawingOptionsObject) {
 			let heightWidthList = ["Height", "Width"];
 			for (let imageOrPuzzle of ["image", "puzzle"]) {
