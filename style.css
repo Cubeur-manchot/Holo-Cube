@@ -1,0 +1,29 @@
+/* Page structure */
+
+body {
+	margin: 0;
+}
+
+/* Titles, paragraphs, summaries, ... */
+
+h1 {
+}
+
+h2 {
+}
+
+h3 {
+}
+
+/* General useful style */
+
+:disabled:hover {
+	cursor: not-allowed;
+}	
+
+/* Useful for debug */
+
+.debug {
+	background-color: rgba(255, 0, 255, 0.3);
+	border: 1px dashed black;
+}

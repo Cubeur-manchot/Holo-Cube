@@ -1,0 +1,12 @@
+div.colorSchemeFace input[type=range] {
+	width: 50px;
+}
+
+div.vrContainer {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+div.vr {
+	height: 100%;
+}

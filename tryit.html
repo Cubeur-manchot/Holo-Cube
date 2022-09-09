@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Holo-Cube | Try it yourself</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap remote -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap remote -->
+		<!--<link href="bootstrap-local/bootstrap.css" rel="stylesheet"> <!-- Bootstrap local -->
+		<!--<script src="bootstrap-local/bootstrap.js"></script> <!-- Bootstrap local -->
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="tryit.css">
+		<script src="./tryit.js"></script>
+	</head>
+	<body>
+		<h1>Holo-Cube - Try it yourself</h1>
+		<div class="row">
+			<div class="col-md-4 container">
+				<h2>Input fields</h2>
+				<h3>Puzzle</h3>
+				<div class="row">
+					<div class="col">
+						<label for="puzzleShape">Puzzle shape</label>
+						<select id="puzzleShape" class="form-select">
+							<option selected>Cube</option>
+							<option disabled>Dodecahedron</option>
+							<option disabled>Pyramid</option>
+						</select>
+					</div>
+					<div class="col">
+						<label for="puzzleSize">Puzzle size</label>
+						<input type="text" id="puzzleSize" class="form-control" placeholder="Puzzle size is required" value="3">
+					</div>
+				</div>
+				<label for="stage">Stage</label>
+				<select id="stage" class="form-select" disabled></select>
+				<label>Color scheme</label>
+				<div class="row text-center">
+					<div class="col-2 colorSchemeFace">
+						<label for="colorSchemeUColor" class="colorSchemeLabel">U</label>
+						<input type="color" id="colorSchemeUColor" value="#FFFFFF">
+						<input type="range" id="colorSchemeUOpacity" min="0" max="1" step="0.01" value="1">
+					</div>
+					<div class="col-2 colorSchemeFace">
+						<label for="colorSchemeFColor" class="colorSchemeLabel">F</label>
+						<input type="color" id="colorSchemeFColor" value="#00D800">
+						<input type="range" id="colorSchemeFOpacity" min="0" max="1" step="0.01" value="1">
+					</div>
+					<div class="col-2 colorSchemeFace">
+						<label for="colorSchemeRColor" class="colorSchemeLabel">R</label>
+						<input type="color" id="colorSchemeRolor" value="#FF0000">
+						<input type="range" id="colorSchemeROpacity" min="0" max="1" step="0.01" value="1">
+					</div>
+					<div class="col-2 colorSchemeFace">
+						<label for="colorSchemeDColor" class="colorSchemeLabel">D</label>
+						<input type="color" id="colorSchemeDColor" value="#FFFF00">
+						<input type="range" id="colorSchemeDOpacity" min="0" max="1" step="0.01" value="1">
+					</div>
+					<div class="col-2 colorSchemeFace">
+						<label for="colorSchemeBColor" class="colorSchemeLabel">B</label>
+						<input type="color" id="colorSchemeBColor" value="#0000FF">
+						<input type="range" id="colorSchemeBOpacity" min="0" max="1" step="0.01" value="1">
+					</div>
+					<div class="col-2 colorSchemeFace">
+						<label for="colorSchemeRColor" class="colorSchemeLabel">L</label>
+						<input type="color" id="colorSchemeLolor" value="#FF7F00">
+						<input type="range" id="colorSchemeLOpacity" min="0" max="1" step="0.01" value="1">
+					</div>
+				</div>
+				<h3>Move sequences</h3>
+				<label for="moveSequences">Move sequences</label>
+				<textarea id="moveSequences" class="form-control" rows="3" placeholder="Move sequences are required.&#10;One line per move sequence."></textarea>
+				<h3>Drawing options</h3>
+				<label for="view">View</label>
+				<select id="view" class="form-select">
+					<option selected>Plan (default)</option>
+					<option disabled>Isometric</option>
+					<option disabled>Net</option>
+					<option disabled>Top-down</option>
+				</select>
+				<div class="row">
+					<div class="col-5">
+						<h4>Image</h4>
+						<label for="imageHeight">Height</label>
+						<input type="text" id="imageHeight" class="form-control" placeholder="px">
+						<label for="imageWidth">Width</label>
+						<input type="text" id="imageWidth" class="form-control" placeholder="px">
+						<label for="imageScale">Scale</label>
+						<input type="text" id="imageScale" class="form-control" placeholder="">
+						<label for="imageBackgroundColor">Background color</label><br>
+						<input type="color" id="imageBackgroundColor" value="#FFFFFF"><br>
+						<input type="range" id="imageBackgroundOpacity" min="1" max="1" step="0.01" value="0">
+					</div>
+					<div class="col-2 vrContainer"><div class="vr"></div></div>
+					<div class="col-5">
+						<h4>Puzzle</h4>
+						<label for="puzzleHeight">Height</label>
+						<input type="text" id="puzzleHeight" class="form-control" placeholder="px">
+						<label for="puzzleWidth">Width</label>
+						<input type="text" id="puzzleWidth" class="form-control" placeholder="px">
+						<label for="puzzleScale">Scale</label>
+						<input type="text" id="puzzleScale" class="form-control" placeholder="">
+						<label for="puzzleColor">Background color</label><br>
+						<input type="color" id="puzzleColor" value="#FFFFFF"><br>
+						<input type="range" id="puzzleOpacity" min="1" max="1" step="0.01" value="0">
+					</div>
+				</div>
+				<h3>Logger</h3>
+				<label for="loggerMode">Mode</label>
+				<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
+					<option>Console</option>
+					<option>Result</option>
+					<option>HTML tag</option>
+					<option>Off</option>
+				</select>
+				<label for="verbosity">Verbosity</label>
+				<select id="verbosity" class="form-select">
+					<option>0 - Errors only</option>
+					<option>1 - General</option>
+					<option>2 - Advanced</option>
+					<option>3 - Debug</option>
+				</select>
+				<div id="htmlTagContainer" hidden>
+					<label for="htmlTagSelector">HTML tag selector</label>
+					<input type="text" id="htmlTagSelector" class="form-control" placeholder="div#htmlLogs">
+				</div>
+			</div>
+			<div class="col-md-4 container">
+				<h3>Input object</h3>
+				<ul class="nav nav-pills" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" data-bs-toggle="pill" href="#javascriptObjectInput">Javascript object</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-bs-toggle="pill" href="#jsonInput">JSON</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div id="javascriptObjectInput" class="container tab-pane active">Test Javascript object.</div>
+					<div id="jsonInput" class="container tab-pane">Test JSON.</div>
+				</div>
+			</div>
+			<div class="col-md-4 container">
+				<h3>Outputs</h3>
+				<ul class="nav nav-pills" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" data-bs-toggle="pill" href="#svgResults">SVG results</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-bs-toggle="pill" href="#logs">logs</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div id="svgResults" class="container tab-pane active">Test SVG results.</div>
+					<div id="logs" class="container tab-pane">Test logs.</div>
+				</div>
+			</div>
+		</div>
+		<hr style="margin-top: 70px; margin-bottom: 50px;">
+		<hr>
+		<hr>
+		<hr>
+		<h1>---Debug---</h1>
+		<div>
+			<p style="margin-top: 20px;">Object structure to give :</p>
+			<p class="mandatory">{</p>
+			<p class="firstLevel mandatory">"puzzle": {</p>
+			<p class="secondLevel mandatory">"fullName": string,<span class="comment">// example : cube3x3x3</span></p>
+			<p class="secondLevel notSupported">"stage": string,<span class="comment">// stage to show (OLL, PLL, CMLL, F2L, ...)</span></p>
+			<p class="secondLevel optional">"colorScheme": array of colors<span class="comment">// colorscheme of the puzzle (for a cube : U,F,R,D,B,L), default value depends on puzzle shape</span></p>
+			<p class="firstLevel mandatory">},</p>
+			<p class="firstLevel moveSequence">"moveSequence": string or array of strings,<span class="comment">// sequence to apply on one puzzle</span></p>
+			<p class="firstLevel moveSequence">"moveSequenceList": array of strings,<span class="comment">// sequences to apply, each one on a different puzzle</span></p>
+			<p class="firstLevel optional">"drawingOptions": {</p>
+			<p class="secondLevel optional">"imageHeight": number,<span class="comment">// height of the image in px, default value is 100</span></p>
+			<p class="secondLevel optional">"imageWidth": number,<span class="comment">// width of the image in px, default value is 100</span></p>
+			<p class="secondLevel optional">"imageScale": number,<span class="comment">// scale to apply to both height and width of the image, default value is 1</span></p>
+			<p class="secondLevel optional">"imageBackgroundColor": color,<span class="comment">// background color of the image (white, transparent, ...), default value is "transparent"</span></p>
+			<p class="secondLevel optional">"puzzleHeight": number,<span class="comment">// height of the puzzle in px, default value is 100</span></p>
+			<p class="secondLevel optional">"puzzleWidth": number,<span class="comment">// width of the puzzle in px, default value is 100</span></p>
+			<p class="secondLevel optional">"puzzleScale": number,<span class="comment">// scale to apply to both height and width of the puzzle, default value is 1</span></p>
+			<p class="secondLevel optional">"puzzleColor": color,<span class="comment">// color of the puzzle, excluding the stickers (black, primary, stickerless, transparent, ...), default value is "black"</span></p>
+			<p class="secondLevel notSupported">"view": string<span class="comment">// view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"</span></p>
+			<p class="firstLevel optional">},</p>
+			<p class="firstLevel optional">"logger": {</p>
+			<p class="secondLevel optional">"verbosity": int<span class="comment">// level of verbosity for the logs (0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1</span></p>
+			<p class="secondLevel optional">"mode": string,<span class="comment">// mode of logs ("console"|"result"|"htmlTag"|"off"), default value is "console"</span></p>
+			<p class="secondLevel optional">"htmlTagSelector": string<span class="comment">// selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected</span></p>
+			<p class="firstLevel optional">},</p>
+			<p class="mandatory">}</p>
+			<br/>
+			<p class="mandatory">puzzle.fullName is mandatory</p>
+			<p class="moveSequence">moveSequence XOR moveSequenceList is mandatory</p>
+			<p class="notSupported">stage and view are not yet supported</p>
+			<p class="optional">Other inputs are optional</p>
+		</div>
+		<style>
+			p { margin: 0; }
+			p.firstLevel { padding-left: 20px; }
+			p.secondLevel { padding-left: 40px; }
+			p.mandatory { font-weight: bold; }
+			p.moveSequence { color: blue; }
+			p.notSupported { color: red; }
+			p.optional { color: grey; }
+			span.comment { color: green; margin-left: 10px; }
+			textarea#jsonInput { border-radius: 4px; max-width: 100%; }
+			div#svgResults svg { margin-top: 10px; margin-left: 10px; border: 1px solid black; }
+		</style>
+    </body>
+</html>
