@@ -20,21 +20,25 @@
 				<h2>Input fields</h2>
 				<h3>Puzzle</h3>
 				<div class="row">
-					<div class="col">
-						<label for="puzzleShape">Puzzle shape</label>
+					<div class="col form-floating">
 						<select id="puzzleShape" class="form-select">
 							<option selected>Cube</option>
 							<option disabled>Dodecahedron</option>
 							<option disabled>Pyramid</option>
 						</select>
+						<label for="puzzleShape" class="form-label">Shape</label>
 					</div>
-					<div class="col">
-						<label for="puzzleSize">Puzzle size</label>
+					<div class="col form-floating">
 						<input type="text" id="puzzleSize" class="form-control" placeholder="Puzzle size is required" value="3">
+						<label for="puzzleSize">Puzzle size</label>
+					</div>
+					<div class="col form-floating">
+						<select id="stage" class="form-select" disabled>
+							<option selected>-</option>
+						</select>
+						<label for="stage">Stage</label>
 					</div>
 				</div>
-				<label for="stage">Stage</label>
-				<select id="stage" class="form-select" disabled></select>
 				<label>Color scheme</label>
 				<div class="row text-center">
 					<div class="col-2 colorSchemeFace">
@@ -69,61 +73,87 @@
 					</div>
 				</div>
 				<h3>Move sequences</h3>
-				<label for="moveSequences">Move sequences</label>
-				<textarea id="moveSequences" class="form-control" rows="3" placeholder="Move sequences are required.&#10;One line per move sequence."></textarea>
+				<div class="form-floating">
+					<textarea id="moveSequences" class="form-control" placeholder="Move sequences"></textarea>
+					<label for="moveSequences">Move sequences</label>
+				</div>
 				<h3>Drawing options</h3>
-				<label for="view">View</label>
-				<select id="view" class="form-select">
-					<option selected>Plan (default)</option>
-					<option disabled>Isometric</option>
-					<option disabled>Net</option>
-					<option disabled>Top-down</option>
-				</select>
+				<div class="form-floating">
+					<select id="view" class="form-select">
+						<option selected>Plan (default)</option>
+						<option disabled>Isometric</option>
+						<option disabled>Net</option>
+						<option disabled>Top-down</option>
+					</select>
+					<label for="view">View</label>
+				</div>
+				<h4>Image</h4>
 				<div class="row">
-					<div class="col-5">
-						<h4>Image</h4>
-						<label for="imageHeight">Height</label>
+					<div class="col form-floating">
 						<input type="text" id="imageHeight" class="form-control" placeholder="px">
-						<label for="imageWidth">Width</label>
+						<label for="imageHeight">Height</label>
+					</div>
+					<div class="col form-floating">
 						<input type="text" id="imageWidth" class="form-control" placeholder="px">
+						<label for="imageWidth">Width</label>
+					</div>
+					<div class="col form-floating">
+						<input type="text" id="imageScale" class="form-control" placeholder="multiplier">
 						<label for="imageScale">Scale</label>
-						<input type="text" id="imageScale" class="form-control" placeholder="">
+					</div>
+					<div class="col">
 						<label for="imageBackgroundColor">Background color</label><br>
 						<input type="color" id="imageBackgroundColor" value="#FFFFFF"><br>
-						<input type="range" id="imageBackgroundOpacity" min="1" max="1" step="0.01" value="0">
+						<input type="range" id="imageBackgroundOpacity" min="0" max="1" step="0.01" value="0">
 					</div>
-					<div class="col-2 vrContainer"><div class="vr"></div></div>
-					<div class="col-5">
-						<h4>Puzzle</h4>
-						<label for="puzzleHeight">Height</label>
+				</div>
+				<h4>Puzzle</h4>
+				<div class="row">
+					<div class="col form-floating">
 						<input type="text" id="puzzleHeight" class="form-control" placeholder="px">
-						<label for="puzzleWidth">Width</label>
+						<label for="puzzleHeight">Height</label>
+					</div>
+					<div class="col form-floating">
 						<input type="text" id="puzzleWidth" class="form-control" placeholder="px">
+						<label for="puzzleWidth">Width</label>
+					</div>
+					<div class="col form-floating">
+						<input type="text" id="puzzleScale" class="form-control" placeholder="multiplier">
 						<label for="puzzleScale">Scale</label>
-						<input type="text" id="puzzleScale" class="form-control" placeholder="">
-						<label for="puzzleColor">Background color</label><br>
-						<input type="color" id="puzzleColor" value="#FFFFFF"><br>
-						<input type="range" id="puzzleOpacity" min="1" max="1" step="0.01" value="0">
+					</div>
+					<div class="col">
+						<label for="puzzleColor">Color</label><br>
+						<input type="color" id="puzzleColor" value="#000000"><br>
+						<input type="range" id="puzzleOpacity" min="0" max="1" step="0.01" value="1">
 					</div>
 				</div>
 				<h3>Logger</h3>
-				<label for="loggerMode">Mode</label>
-				<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
-					<option>Console</option>
-					<option>Result</option>
-					<option>HTML tag</option>
-					<option>Off</option>
-				</select>
-				<label for="verbosity">Verbosity</label>
-				<select id="verbosity" class="form-select">
-					<option>0 - Errors only</option>
-					<option>1 - General</option>
-					<option>2 - Advanced</option>
-					<option>3 - Debug</option>
-				</select>
-				<div id="htmlTagContainer" hidden>
-					<label for="htmlTagSelector">HTML tag selector</label>
-					<input type="text" id="htmlTagSelector" class="form-control" placeholder="div#htmlLogs">
+				<div class="row">
+					<div class="col form-floating">
+						<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
+							<option selected>Console (default)</option>
+							<option>Result</option>
+							<option>HTML tag</option>
+							<option>Off</option>
+						</select>
+						<label for="loggerMode">Mode</label>
+					</div>
+					<div class="col form-floating">
+						<select id="verbosity" class="form-select">
+							<option>0 - Errors only</option>
+							<option selected>1 - General (default)</option>
+							<option>2 - Advanced</option>
+							<option>3 - Debug</option>
+						</select>
+						<label for="verbosity">Verbosity</label>
+					</div>
+				</div>
+				<div id="htmlTagContainer" class="row" hidden>
+					<div class="col form-floating">
+						<input type="text" id="htmlTagSelector" class="form-control" placeholder="div#logs" value="div#Logs">
+						<label for="htmlTagSelector">HTML tag selector</label>
+					</div>
+					<div class="col"></div>
 				</div>
 			</div>
 			<div class="col-md-4 container">
@@ -157,7 +187,7 @@
 				</div>
 			</div>
 		</div>
-		<hr style="margin-top: 70px; margin-bottom: 50px;">
+		<hr style="margin-top: 70px">
 		<hr>
 		<hr>
 		<hr>
