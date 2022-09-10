@@ -64,7 +64,7 @@ class Run {
 	throwError = message => {
 		let errorMessage = `[ERROR] ${message}`;
 		Logger.consoleLog(errorMessage); // always display errors in the console
-		if (this.logger && this.logger.mode === "console") {
+		if (this.logger && this.logger.mode !== "console") {
 			this.logger.errorLog(message);
 		}
 		throw errorMessage;
