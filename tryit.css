@@ -15,6 +15,25 @@ div.row > div.form-floating label {
 	padding-left: 1.64rem;
 }
 
+label.inputCategoryLabel {
+	font-size: 1.3rem;
+	font-weight: 550;
+}
+
+label.inputCategoryLabel:not(:nth-child(2)) {
+	margin-top: 10px;
+}
+
+label.inputLabel {
+	margin-top: 10px;
+	margin-bottom: 5px;
+	font-weight: 500;
+}
+
+label {
+	margin-bottom: 5px;
+}
+
 textarea#moveSequences {
 	min-height: 90px;
 }
@@ -27,24 +46,26 @@ div#htmlTagContainer{
 .form-floating > textarea.form-control:not(:-moz-placeholder-shown) ~ label {
     opacity: 1;
     color: rgba(0, 0, 0, 0.5);
+	font-size: 0.865rem;
     background-color: #fff;
     height: auto;
-    padding: 0px;
     padding: 0px 0px 0px 10px;
     width: 95%;
     transform: scale(0.982) translateY(0.045rem) translateX(0.1rem);
     border-radius: 5px 0 0 0;
+	transition: transform 0.1s ease-in-out, padding 0.1s ease-in-out, font-size 0.1s ease-in-out;
 }
 .form-floating > textarea.form-control:focus ~ label,
 .form-floating > textarea.form-control:not(:placeholder-shown) ~ label,
 .form-floating > textarea.form-control:-webkit-autofill ~ label {
     opacity: 1;
     color: rgba(0, 0, 0, 0.5);
+	font-size: 0.865rem;
     background-color: #fff;
     height: auto;
-    padding: 0px;
     padding: 0px 0px 0px 10px;
     width: 95%;
     transform: scale(0.982) translateY(0.045rem) translateX(0.1rem);
     border-radius: 5px 0 0 0;
+	transition: transform 0.1s ease-in-out, padding 0.1s ease-in-out, font-size 0.1s ease-in-out;
 }

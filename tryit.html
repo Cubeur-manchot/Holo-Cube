@@ -16,9 +16,9 @@
 	<body>
 		<h1>Holo-Cube - Try it yourself</h1>
 		<div class="row">
-			<div class="col-md-4 container">
+			<div class="col container">
 				<h2>Input fields</h2>
-				<h3>Puzzle</h3>
+				<label class="inputCategoryLabel">Puzzle</label>
 				<div class="row">
 					<div class="col form-floating">
 						<select id="puzzleShape" class="form-select">
@@ -72,12 +72,12 @@
 						<input type="range" id="colorSchemeLOpacity" min="0" max="1" step="0.01" value="1">
 					</div>
 				</div>
-				<h3>Move sequences</h3>
+				<label class="inputCategoryLabel">Move sequences</label>
 				<div class="form-floating">
 					<textarea id="moveSequences" class="form-control" placeholder="Move sequences"></textarea>
 					<label for="moveSequences">Move sequences</label>
 				</div>
-				<h3>Drawing options</h3>
+				<label class="inputCategoryLabel">Drawing options</label>
 				<div class="form-floating">
 					<select id="view" class="form-select">
 						<option selected>Plan (default)</option>
@@ -87,7 +87,7 @@
 					</select>
 					<label for="view">View</label>
 				</div>
-				<h4>Image</h4>
+				<label class="inputLabel">Image</label>
 				<div class="row">
 					<div class="col form-floating">
 						<input type="text" id="imageHeight" class="form-control" placeholder="px">
@@ -107,7 +107,7 @@
 						<input type="range" id="imageBackgroundOpacity" min="0" max="1" step="0.01" value="0">
 					</div>
 				</div>
-				<h4>Puzzle</h4>
+				<label class="inputLabel">Puzzle</label>
 				<div class="row">
 					<div class="col form-floating">
 						<input type="text" id="puzzleHeight" class="form-control" placeholder="px">
@@ -127,7 +127,7 @@
 						<input type="range" id="puzzleOpacity" min="0" max="1" step="0.01" value="1">
 					</div>
 				</div>
-				<h3>Logger</h3>
+				<label class="inputCategoryLabel">Logger</label>
 				<div class="row">
 					<div class="col form-floating">
 						<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
@@ -156,7 +156,7 @@
 					<div class="col"></div>
 				</div>
 			</div>
-			<div class="col-md-4 container">
+			<div class="col container">
 				<h3>Input object</h3>
 				<ul class="nav nav-pills" role="tablist">
 					<li class="nav-item">
@@ -171,7 +171,7 @@
 					<div id="jsonInput" class="container tab-pane">Test JSON.</div>
 				</div>
 			</div>
-			<div class="col-md-4 container">
+			<div class="col container">
 				<h3>Outputs</h3>
 				<ul class="nav nav-pills" role="tablist">
 					<li class="nav-item">
