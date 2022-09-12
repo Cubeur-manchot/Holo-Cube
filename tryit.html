@@ -11,6 +11,7 @@
 		<script src="bootstrap-local/bootstrap.js"></script> <!-- Bootstrap local -->
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="tryit.css">
+		<link rel="stylesheet" href="bootstrap-fixes.css">
 		<script src="./tryit.js"></script>
 	</head>
 	<body>
@@ -19,6 +20,31 @@
 			<div class="col container">
 				<h2>Input fields</h2>
 				<label class="inputCategoryLabel">Puzzle</label>
+				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#puzzleInputModal"></button>
+				<div class="modal" id="puzzleInputModal" tab-index="-1">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<label class="modal-title">Puzzle</label>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<p>Those are all inputs fields related to the puzzle.</p>
+								<h2>Shape</h2>
+								<p>This defines the shape of the puzzle (regular NxNxN cube, dodecahedron, pyramid, ...). For now, only the cube shape is supported.</p>
+								<h2>Size</h2>
+								<p>This defines the number of layers of the puzzle, assuming the puzzle is regular.</p>
+								<h2>Color scheme</h2>
+								<p>This defines for each face, the color (and transparency if desired) of all stickers of the face.</p>
+								<br>
+								<p>Remark : In the input object required by Holo-Cube, the puzzle is described by the single property "fullName". Here the shape and size of the puzzle are artificially separated for onboarding purposes.</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col form-floating">
 						<select id="puzzleShape" class="form-select">
