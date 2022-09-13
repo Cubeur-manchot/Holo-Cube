@@ -99,6 +99,27 @@
 					</div>
 				</div>
 				<label class="inputCategoryLabel">Move sequences</label>
+				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#moveSequenceInputModal"></button>
+				<div class="modal" id="moveSequenceInputModal" tab-index="-1">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<label class="modal-title">Move sequence</label>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<p>This field contains the move sequences to apply to solved puzzles.</p>
+								<br>
+								<p>One move sequence per line : move sequences must be separated by a newline character.</p>
+								<br>
+								<p>In the move sequences, moves must be separated by a space.</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="form-floating">
 					<textarea id="moveSequences" class="form-control" placeholder="Move sequences"></textarea>
 					<label for="moveSequences">Move sequences</label>
