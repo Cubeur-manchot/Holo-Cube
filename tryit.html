@@ -5,10 +5,10 @@
 		<title>Holo-Cube | Try it yourself</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap remote -->
-		<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap remote -->
-		<link href="bootstrap-local/bootstrap.css" rel="stylesheet"> <!-- Bootstrap local -->
-		<script src="bootstrap-local/bootstrap.js"></script> <!-- Bootstrap local -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap remote -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap remote -->
+		<!--<link href="bootstrap-local/bootstrap.css" rel="stylesheet"> <!-- Bootstrap local -->
+		<!--<script src="bootstrap-local/bootstrap.js"></script> <!-- Bootstrap local -->
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="tryit.css">
 		<link rel="stylesheet" href="bootstrap-fixes.css">
@@ -22,20 +22,20 @@
 				<label class="inputCategoryLabel">Puzzle</label>
 				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#puzzleInputModal"></button>
 				<div class="modal" id="puzzleInputModal" tab-index="-1">
-					<div class="modal-dialog">
+					<div class="modal-dialog modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
 								<label class="modal-title">Puzzle</label>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<p>Those are all inputs fields related to the puzzle.</p>
+								<p>These fields defined the puzzle to apply move sequences to.</p>
 								<h2>Shape</h2>
-								<p>This defines the shape of the puzzle (regular NxNxN cube, dodecahedron, pyramid, ...). For now, only the cube shape is supported.</p>
+								<p>This field defines the shape of the puzzle (regular NxNxN cube, dodecahedron, pyramid, ...). For now, only the cube shape is supported.</p>
 								<h2>Size</h2>
-								<p>This defines the number of layers of the puzzle, assuming the puzzle is regular.</p>
+								<p>This field defines the number of layers of the puzzle, assuming the puzzle is regular.</p>
 								<h2>Color scheme</h2>
-								<p>This defines for each face, the color (and transparency if desired) of all stickers of the face.</p>
+								<p>This field defines for each face, the color (and transparency if desired) of all stickers of the face.</p>
 								<br>
 								<p>Remark : In the input object required by Holo-Cube, the puzzle is described by the single property "fullName". Here the shape and size of the puzzle are artificially separated for onboarding purposes.</p>
 							</div>
@@ -101,14 +101,14 @@
 				<label class="inputCategoryLabel">Move sequences</label>
 				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#moveSequenceInputModal"></button>
 				<div class="modal" id="moveSequenceInputModal" tab-index="-1">
-					<div class="modal-dialog">
+					<div class="modal-dialog modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
 								<label class="modal-title">Move sequence</label>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<p>This field contains the move sequences to apply to solved puzzles.</p>
+								<p>This field defines the move sequences to apply to solved puzzles.</p>
 								<br>
 								<p>One move sequence per line : move sequences must be separated by a newline character.</p>
 								<br>
@@ -175,6 +175,66 @@
 					</div>
 				</div>
 				<label class="inputCategoryLabel">Logger</label>
+				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#loggerInputModal"></button>
+				<div class="modal" id="loggerInputModal" tab-index="-1">
+					<div class="modal-dialog modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-header">
+								<label class="modal-title">Logger</label>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<p>During its execution, Holo-Cube writes some logs to help following its execution. These fields define how much and where they will be written.</p>
+								<h2>Mode</h2>
+								<p>This field defines where the logs will be written. Use the most relevant, depending on how the code is called.
+								<ul>
+									<li>Off : No logs are written.</li>
+									<li>Console : Logs are written in the javascript console.</li>
+									<li>Result : Logs are written in json result.</li>
+									<li>HTML tag : Logs are written in the HTML document, inside the tag specified by the selector (same as CSS or document.querySelector()).</li>
+								</ul>
+								<p>Even if the mode you selected is not "Console", the errors will also be displayed in the console. This way you can still debug when trying to use another log mode (for example if the HTML selector is invalid).</p>
+								<h2>Verbosity</h2>
+								<p>This field defines how much logs will be written. Each level of verbosity n will include all logs of level n-1.</p>
+								<ul>
+									<li>0 : Only errors will be displayed. Notice that the execution will stop once the first error is reached, so you will have at most 1 log with this mode.</li>
+									<li>1 : In addition to 0, some general logs are written.</li>
+									<li>2 : In addition to 1, some more detailed logs are written.</li>
+									<li>3 : In addition to 2, some debug logs are written.</li>
+								</ul>
+								<p>Here is the details of all written logs, depending on the verbosity level </p>
+								<table class="table table-striped table-hover">
+									<thead>
+										<th scope="col">Log</th>
+										<th scope="col">0 : Errors</th>
+										<th scope="col">1 : General</th>
+										<th scope="col">2 : Detailed</th>
+										<th scope="col">3 : Debug</th>
+										</thead>
+									<tbody>
+										<tr>
+											<td>Test 1</td>
+											<td></td>
+											<td><div class="check"></div></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>Test 2</td>
+											<td></td>
+											<td><div class="check"></div></td>
+											<td></td>
+											<td><div class="check"></div></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col form-floating">
 						<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
