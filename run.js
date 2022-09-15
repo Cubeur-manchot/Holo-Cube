@@ -142,6 +142,7 @@ class Run {
 		this.drawingOptions = new DrawingOptionsRunInput(inputObject.drawingOptions, this);
 	};
 	setPuzzleClass = () => {
+		this.logger.debugLog("Setting puzzle class.");
 		switch(this.puzzle.shape) {
 			case "cube": switch(this.puzzle.fullName) {
 				case "cube1x1x1": this.puzzleClass = Cube1x1x1; break;
@@ -216,7 +217,7 @@ class PuzzleRunInput {
 		if (this.size === 0) {
 			this.run.throwError(`Creating cube with no layer.`);
 		} else if (this.size > 13) {
-			this.run.logger.warningLog(`Creating cube image with large number of layers (${this.size}).`);
+			this.run.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
 		}
 	};
 	setStage = puzzle => {
@@ -342,7 +343,7 @@ class DrawingOptionsRunInput {
 		} else {
 			this.setAllValuesFromDefault();
 		}
-	};
+	}; // todo add debug logs when setting values with default values ?
 	setAllValuesFromDefault = () => {
 		for (let drawingOptionsNumericProperty of ["imageHeight", "imageWidth", "puzzleHeight", "puzzleWidth"]) {
 			this.setNumericValueFromDefault(drawingOptionsNumericProperty);

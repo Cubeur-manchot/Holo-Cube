@@ -144,7 +144,6 @@ class CubePlanDrawer extends CubeDrawer {
 		for (let rank = 0; rank < this.cubeSize; rank++) {
 			this.options.startingValues.push(- 50 + this.options.uFaceStickerMargin + rank * (this.options.stickerSize + this.options.uFaceStickerMargin));
 		}
-		
 	};
 	createSvgSkeletton = () => {
 		this.run.logger.debugLog("Creating puzzle image skeletton");

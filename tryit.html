@@ -22,7 +22,7 @@
 				<label class="inputCategoryLabel">Puzzle</label>
 				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#puzzleInputModal"></button>
 				<div class="modal" id="puzzleInputModal" tab-index="-1">
-					<div class="modal-dialog modal-dialog-scrollable">
+					<div class="modal-dialog modal-lg modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
 								<label class="modal-title">Puzzle</label>
@@ -101,7 +101,7 @@
 				<label class="inputCategoryLabel">Move sequences</label>
 				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#moveSequenceInputModal"></button>
 				<div class="modal" id="moveSequenceInputModal" tab-index="-1">
-					<div class="modal-dialog modal-dialog-scrollable">
+					<div class="modal-dialog modal-lg modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
 								<label class="modal-title">Move sequence</label>
@@ -124,7 +124,23 @@
 					<textarea id="moveSequences" class="form-control" placeholder="Move sequences"></textarea>
 					<label for="moveSequences">Move sequences</label>
 				</div>
-				<label class="inputCategoryLabel">Drawing options</label>
+				<label class="inputCategoryLabel">Drawing options</label><button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#drawingOptionsInputModal"></button>
+				<div class="modal" id="drawingOptionsInputModal" tab-index="-1">
+					<div class="modal-dialog modal-lg modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-header">
+								<label class="modal-title">Drawing options</label>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								TODO
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="form-floating">
 					<select id="view" class="form-select">
 						<option selected>Plan (default)</option>
@@ -177,7 +193,7 @@
 				<label class="inputCategoryLabel">Logger</label>
 				<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#loggerInputModal"></button>
 				<div class="modal" id="loggerInputModal" tab-index="-1">
-					<div class="modal-dialog modal-dialog-scrollable">
+					<div class="modal-dialog modal-lg modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
 								<label class="modal-title">Logger</label>
@@ -202,7 +218,7 @@
 									<li>2 : In addition to 1, some more detailed logs are written.</li>
 									<li>3 : In addition to 2, some debug logs are written.</li>
 								</ul>
-								<p>Here is the details of all written logs, depending on the verbosity level </p>
+								<p>Here is the list of all written logs, depending on the verbosity level :</p>
 								<table class="table table-striped table-hover">
 									<thead>
 										<th scope="col">Log</th>
@@ -212,19 +228,61 @@
 										<th scope="col">3 : Debug</th>
 										</thead>
 									<tbody>
+										<tr><td>Any execution error</td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Logger created</td><td></td><td></td><td>
+											<div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new Run</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Reading input : puzzle</td><td></td><td></td><td>
+											<div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new PuzzleRunInput</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating large cube (if > 13 layers)</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Warning : Stage option is not yet supported (if stage is specified)</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Reading input : move sequence(s)</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Reading input : drawingOptions</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new DrawingOptionsRunInput</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Warning : View option is not yet supported (if view is specified)</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Setting puzzle class</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating blank puzzle</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new Puzzle</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new Cube</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new Cube</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new BlankCubeXxx (Xxx = 1x1x1, 2x2x2, 3x3x3 or Big)</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new MoveSequenceParser</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new MoveParser</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new CubeMoveParser</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Attaching CubeMoveParser to MoveSequenceParser</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new TwistyPuzzleDrawer</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new CubeDrawer</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new CubePlanDrawer</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Initializing dimensions</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating puzzle image skeletton</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
 										<tr>
-											<td>Test 1</td>
-											<td></td>
-											<td><div class="check"></div></td>
-											<td></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td>Test 2</td>
-											<td></td>
-											<td><div class="check"></div></td>
-											<td></td>
-											<td><div class="check"></div></td>
+											<td>TODO : execution phase</td>
+											<td>-----</td><td>-----</td><td>-----</td><td>-----</td>
 										</tr>
 									</tbody>
 								</table>
