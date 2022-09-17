@@ -133,8 +133,26 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								
-								TODO
+								<p>These fields define some options for drawing the images. The default values are :</p>
+								<ul>
+									<li>Image height = 100px, image width = 100px, image scale = 1</li>
+									<li>Image background color : transparent</li>
+									<li>Puzzle height = 100px, puzzle width = 100px, puzzle scale = 1</li>
+									<li>Puzzle color : black</li>
+								</ul>
+								<h2>Image height and width</h2>
+								<p>These fields define the height and width of the resulting image, in pixels.</p>
+								<h2>Image scale</h2>
+								<p>This field defines a multiplier to apply to both image dimensions. If some of the image dimensions are not specified, the multiplier will be applied after taking the respective default values.</p>
+								<h2>Image background color</h2>
+								<p>This field defines the background color of the image, including opacity.</p>
+								<h2>Puzzle height and width</h2>
+								<p>These fields define the height and width of the puzzle, in pixels. Both puzzle dimensions must not exceed the respective image dimension (except when the puzzle scale is specified and is < 1).</p>
+								<h2>Puzzle scale</h2>
+								<p>This field defines a multiplier to apply to both puzzle dimensions. If some of the puzzle dimensions are not specified, the multiplier will be applied after taking the respective default values.
+								<br>After the multiplier is applied, both puzzle dimensions must not exceed the image dimensions.</p>
+								<h2>Puzzle color</h2>
+								<p>This field defines the color, including opacity, of the puzzle between the stickers (= plastic color).</p>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
