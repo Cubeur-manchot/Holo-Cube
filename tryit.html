@@ -29,7 +29,7 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<p>These fields defined the puzzle to apply move sequences to.</p>
+								<p>These fields defines the puzzle to apply move sequences to.</p>
 								<h2>Shape</h2>
 								<p>This field defines the shape of the puzzle (regular NxNxN cube, dodecahedron, pyramid, ...). For now, only the cube shape is supported.</p>
 								<h2>Size</h2>
@@ -104,7 +104,7 @@
 					<div class="modal-dialog modal-lg modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
-								<label class="modal-title">Move sequence</label>
+								<label class="modal-title">Move sequences</label>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
@@ -133,6 +133,7 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
+								
 								TODO
 							</div>
 							<div class="modal-footer">
@@ -232,53 +233,51 @@
 											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 										<tr><td>Logger created</td><td></td><td></td><td>
 											<div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Creating new Run</td><td></td>
+										<tr><td>Creating new run</td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 										<tr><td>Reading input : puzzle</td><td></td><td></td><td>
 											<div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Creating new PuzzleRunInput</td><td></td><td></td><td></td>
+										<tr><td>Creating new puzzle run input</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
 										<tr><td>Creating large cube (if > 13 layers)</td><td></td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Warning : Stage option is not yet supported (if stage is specified)</td><td></td><td></td>
+										<tr><td>Warning : stage option is not yet supported (if stage is specified)</td><td></td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Reading input : move sequence(s)</td><td></td><td></td>
+										<tr><td>Reading input : move sequences</td><td></td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 										<tr><td>Reading input : drawingOptions</td><td></td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Creating new DrawingOptionsRunInput</td><td></td><td></td><td></td>
+										<tr><td>Creating new drawing options run input</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Warning : View option is not yet supported (if view is specified)</td><td></td><td></td>
+										<tr><td>Warning : view option is not yet supported (if view is specified)</td><td></td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 										<tr><td>Setting puzzle class</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
 										<tr><td>Creating blank puzzle</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new Puzzle</td><td></td><td></td><td></td>
+										<tr><td>Creating new puzzle</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new Cube</td><td></td><td></td><td></td>
+										<tr><td>Creating new cube</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new Cube</td><td></td><td></td><td></td>
+										<tr><td>Creating new blank cube (1x1x1 | 2x2x2 | 3x3x3 | big)</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new BlankCubeXxx (Xxx = 1x1x1, 2x2x2, 3x3x3 or Big)</td><td></td><td></td><td></td>
-											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new MoveSequenceParser</td><td></td>
+										<tr><td>Creating new move sequence parser</td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Creating new MoveParser</td><td></td><td></td><td></td>
+										<tr><td>Creating new move parser</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new CubeMoveParser</td><td></td>
+										<tr><td>Creating new cube move parser</td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-										<tr><td>Attaching CubeMoveParser to MoveSequenceParser</td><td></td><td></td><td></td>
+										<tr><td>Attaching cube move parser to move sequence parser</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new TwistyPuzzleDrawer</td><td></td><td></td><td></td>
+										<tr><td>Creating new twisty puzzle drawer</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new CubeDrawer</td><td></td><td></td><td></td>
+										<tr><td>Creating new cube drawer</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating new CubePlanDrawer</td><td></td>
+										<tr><td>Creating new cube plan drawer</td><td></td>
 											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 										<tr><td>Initializing dimensions</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr><td>Creating puzzle image skeletton</td><td></td><td></td><td></td>
+										<tr><td>Creating puzzle image skeleton</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
 										<tr>
 											<td>TODO : execution phase</td>
