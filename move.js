@@ -22,7 +22,7 @@ class MoveSequence {
 class Move {
 	constructor(run) {
 		this.run = run;
-		this.run.logger.detailedLog("Creating new Move.");
+		this.run.logger.debugLog("Creating new Move.");
 		this.cycles = [];
 	};
 	getCycleList = () => {

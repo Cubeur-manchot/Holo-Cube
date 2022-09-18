@@ -46,19 +46,23 @@ class Run {
 		this.setBlankPuzzle();
 		this.setMoveSequenceParser();
 		this.setPuzzleDrawer();
+		this.logger.generalLog("End of initialization phase.");
 	};
 	run = () => {
+		this.logger.generalLog("Beginning of execution phase.");
 		let result = {
 			svgList: []
 		};
 		for (let moveSequence of this.moveSequenceList) {
 			let puzzle = new this.puzzleClass(this);
 			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
+			this.logger.generalLog("Adding image to output.");
 			result.svgList.push(this.puzzleDrawer.drawPuzzle(puzzle));
 		}
 		if (this.logger.mode === "result") {
 			result.logs = this.logs;
 		}
+		this.logger.generalLog("End of execution phase.");
 		return result;
 	};
 	throwError = message => {

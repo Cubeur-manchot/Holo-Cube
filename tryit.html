@@ -225,7 +225,7 @@
 								<ul>
 									<li>Off : No logs are written.</li>
 									<li>Console : Logs are written in the javascript console.</li>
-									<li>Result : Logs are written in json result.</li>
+									<li>Result : Logs are written in json result. Notice that if an error occurs during the execution, the result will not be written and you will get no logs.</li>
 									<li>HTML tag : Logs are written in the HTML document, inside the tag specified by the selector (same as CSS or document.querySelector()).</li>
 								</ul>
 								<p>Even if the mode you selected is not "Console", the errors will also be displayed in the console. This way you can still debug when trying to use another log mode (for example if the HTML selector is invalid).</p>
@@ -297,10 +297,48 @@
 											<td><div class="check"></div></td></tr>
 										<tr><td>Creating puzzle image skeleton</td><td></td><td></td><td></td>
 											<td><div class="check"></div></td></tr>
-										<tr>
-											<td>TODO : execution phase</td>
-											<td>-----</td><td>-----</td><td>-----</td><td>-----</td>
-										</tr>
+										<tr><td>End of initialization phase</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Beginning of execution phase</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new cube</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new blank cube (1x1x1 | 2x2x2 | 3x3x3 | big)</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new (1x1x1 | 2x2x2 | 3x3x3 | big) cube</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new move sequence parser</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new move parser</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new cube move parser</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Attaching cube move parser to move sequence parser</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Parsing move sequence</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new move sequence</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Parsing move</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Creating new move</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Creating new cube move</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Applying move sequence on a solved puzzle</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Applying move on puzzle</td><td></td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>Ignoring cycle of length 1 (should never happen)</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Ignoring cycle because orbit types are different (if applicable)</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Ignoring cycle because cyle orbit ranks are different (if applicable)</td><td></td><td></td><td></td>
+											<td><div class="check"></div></td></tr>
+										<tr><td>Adding image to output</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+										<tr><td>End of execution phase</td><td></td>
+											<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 									</tbody>
 								</table>
 							</div>
