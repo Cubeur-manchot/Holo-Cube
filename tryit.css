@@ -9,6 +9,11 @@ button.question-mark {
 	margin-left: 5px;
 }
 
+div.card-3 {
+	background-color: rgba(0,0,0,0.1);
+	width: 32%;
+}
+
 /* Modals */
 
 div.modal h2 {
