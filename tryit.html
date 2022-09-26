@@ -12,6 +12,7 @@
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="tryit.css">
 		<link rel="stylesheet" href="bootstrap-fixes.css">
+		<script src="./color.js"></script>
 		<script src="./tryit.js"></script>
 	</head>
 	<body>
@@ -56,7 +57,7 @@
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeRColor" class="colorSchemeLabel">R</label>
-							<input type="color" id="colorSchemeRolor" value="#FF0000">
+							<input type="color" id="colorSchemeRColor" value="#FF0000">
 							<input type="range" id="colorSchemeROpacity" min="0" max="1" step="0.01" value="1">
 						</div>
 						<div class="col-2 colorSchemeFace">
@@ -71,7 +72,7 @@
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeRColor" class="colorSchemeLabel">L</label>
-							<input type="color" id="colorSchemeLolor" value="#FF7F00">
+							<input type="color" id="colorSchemeLColor" value="#FF7F00">
 							<input type="range" id="colorSchemeLOpacity" min="0" max="1" step="0.01" value="1">
 						</div>
 					</div>
@@ -137,19 +138,19 @@
 					<div class="row">
 						<div class="col form-floating">
 							<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
-								<option selected>Console (default)</option>
-								<option>Result</option>
-								<option>HTML tag</option>
-								<option>Off</option>
+								<option value="console" selected>Console (default)</option>
+								<option value="result">Result</option>
+								<option value="htmlTag">HTML tag</option>
+								<option value="off">Off</option>
 							</select>
 							<label for="loggerMode">Mode</label>
 						</div>
 						<div class="col form-floating">
 							<select id="verbosity" class="form-select">
-								<option>0 - Errors only</option>
-								<option selected>1 - General (default)</option>
-								<option>2 - Advanced</option>
-								<option>3 - Debug</option>
+								<option value="0">0 - Errors only</option>
+								<option value="1" selected>1 - General (default)</option>
+								<option value="2">2 - Advanced</option>
+								<option value="3">3 - Debug</option>
 							</select>
 							<label for="verbosity">Verbosity</label>
 						</div>
