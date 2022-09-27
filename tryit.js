@@ -89,4 +89,8 @@ const buildJsonInput = () => {
 			jsonInput.logger.htmlTagSelector = document.querySelector("input#htmlTagSelector").value;
 		}
 	}
+	let jsonInputString = JSON.stringify(jsonInput, null, 4);
+	console.log(jsonInputString);
+	document.querySelector("pre#jsonInput").textContent = jsonInputString;
+	document.querySelector("pre#javascriptObjectInput").textContent = jsonInputString.replace(/"(?=.*:)/g, "");
 };
