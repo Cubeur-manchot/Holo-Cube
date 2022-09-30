@@ -16,7 +16,7 @@ const buildJsonInput = () => {
 		puzzle: {
 			fullName: fullName
 		},
-		moveSequences: document.querySelector("textarea#moveSequences").value.split("\n")
+		moveSequenceList: document.querySelector("textarea#moveSequences").value.split("\n")
 	};
 	// optional puzzle fields : color scheme
 	let uColor = document.querySelector("input#colorSchemeUColor").value;
