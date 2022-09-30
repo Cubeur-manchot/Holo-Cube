@@ -12,6 +12,7 @@ button.question-mark {
 div.card-3 {
 	background-color: rgba(0,0,0,0.1);
 	width: 32%;
+	margin-bottom: 15px;
 }
 
 /* Modals */
@@ -66,4 +67,10 @@ textarea#moveSequences {
 
 div#htmlTagContainer{
 	margin-top: 10px;
+}
+
+/* Intermediate input and Output zones */
+
+pre#javascriptObjectInput, pre#jsonInput, div#svgResults, div#logs {
+	padding: 10px 0px;
 }
