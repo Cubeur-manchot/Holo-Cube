@@ -232,8 +232,8 @@ class CubeMove extends Move {
 		}
 	};
 	treatBetweenMiddleAndLastLayer = (firstRankBegin, firstRankEnd) => {
-		let oppositeTurnCount = this.run.moveSequenceParser.moveParser.cleanTurnCount(-this.turnCount);
-		let oppositeFace = this.run.moveSequenceParser.moveParser.getOppositeFace(this.face);
+		let oppositeTurnCount = CubeMoveParser.cleanTurnCount(-this.turnCount);
+		let oppositeFace = CubeMoveParser.getOppositeFace(this.face);
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) {
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank, oppositeFace, oppositeTurnCount);
 			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
@@ -250,8 +250,8 @@ class CubeMove extends Move {
 		}
 	};
 	treatLastLayer = isBigCube => {
-		let oppositeTurnCount = this.run.moveSequenceParser.moveParser.cleanTurnCount(-this.turnCount);
-		let oppositeFace = this.run.moveSequenceParser.moveParser.getOppositeFace(this.face);
+		let oppositeTurnCount = CubeMoveParser.cleanTurnCount(-this.turnCount);
+		let oppositeFace = CubeMoveParser.getOppositeFace(this.face);
 		this.addCornerElementaryCycles(oppositeFace, oppositeTurnCount);
 		this.addMidgeElementaryCycles(CubeMove.externalMode, oppositeFace, oppositeTurnCount);
 		if (isBigCube) {
