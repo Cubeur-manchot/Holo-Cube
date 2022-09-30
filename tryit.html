@@ -442,55 +442,5 @@
 				</div>
 			</div>
 		</div>
-		<hr style="margin-top: 70px">
-		<hr>
-		<hr>
-		<hr>
-		<h1>---Debug---</h1>
-		<div>
-			<p style="margin-top: 20px;">Object structure to give :</p>
-			<p class="mandatory">{</p>
-			<p class="firstLevel mandatory">"puzzle": {</p>
-			<p class="secondLevel mandatory">"fullName": string,<span class="comment">// example : cube3x3x3</span></p>
-			<p class="secondLevel notSupported">"stage": string,<span class="comment">// stage to show (OLL, PLL, CMLL, F2L, ...)</span></p>
-			<p class="secondLevel optional">"colorScheme": array of colors<span class="comment">// colorscheme of the puzzle (for a cube : U,F,R,D,B,L), default value depends on puzzle shape</span></p>
-			<p class="firstLevel mandatory">},</p>
-			<p class="firstLevel moveSequence">"moveSequence": string or array of strings,<span class="comment">// sequence to apply on one puzzle</span></p>
-			<p class="firstLevel moveSequence">"moveSequenceList": array of strings,<span class="comment">// sequences to apply, each one on a different puzzle</span></p>
-			<p class="firstLevel optional">"drawingOptions": {</p>
-			<p class="secondLevel optional">"imageHeight": number,<span class="comment">// height of the image in px, default value is 100</span></p>
-			<p class="secondLevel optional">"imageWidth": number,<span class="comment">// width of the image in px, default value is 100</span></p>
-			<p class="secondLevel optional">"imageScale": number,<span class="comment">// scale to apply to both height and width of the image, default value is 1</span></p>
-			<p class="secondLevel optional">"imageBackgroundColor": color,<span class="comment">// background color of the image (white, transparent, ...), default value is "transparent"</span></p>
-			<p class="secondLevel optional">"puzzleHeight": number,<span class="comment">// height of the puzzle in px, default value is 100</span></p>
-			<p class="secondLevel optional">"puzzleWidth": number,<span class="comment">// width of the puzzle in px, default value is 100</span></p>
-			<p class="secondLevel optional">"puzzleScale": number,<span class="comment">// scale to apply to both height and width of the puzzle, default value is 1</span></p>
-			<p class="secondLevel optional">"puzzleColor": color,<span class="comment">// color of the puzzle, excluding the stickers (black, primary, stickerless, transparent, ...), default value is "black"</span></p>
-			<p class="secondLevel notSupported">"view": string<span class="comment">// view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"</span></p>
-			<p class="firstLevel optional">},</p>
-			<p class="firstLevel optional">"logger": {</p>
-			<p class="secondLevel optional">"verbosity": int<span class="comment">// level of verbosity for the logs (0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1</span></p>
-			<p class="secondLevel optional">"mode": string,<span class="comment">// mode of logs ("console"|"result"|"htmlTag"|"off"), default value is "console"</span></p>
-			<p class="secondLevel optional">"htmlTagSelector": string<span class="comment">// selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected</span></p>
-			<p class="firstLevel optional">},</p>
-			<p class="mandatory">}</p>
-			<br/>
-			<p class="mandatory">puzzle.fullName is mandatory</p>
-			<p class="moveSequence">moveSequence XOR moveSequenceList is mandatory</p>
-			<p class="notSupported">stage and view are not yet supported</p>
-			<p class="optional">Other inputs are optional</p>
-		</div>
-		<style>
-			p { margin: 0; }
-			p.firstLevel { padding-left: 20px; }
-			p.secondLevel { padding-left: 40px; }
-			p.mandatory { font-weight: bold; }
-			p.moveSequence { color: blue; }
-			p.notSupported { color: red; }
-			p.optional { color: grey; }
-			span.comment { color: green; margin-left: 10px; }
-			textarea#jsonInput { border-radius: 4px; max-width: 100%; }
-			div#svgResults svg { margin-top: 10px; margin-left: 10px; border: 1px solid black; }
-		</style>
     </body>
 </html>
