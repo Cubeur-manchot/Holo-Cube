@@ -4,7 +4,7 @@ const updateHtmlTagSelectorVisibility = value => {
 	document.querySelector("div#htmlTagContainer").hidden = value !== "htmlTag";
 };
 
-const buildJsonInput = () => {
+const updateResults = () => { // update input object/json and Holo-Cube results
 	// mandatory fields : puzzle and move sequence
 	let puzzleSize = document.querySelector("input#puzzleSize").value;
 	if (puzzleSize === "") { // input is incomplete, calling function should not update the view
@@ -90,7 +90,15 @@ const buildJsonInput = () => {
 		}
 	}
 	let jsonInputString = JSON.stringify(jsonInput, null, 4);
-	console.log(jsonInputString);
 	document.querySelector("pre#jsonInput").textContent = jsonInputString;
 	document.querySelector("pre#javascriptObjectInput").textContent = jsonInputString.replace(/"(?=.*:)/g, "");
+	// run Holo-Cube
+	let svgResultsTag = document.querySelector("div#svgResults");
+	svgResultsTag.textContent = "";
+	document.querySelector("div#logs").textContent = "";
+	let run = new Run(jsonInput);
+	let runResults = run.run();
+	for (let svg of runResults.svgList) {
+		svgResultsTag.appendChild(svg);
+	}
 };
