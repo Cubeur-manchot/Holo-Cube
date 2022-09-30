@@ -89,7 +89,7 @@ class Run {
 			if (verbosity !== -1 && ![undefined, null].includes(inputObject.logger.mode)) { // check mode
 				if (typeof inputObject.logger.mode !== "string") {
 					this.throwError("Property mode must be a string.");
-				} else if (!["console", "result", "htmlTag"].includes(inputObject.logger.mode)) {
+				} else if (!["console", "result", "htmlTag", "off"].includes(inputObject.logger.mode)) {
 					this.throwError(`Property mode only accept values "console", "result" and "htmlTag" (received value = ${inputObject.logger.mode}).`);
 				}
 				mode = inputObject.logger.mode;
