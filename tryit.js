@@ -1,7 +1,7 @@
 "use strict";
 
-const updateHtmlTagSelectorVisibility = value => { // todo replaced by an aria-labeledby ?
-	document.querySelector("div#htmlTagContainer").hidden = value !== "HTML tag";
+const updateHtmlTagSelectorVisibility = value => {
+	document.querySelector("div#htmlTagContainer").hidden = value !== "htmlTag";
 };
 
 const buildJsonInput = () => {
