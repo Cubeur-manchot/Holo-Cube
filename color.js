@@ -38,13 +38,13 @@ class Color {
 			[this.r, this.g, this.b] = colorString.match(/\d+/g);
 			this.a = 1;
 		} else if (Color.isRgba(colorString)) {
-			let numbers = colorString.replace(/^.*\(/g, "").replace(/\).*$/g, "").replace(/\s+/g).split(",");
+			let numbers = colorString.replace(/^.*\(/g, "").replace(/\).*$/g, "").replace(/\s+/g, "").split(",");
 			this.r = parseInt(numbers[0]);
 			this.g = parseInt(numbers[1]);
 			this.b = parseInt(numbers[2]);
 			this.a = parseFloat(numbers[3]);
 		} else if (Color.isKnownColor(colorString)) {
-			Object.assign(this, Color.getRgbaFromKnownColor(colorString));
+			Object.assign(this, Color.getKnownColor(colorString));
 		}
 	};
 	static checkFormat = colorString => {
@@ -72,10 +72,10 @@ class Color {
 		return true;
 	};
 	static isRgba = colorString => {
-		if(!/^rgb\( *\d+ *, *\d+ *, *\d+ *, *([0-1]\.?|0?\.\d+)\) *\)$/.test(colorString)) {
+		if(!/^rgba\( *\d+ *, *\d+ *, *\d+ *, *([0-1]|0?\.\d+) *\)$/.test(colorString)) {
 			return false;
 		}
-		let rgbaValues = colorString.replace(/ /g, "").replace(/^.*\(/, "").replace(")", "").split(",");
+		let rgbValues = colorString.replace(/ /g, "").replace(/^.*\(/, "").replace(")", "").split(",");
 		for (let rgbIndex of [0, 1, 2]) {
 			if (parseInt(rgbValues[rgbIndex]) > 255) {
 				return false;
@@ -103,7 +103,16 @@ class Color {
 	static isKnownColor = colorString => {
 		return Color.knownColors[colorString] !== undefined;
 	};
-	static getRgbaFromKnownColor = colorString => {
+	static getKnownColorString = color => {
+		for (let knownColorName in Color.knownColors) {
+			let knownColor = Color.knownColors[knownColorName];
+			if (color.r === knownColor.r && color.g === knownColor.g && color.b === knownColor.b) {
+				return knownColorName;
+			}
+		}
+		return null;
+	};
+	static getKnownColor = colorString => {
 		return Color.knownColors[colorString];
 	};
 	getRgbHex6 = () => {
@@ -116,6 +125,6 @@ class Color {
 		return this.a;
 	};
 	getRgba = () => {
-		return `rgba(${this.r ?? 0},${this.g ?? 0},${this.b ?? 0},${this.a ?? 0})`;
+		return `rgba(${this.r ?? 0}, ${this.g ?? 0}, ${this.b ?? 0}, ${this.a ?? 0})`;
 	};
 }

@@ -25,7 +25,7 @@
 		<script src="./run.js"></script>
 		<script src="./tryit.js"></script>
 	</head>
-	<body>
+	<body onload="updateResults();">
 		<h1>Holo-Cube - Try it yourself</h1>
 		<div class="d-flex justify-content-evenly">
 			<div class="card card-3 bg-white">
@@ -35,7 +35,7 @@
 					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#puzzleInputModal"></button>
 					<div class="row">
 						<div class="col form-floating">
-							<select id="puzzleShape" class="form-select">
+							<select id="puzzleShape" class="form-select" onchange="updateResults();">
 								<option selected>Cube</option>
 								<option disabled>Dodecahedron</option>
 								<option disabled>Pyramid</option>
@@ -43,11 +43,11 @@
 							<label for="puzzleShape" class="form-label">Shape</label>
 						</div>
 						<div class="col form-floating">
-							<input type="text" id="puzzleSize" class="form-control" placeholder="Puzzle size is required" value="3">
+							<input type="text" id="puzzleSize" class="form-control" placeholder="Puzzle size is required" value="3" onchange="updateResults();">
 							<label for="puzzleSize">Puzzle size</label>
 						</div>
 						<div class="col form-floating">
-							<select id="stage" class="form-select" disabled>
+							<select id="stage" class="form-select" onchange="updateResults();" disabled>
 								<option selected>-</option>
 							</select>
 							<label for="stage">Stage</label>
@@ -57,45 +57,45 @@
 					<div class="row text-center">
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeUColor" class="colorSchemeLabel">U</label>
-							<input type="color" id="colorSchemeUColor" value="#FFFFFF">
-							<input type="range" id="colorSchemeUOpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="colorSchemeUColor" value="#FFFFFF" onchange="updateResults();">
+							<input type="range" id="colorSchemeUOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeFColor" class="colorSchemeLabel">F</label>
-							<input type="color" id="colorSchemeFColor" value="#00D800">
-							<input type="range" id="colorSchemeFOpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="colorSchemeFColor" value="#00D800" onchange="updateResults();">
+							<input type="range" id="colorSchemeFOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeRColor" class="colorSchemeLabel">R</label>
-							<input type="color" id="colorSchemeRColor" value="#FF0000">
-							<input type="range" id="colorSchemeROpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="colorSchemeRColor" value="#FF0000" onchange="updateResults();">
+							<input type="range" id="colorSchemeROpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeDColor" class="colorSchemeLabel">D</label>
-							<input type="color" id="colorSchemeDColor" value="#FFFF00">
-							<input type="range" id="colorSchemeDOpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="colorSchemeDColor" value="#FFFF00" onchange="updateResults();">
+							<input type="range" id="colorSchemeDOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeBColor" class="colorSchemeLabel">B</label>
-							<input type="color" id="colorSchemeBColor" value="#0000FF">
-							<input type="range" id="colorSchemeBOpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="colorSchemeBColor" value="#0000FF" onchange="updateResults();">
+							<input type="range" id="colorSchemeBOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 						<div class="col-2 colorSchemeFace">
 							<label for="colorSchemeRColor" class="colorSchemeLabel">L</label>
-							<input type="color" id="colorSchemeLColor" value="#FF7F00">
-							<input type="range" id="colorSchemeLOpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="colorSchemeLColor" value="#FF7F00" onchange="updateResults();">
+							<input type="range" id="colorSchemeLOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 					</div>
 					<label class="inputCategoryLabel">Move sequences</label>
 					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#moveSequenceInputModal"></button>
 					<div class="form-floating">
-						<textarea id="moveSequences" class="form-control" placeholder="Move sequences"></textarea>
+						<textarea id="moveSequences" class="form-control" placeholder="Move sequences" onchange="updateResults();"></textarea>
 						<label for="moveSequences">Move sequences</label>
 					</div>
 					<label class="inputCategoryLabel">Drawing options</label>
 					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#drawingOptionsInputModal"></button>
 					<div class="form-floating">
-						<select id="view" class="form-select">
+						<select id="view" class="form-select" onchange="updateResults();">
 							<option selected>Plan (default)</option>
 							<option disabled>Isometric</option>
 							<option disabled>Net</option>
@@ -106,48 +106,48 @@
 					<label class="inputLabel">Image</label>
 					<div class="row">
 						<div class="col form-floating">
-							<input type="text" id="imageHeight" class="form-control" placeholder="px">
+							<input type="text" id="imageHeight" class="form-control" placeholder="px" onchange="updateResults();">
 							<label for="imageHeight">Height</label>
 						</div>
 						<div class="col form-floating">
-							<input type="text" id="imageWidth" class="form-control" placeholder="px">
+							<input type="text" id="imageWidth" class="form-control" placeholder="px" onchange="updateResults();">
 							<label for="imageWidth">Width</label>
 						</div>
 						<div class="col form-floating">
-							<input type="text" id="imageScale" class="form-control" placeholder="multiplier">
+							<input type="text" id="imageScale" class="form-control" placeholder="multiplier" onchange="updateResults();">
 							<label for="imageScale">Scale</label>
 						</div>
 						<div class="col">
 							<label for="imageBackgroundColor">Background color</label><br>
-							<input type="color" id="imageBackgroundColor" value="#FFFFFF"><br>
-							<input type="range" id="imageBackgroundOpacity" min="0" max="1" step="0.01" value="0">
+							<input type="color" id="imageBackgroundColor" value="#FFFFFF" onchange="updateResults();"><br>
+							<input type="range" id="imageBackgroundOpacity" min="0" max="1" step="0.01" value="0" onchange="updateResults();">
 						</div>
 					</div>
 					<label class="inputLabel">Puzzle</label>
 					<div class="row">
 						<div class="col form-floating">
-							<input type="text" id="puzzleHeight" class="form-control" placeholder="px">
+							<input type="text" id="puzzleHeight" class="form-control" placeholder="px" onchange="updateResults();">
 							<label for="puzzleHeight">Height</label>
 						</div>
 						<div class="col form-floating">
-							<input type="text" id="puzzleWidth" class="form-control" placeholder="px">
+							<input type="text" id="puzzleWidth" class="form-control" placeholder="px" onchange="updateResults();">
 							<label for="puzzleWidth">Width</label>
 						</div>
 						<div class="col form-floating">
-							<input type="text" id="puzzleScale" class="form-control" placeholder="multiplier">
+							<input type="text" id="puzzleScale" class="form-control" placeholder="multiplier" onchange="updateResults();">
 							<label for="puzzleScale">Scale</label>
 						</div>
 						<div class="col">
 							<label for="puzzleColor">Color</label><br>
-							<input type="color" id="puzzleColor" value="#000000"><br>
-							<input type="range" id="puzzleOpacity" min="0" max="1" step="0.01" value="1">
+							<input type="color" id="puzzleColor" value="#000000" onchange="updateResults();"><br>
+							<input type="range" id="puzzleOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
 						</div>
 					</div>
 					<label class="inputCategoryLabel">Logger</label>
 					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#loggerInputModal"></button>
 					<div class="row">
 						<div class="col form-floating">
-							<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value);">
+							<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value); updateResults();">
 								<option value="console" selected>Console (default)</option>
 								<option value="result">Result</option>
 								<option value="htmlTag">HTML tag</option>
@@ -156,7 +156,7 @@
 							<label for="loggerMode">Mode</label>
 						</div>
 						<div class="col form-floating">
-							<select id="verbosity" class="form-select">
+							<select id="verbosity" class="form-select" onchange="updateResults();">
 								<option value="0">0 - Errors only</option>
 								<option value="1" selected>1 - General (default)</option>
 								<option value="2">2 - Advanced</option>
@@ -167,7 +167,7 @@
 					</div>
 					<div id="htmlTagContainer" class="row" hidden>
 						<div class="col form-floating">
-							<input type="text" id="htmlTagSelector" class="form-control" placeholder="div#logs" value="div#logs">
+							<input type="text" id="htmlTagSelector" class="form-control" placeholder="div#logs" value="div#logs" onchange="updateResults();">
 							<label for="htmlTagSelector">HTML tag selector</label>
 						</div>
 						<div class="col"></div>

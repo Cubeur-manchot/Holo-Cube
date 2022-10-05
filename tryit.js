@@ -4,6 +4,18 @@ const updateHtmlTagSelectorVisibility = value => {
 	document.querySelector("div#htmlTagContainer").hidden = value !== "htmlTag";
 };
 
+const getColorForInput = (colorRgbHex6, opacityString) => {
+	if (opacityString === "0") {
+		return "transparent";
+	} else if (opacityString === "1") {
+		return Color.getKnownColorString(colorRgbHex6) ?? colorRgbHex6;
+	} else {
+		let color = new Color(colorRgbHex6);
+		color.a = parseFloat(opacityString);
+		return color.getRgba();
+	}
+};
+
 const updateResults = () => { // update input object/json and Holo-Cube results
 	// mandatory fields : puzzle and move sequence
 	let puzzleSize = document.querySelector("input#puzzleSize").value;
@@ -20,13 +32,37 @@ const updateResults = () => { // update input object/json and Holo-Cube results
 	};
 	// optional puzzle fields : color scheme
 	let uColor = document.querySelector("input#colorSchemeUColor").value;
+	let uOpacity = document.querySelector("input#colorSchemeUOpacity").value;
 	let fColor = document.querySelector("input#colorSchemeFColor").value;
+	let fOpacity = document.querySelector("input#colorSchemeFOpacity").value;
 	let rColor = document.querySelector("input#colorSchemeRColor").value;
+	let rOpacity = document.querySelector("input#colorSchemeROpacity").value;
 	let dColor = document.querySelector("input#colorSchemeDColor").value;
+	let dOpacity = document.querySelector("input#colorSchemeDOpacity").value;
 	let bColor = document.querySelector("input#colorSchemeBColor").value;
+	let bOpacity = document.querySelector("input#colorSchemeBOpacity").value;
 	let lColor = document.querySelector("input#colorSchemeLColor").value;
-	if (uColor !== "#ffffff" || fColor !== "#00d800" || rColor !== "#ff0000" || dColor !== "#ffff00" || bColor !== "#0000ff" || lColor !== "#ff7f00") {
-		jsonInput.puzzle.colorScheme = [uColor, fColor, rColor, dColor, bColor, lColor];
+	let lOpacity = document.querySelector("input#colorSchemeLOpacity").value;
+	if (uColor !== "#ffffff" || uOpacity !== "1" || fColor !== "#00d800" || fOpacity !== "1" || rColor !== "#ff0000" || rOpacity !== "1"
+		|| dColor !== "#ffff00" || dOpacity !== "1" || bColor !== "#0000ff" || bOpacity !== "1" || lColor !== "#ff7f00" || lOpacity !== "1") {
+		jsonInput.puzzle.colorScheme = [];
+		let colorAndOpacityPairs = [
+			{color: uColor, opacity: uOpacity},
+			{color: fColor, opacity: fOpacity},
+			{color: rColor, opacity: rOpacity},
+			{color: dColor, opacity: dOpacity},
+			{color: bColor, opacity: bOpacity},
+			{color: lColor, opacity: lOpacity},
+		];
+		for (let colorAndOpacity of colorAndOpacityPairs) {
+			if (colorAndOpacity.opacity === "1") {
+				jsonInput.puzzle.colorScheme.push(colorAndOpacity.color);
+			} else {
+				let color = new Color(colorAndOpacity.color);
+				color.a = parseFloat(colorAndOpacity.opacity);
+				jsonInput.puzzle.colorScheme.push(color.getRgba());
+			}
+		}
 	}
 	// drawing options
 	let imageHeight = document.querySelector("input#imageHeight").value;
@@ -54,7 +90,11 @@ const updateResults = () => { // update input object/json and Holo-Cube results
 		if (imageBackgroundOpacity !== "0") {
 			let color = new Color(imageBackgroundColor);
 			color.a = parseFloat(imageBackgroundOpacity);
-			jsonInput.drawingOptions.imageBackgroundColor = color.getRgba();
+			if (imageBackgroundOpacity === "1") {
+				jsonInput.drawingOptions.imageBackgroundColor = color.getRgbHex6();
+			} else {
+				jsonInput.drawingOptions.imageBackgroundColor = color.getRgba();
+			}
 		}
 		if (puzzleHeight !== "") {
 			jsonInput.drawingOptions.puzzleHeight = parseFloat(puzzleHeight);
