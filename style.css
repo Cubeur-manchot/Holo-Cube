@@ -28,6 +28,17 @@ h3 {
 	cursor: not-allowed;
 }	
 
+.inline {
+	display: inline;
+}
+
+/* Code box */
+
+div.codeBox {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+}
+
 /* Useful for debug */
 
 .debug {

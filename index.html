@@ -3,11 +3,191 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Test</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap remote -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap remote -->
+		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
+		<h1>Holo-Cube</h1>
+		<div class="card bg-white m-3 p-3">
+			<h2>What is Holo-Cube ?</h2>
+			<p>Holo-Cube is a JavaScript library, whose purpose is to build Rubik's cube images, in order to show some algorithm cases. This library is developed by me, Cubeur-manchot.</p>
+			<p>As it is written in JavaScript, it can be executed at various places (more on that <a href="#howTo">below</a>) :
+				<ul>
+					<li>Standard HTML page (front-end)</li>
+					<li>NodeJS bot, like <a href="https://github.com/Cubeur-manchot/AlgBot">AlgBot</a> (back-end)</li>
+					<li>Google Spreadsheet (integration still in progress)</li>
+				</ul>
+			</p>
+			<p>For now, only the "plan" view and the regular NxNxN cubes are available, but many others views and puzzle shapes will be added in the future.</p>
 		</div>
 		<div class="card bg-white m-3 p-3">
-			<h2>More technical details</h2>
+			<h2>Why Holo-Cube ?</h2>
+			<p>A similar tool already exists and is called <a href="todo">VisualCube</a>. It is written in PHP, the code is executed on the server's side and and when requesting the website's url it returns an image instead of a standard web page.
+			<br/>VisualCube is easier at first but leads to some downsides/limitations, mostly due to being executed on the server's side.</p>
+			<ol>
+				<li>Limitations due to being executed on the server's side :
+					<ul>
+						<li>All the work load is handled by the server : the more requests, the more the server has to work. As the cubing community is growing and many people sharing their algorithms on their website or a google sheet, this increases the number of requests and thus the response time.</li>
+						<li>Only one image can be returned at once. X people viewing Y websites with Z algorithms causes x*y*z requests to the server. Notice that today people learn significantly more algorithms that many years ago, are interested in large sets like ZBLL or are even seriously considering full 1LLL.</li>
+						<li>A downtime of the server is a downtime for everyone at once.</li>
+						<li>It can't be executed locally, or at least not in an easy way (it has to be run on a local server, which is not trivial for everyone on a computer and even harder on a phone).</li>
+						<li>As it is currently coded, no part of the execution can be reused from one request to the other one, although a lot of the requests are very close. There is no cache either.</li>
+						<li>When called with a bot, if the request takes too much time to process and return a result, no result will appear. It would be easier to control the flow when the code can be executed directly by the bot, and it would also be easier for debugging.</li>
+					</ul>
+				</li>
+				<li>Features limitations :
+					<ul>
+						<li>The code didn't evolve for the last many years.</li>
+						<li>No other puzzle shapes was added. Some other puzzle shapes were implemented separately by other entities, although they are not well known (like <a href="https://cubiclealgdbimagegen.azurewebsites.net">Cubicle AlgDB Imagegen</a>).</li>
+						<li>Cube size is limited to 10, but in some cases it would be interesting to show bigger cubes.</li>
+						<li>The notation is not fully consistent with and not as exhaustive as <a href="https://alg.cubing.net">Alg Cubing</a>, as it doesn't implement slice moves involving inner layers at all. The same move notation means an outer move for VisualCube and an inner slice move involving one layer for Alg Cubing, and there is no way to describe an inner slice move involving 2+ layers.</li>
+						<li>Moves are allowed to be stucked without space in between, however the rule to decide the split between moves is unclear and/or incomplete.</li>
+					</ul>
+				</li>
+				<li>Maintainance limitations :
+					<ul>
+						<li>There are some algorithmic bugs.</li><!-- todo find the case for bug -->
+						<li>There are some display bugs (1x1x1).</li> <!-- todo others ? -->
+						<li>The notation is not strict enough. Wrong moves are ignored instead of returning an error, which leads to unexpected behaviours.</li>
+					</ul>
+				</li>
+			</ol>
+			<p>So basically I developped my own version of VisualCube, to overtake most of these issues, and named it after the suggestion of a friend "Holo-Cube".</p>
+		</div>
+		<div id="howTo" class="card bg-white m-3 p-3">
+			<h2>How to use Holo-Cube ?</h2>
+			<p>For each way of using Holo-Cube, the steps to follow are described, and a working example will be provided.</p>
+			<details id="htmlPageUse">
+				<summary>Standard HTML page</summary>
+				<p>This is the most standard way of using Holo-Cube. The script is called in a standard HTML page, in order to build the images and include them in the page.</p>
+				<a href="./htmlExample.html">Working example</a><!-- todo create for real -->
+				<ul>
+					<li>
+						Include the scripts in the <pre class="inline">&lt;head&gt;</pre> :
+						<div class="codeBox">
+							<code><!-- todo syntaxic coloration -->
+								&lt;!DOCTYPE html&gt;<br>
+								&lt;html&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;head&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/color.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/sticker.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/slot.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/orbit.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/puzzle.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/cycle.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/moveParser.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/move.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/drawer.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/logger.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="https://cubeur-manchot.github.io/Holo-Cube/run.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;/head&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;body&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;/body&gt;<br>
+								&lt;/html&gt;
+							</code>
+						</div>
+					</li>
+					<li>
+						Prepare your script call and the images destination :
+						<div class="codeBox">
+							<code><!-- todo syntaxic coloration -->
+								&lt;html&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;head&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="text/javascript" src="./example.js"&gt;&lt;/script&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;link rel="stylesheet" href="example.css"&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;/head&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;body onload="callHoloCube();"&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div id="holoCubeResults"&gt;&lt;/div&gt;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;/body&gt;<br>
+								&lt;/html&gt;
+							</code>
+						</div>
+					</li>
+					<li>
+						Create a Holo-Cube <code>Run</code> object and run it :
+						<div class="codeBox"> <!-- todo tell that we are in the external script -->
+							<code>
+								const callHoloCube = () => {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let algList = [<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"R U R' U'",<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"R2' F2 r U r' F2 R F' R",<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"M2 E2 S2"<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;];<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let run = new Run({<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;puzzle: {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fullName: "cube3x3x3"<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;moveSequenceList: algList<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let holoCubeResult = run.run();<br>
+								};
+							</code>
+						</div>
+					</li>
+					<li>
+						Display the results :
+						<div class="codeBox">
+							<code>
+								const callHoloCube = () => {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let algList = [...];<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let run = new Run({...});<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let holoCubeResult = run.run();<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;let destinationTag = document.querySelector("div#holoCubeResults");<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;for (let algIndex = 0; algIndex < algList.length; algIndex++) {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// create an alg card<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let algCardTag = document.createElement("div");<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algCardTag.setAttribute("class", "algCard");<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// use the svg as an image<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algCardTag.appendChild(holoCubeResults.svgList[algIndex]);<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// create the alg tag<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let algTag = document.createElement("div");<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algTag.setAttribute("class", "alg");<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algTag.textContent = algList[algIndex];<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algCardTag.appendChild = algTag;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destinationTag.appendChild(algCardTag);<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+								};
+							</code>
+						</div>
+					</li>
+					<li>
+						Style the results :
+						<div class="codeBox"> <!-- todo tell that we are in an external file -->
+						<!-- todo show CSS import in HTML -->
+							<code>
+								div.algCard {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;background-color: white;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 5px;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;border: 1px solid grey;<br>
+								};<br><br>
+								div.algCard div.alg {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;border-top: 1px solid grey;<br>
+								};<br><br>
+								div.algCard svg {<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;height: 100px;<br>
+								&nbsp;&nbsp;&nbsp;&nbsp;width: 100px;<br>
+								};
+							</code>
+						</div>
+					</li>
+				<ul>
+				</summary>
+			</details>
+			<h3>NodeJS bot</h3>
+			<details id="nodeJsUse">
+				<summary></summary>
+				todo
+			</details>
+			<h3>Google Spreadsheet</h3>
+			<details id="googleSheetUse">
+				<summary></summary>
+				Todo
+			</details>
 		</div>
     </body>
 </html>

@@ -1,0 +1,14 @@
+div.algCard {
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid grey;
+};
+
+div.algCard div.alg {
+    border-top: 1px solid grey;
+};
+
+div.algCard svg {
+    height: 100px;
+    width: 100px;
+};
