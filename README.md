@@ -6,12 +6,13 @@ JavaScript code, embeddable in web pages, Google Sheets, Discord bots (AlgBot wi
 JSON I/O : either return an SVG image or an error object.
 
 ## Options/Customization
-- 3 different views
-  - top : U face, for last layer algs
-  - top-down oblique : U and F faces, for last two centers algs
+- 4 different views
+  - plan : U face, for last layer algs
+  - top-down : U and F faces, for last two centers algs
   - isometric : U, F and R faces, for F2L algs for example
+  - net : to see all faces at the same time
 - full color scheme customization
 - many other options
 
 ## Current advancement
-0% haha, a lot of stuff to do
+Working version for plan view, integration in progress.
