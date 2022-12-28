@@ -3,7 +3,7 @@
 button.question-mark {
 	height: 16px;
 	width: 16px;
-	background-image: url("images/question-mark.svg");
+	background-image: url("./images/question-mark.svg");
 	background-color: transparent;
 	border: none;
 	margin-left: 5px;
@@ -33,7 +33,7 @@ td div.check {
 	width: 20px;
 	margin-left: auto;
 	margin-right: auto;
-	background-image: url("images/green-check.svg");
+	background-image: url("./images/green-check.svg");
 	background-repeat: no-repeat;
 }
 
