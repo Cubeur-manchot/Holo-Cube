@@ -19,3 +19,7 @@ jobs:
       run: ls -l -a
     - name: Cat and remove use stricts
       run: cat ./algorithm/* | grep -v '"use strict";' > holo-cube-algorithm.bundle.js
+    - name: Show directory
+      run: ls -l -a
+    - name: Show bundle
+      run: cat holo-cube-algorithm.bundle.js
