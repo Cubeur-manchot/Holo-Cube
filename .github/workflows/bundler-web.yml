@@ -11,12 +11,8 @@ jobs:
     name: Web bundle
     runs-on: ubuntu-latest
     env:
-      BundlePathBegin: ./bundles/holo-cube-algorithm.
-      BundlePathEnd: -bundle.js
-      Web: web
-      Node: node
-      WebBundlePath: "$BundlePathBegin$Web$BundlePathEnd"
-      NodeBundlePath: "$BundlePathBegin$Node$BundlePathEnd"
+      WebBundlePath: ./bundles/holo-cube-algorithm.web-bundle.js
+      NodeBundlePath: ./bundles/holo-cube-algorithm.node-bundle.js
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
