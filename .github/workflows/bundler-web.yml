@@ -8,18 +8,17 @@ on:
 
 jobs:
   bundle:
-    name: Bundle
+    name: Web bundle
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Show path
-      run: pwd
-    - name: Show directory
-      run: ls -l -a
     - name: Cat and remove use stricts
-      run: cat ./algorithm/* | grep -v '"use strict";' > holo-cube-algorithm.bundle.js
-    - name: Show directory
-      run: ls -l -a
+      run: cat ./algorithm/* | grep -v '"use strict";' > ./bundles/web/holo-cube-algorithm.bundle.js
     - name: Show bundle
-      run: cat holo-cube-algorithm.bundle.js
+      run: cat holo-cube-algorithm.web-bundle.js
+    - name: Publish artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: holo-cube-web-bundle
+        path: ./bundles/web/holo-cube-algorithm.web-bundle.js
