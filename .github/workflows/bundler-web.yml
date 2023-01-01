@@ -15,19 +15,19 @@ jobs:
       BundlePathEnd: -bundle.js
       Web: web
       Node: node
-      WebBundlePath: ${BundlePathBegin}${Web}${BundlePathEnd}
-      NodeBundlePath: ${BundlePathBegin}${Node}${BundlePathEnd}
+      WebBundlePath: $BundlePathBegin$Web$BundlePathEnd
+      NodeBundlePath: $BundlePathBegin$Node$BundlePathEnd
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Cat and remove use stricts
-      run: cat ./algorithm/* | grep -v '"use strict";' > ${WebBundlePath}
+      run: cat ./algorithm/* | grep -v '"use strict";' > $WebBundlePath
     - name: Display bundle path
-      run: echo ${WebBundlePath}
+      run: echo $WebBundlePath
     - name: Show bundle
-      run: cat ${WebBundlePath}
+      run: cat $WebBundlePath
     - name: Publish artifact
       uses: actions/upload-artifact@v3
       with:
         name: holo-cube-web-bundle
-        path: ${WebBundlePath}
+        path: $WebBundlePath
