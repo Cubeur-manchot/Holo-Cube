@@ -1,0 +1,17 @@
+# This workflow will combine all scripts under /algorithm into a single file.
+
+name: Web bundler
+
+on:
+  push:
+    branches: [ "test-workflow" ]
+
+jobs:
+  bundle:
+    name: Bundle
+    runs-on: ubuntu-latest
+    steps:
+    - name: Test
+      run: echo Hey!
+    - name: Cat and remove use stricts
+      run: cat /algorithm/* | grep -V '"use strict";' > holo-cube-algorithm.bundle.js
