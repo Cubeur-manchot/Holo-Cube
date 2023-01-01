@@ -11,7 +11,11 @@ jobs:
     name: Bundle
     runs-on: ubuntu-latest
     steps:
-    - name: Test
-      run: echo Hey!
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Show path
+      run: pwd
+    - name: Show directory
+      run: ls -l -a
     - name: Cat and remove use stricts
       run: cat /algorithm/* | grep -V '"use strict";' > holo-cube-algorithm.bundle.js
