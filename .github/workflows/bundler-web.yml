@@ -15,8 +15,8 @@ jobs:
       BundlePathEnd: -bundle.js
       Web: web
       Node: node
-      WebBundlePath: $BundlePathBegin$Web$BundlePathEnd
-      NodeBundlePath: $BundlePathBegin$Node$BundlePathEnd
+      WebBundlePath: "$BundlePathBegin$Web$BundlePathEnd"
+      NodeBundlePath: "$BundlePathBegin$Node$BundlePathEnd"
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
