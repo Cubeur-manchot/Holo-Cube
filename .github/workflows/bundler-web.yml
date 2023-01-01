@@ -14,11 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Cat and remove use stricts
-      run: cat ./algorithm/* | grep -v '"use strict";' > ./bundles/web/holo-cube-algorithm.bundle.js
+      run: cat ./algorithm/* | grep -v '"use strict";' > ./bundles/holo-cube-algorithm.bundle.js
     - name: Show bundle
       run: cat holo-cube-algorithm.web-bundle.js
     - name: Publish artifact
       uses: actions/upload-artifact@v3
       with:
         name: holo-cube-web-bundle
-        path: ./bundles/web/holo-cube-algorithm.web-bundle.js
+        path: ./bundles/holo-cube-algorithm.web-bundle.js
