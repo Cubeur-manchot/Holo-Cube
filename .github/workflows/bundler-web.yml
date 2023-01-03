@@ -35,6 +35,7 @@ jobs:
   push-artifact:
     name: Push artifact to release branch
     needs: [build-bundles, merge-to-release]
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
