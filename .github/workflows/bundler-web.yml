@@ -7,23 +7,46 @@ on:
     branches: [ "test-workflow" ]
 
 jobs:
-  bundle:
-    name: Web bundle
+  build-bundles:
+    name: Build the bundles
     runs-on: ubuntu-latest
-    env:
-      WebBundlePath: ./bundles/holo-cube-algorithm.web-bundle.js
-      NodeBundlePath: ./bundles/holo-cube-algorithm.node-bundle.js
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Cat and remove use stricts
-      run: cat ./algorithm/* | grep -v '"use strict";' > $WebBundlePath
-    - name: Display bundle path
-      run: echo $WebBundlePath
-    - name: Show bundle
-      run: cat $WebBundlePath
-    - name: Publish artifact
+      with:
+        ref: test-workflow
+    - name: Build web bundle
+      run: cat ./algorithm/* | grep -v '"use strict";' > ./holo-cube-algorithm.web-bundle.js
+    - name: Publish web bundle artifact
       uses: actions/upload-artifact@v3
       with:
         name: holo-cube-web-bundle
+        path: ./holo-cube-algorithm.web-bundle.js
+  merge-to-release:
+    name: Merge to release branch
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: release
+    - name: Merge test-workflow into release
+      run: git merge test-workflow; git commit -m "Auto-merge to release"; git push
+  push-artifact:
+    name: Push artifact to release branch
+    needs: [build-bundles, merge-to-release]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: release
+    - name: Download web bundle artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: holo-cube-web-bundle
         path: ./bundles/holo-cube-algorithm.web-bundle.js
+    - name: Push bundles to release
+      run: git add ./bundles/.; git commit -m "Auto-update bundles"; git push
+
+  
+  
