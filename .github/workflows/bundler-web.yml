@@ -37,6 +37,7 @@ jobs:
         from_branch: test-workflow
         target_branch: release
         github_token: ${{ github.token }}
+        message: Auto merge from test-workflow to release
   push-artifact:
     name: Push artifact to release branch
     needs: [build-bundles, merge-to-release]
