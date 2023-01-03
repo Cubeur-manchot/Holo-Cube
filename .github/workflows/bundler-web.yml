@@ -30,8 +30,12 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: release
-    - name: Merge test-workflow into release
-      run: git merge test-workflow; git commit -m "Auto-merge to release"; git push
+    - name: Merge test-workflow into release locally
+      run: git merge test-workflow
+    - name: Commit the merge
+      run: git commit -m "Auto-merge to release"
+    - name: Push the merge
+      run: git push
   push-artifact:
     name: Push artifact to release branch
     needs: [build-bundles, merge-to-release]
