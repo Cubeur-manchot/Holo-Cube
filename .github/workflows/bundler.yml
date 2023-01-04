@@ -51,7 +51,7 @@ jobs:
       with:
         ref: release
     - name: Download web bundle artifact
-      uses: actions/download-artifact
+      uses: actions/download-artifact@latest
       with:
         name: holo-cube-web-bundle
         path: ./bundles/holo-cube-algorithm.web-bundle.js
