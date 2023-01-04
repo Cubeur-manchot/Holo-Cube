@@ -65,7 +65,7 @@ jobs:
     - name: Echo variable
       run: echo $GITHUB_OUTPUT
     - name: Push bundles to release
-      if: steps.verify_diff.outputs.changed == "true"
+      if: steps.verify_diff.outputs.changed == 'true'
       run: |
         git add ./bundles/
         git commit -m "Auto-update bundles"
