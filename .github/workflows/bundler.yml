@@ -51,7 +51,7 @@ jobs:
       with:
         ref: release
     - name: Download web bundle artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@latest
       with:
         name: holo-cube-web-bundle
         path: ./bundles/holo-cube-algorithm.web-bundle.js
@@ -62,8 +62,6 @@ jobs:
     - name: Check if something to commit
       id: verify_diff
       run: git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
-    - name: Echo variable
-      run: echo $GITHUB_OUTPUT
     - name: Push bundles to release
       if: steps.verify_diff.outputs.changed == 'true'
       run: |
