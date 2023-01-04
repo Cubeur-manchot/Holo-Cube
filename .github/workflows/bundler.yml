@@ -1,0 +1,66 @@
+# This workflow will combine all scripts under /algorithm into a single file.
+# One bundle version for web integration, one version for NodeJS integration.
+
+name: Bundler
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-bundles:
+    name: Build the bundles
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: main
+    - name: Build web bundle
+      run: cat ./algorithm/* | grep -v '"use strict";' > ./holo-cube-algorithm.web-bundle.js
+    - name: Publish web bundle artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: holo-cube-web-bundle
+        path: ./holo-cube-algorithm.web-bundle.js
+
+  merge-to-release:
+    name: Merge to release branch
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: release
+    - name: Merge main to release
+      uses: devmasx/merge-branch@master
+      with:
+        type: now
+        from_branch: main
+        target_branch: release
+        github_token: ${{ github.token }}
+        message: Auto merge from main to release
+  
+  push-artifact:
+    name: Push artifact to release branch
+    needs: [ "build-bundles" , "merge-to-release" ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: release
+    - name: Configure Git credentials
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+    - name: Download web bundle artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: holo-cube-web-bundle
+        path: ./bundles/holo-cube-algorithm.web-bundle.js
+    - name: Push bundles to release
+      run: |
+        git add ./bundles/.
+        git commit -m "Auto-update bundles"
+        git push
