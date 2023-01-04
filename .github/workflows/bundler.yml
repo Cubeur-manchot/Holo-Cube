@@ -55,6 +55,8 @@ jobs:
       with:
         name: holo-cube-web-bundle
         path: ./bundles/
+    - name: LS
+      run: ls ./bundles/
     - name: Configure Git credentials
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
