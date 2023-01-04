@@ -54,7 +54,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: holo-cube-web-bundle
-        path: ./bundles/
+        path: ./bundles/ #to test
     - name: Configure Git credentials
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
