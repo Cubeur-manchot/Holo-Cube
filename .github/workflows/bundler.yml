@@ -50,20 +50,23 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: release
-    - name: Configure Git credentials
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
     - name: Download web bundle artifact
       uses: actions/download-artifact@v3
       with:
         name: holo-cube-web-bundle
         path: ./bundles/holo-cube-algorithm.web-bundle.js
-    - name: Push bundles to release
+    - name: Configure Git credentials
       run: |
-        git status
-        git add ./bundles/.
-        git status
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+    - name: Check if something to commit
+      id: verify_diff
+      run: git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+    - name: Echo variable
+      run: echo $GITHUB_OUTPUT
+    - name: Push bundles to release
+      if: steps.verify_diff.outputs.changed == "true"
+      run: |
+        git add ./bundles/
         git commit -m "Auto-update bundles"
-        git status
         git push
