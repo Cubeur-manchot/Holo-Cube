@@ -1715,3 +1715,5 @@ class Sticker {
 		this.color = color;
 	};
 }
+
+module.exports = {Run};
