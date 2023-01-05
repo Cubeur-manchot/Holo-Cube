@@ -23,6 +23,15 @@ jobs:
       with:
         name: holo-cube-web-bundle
         path: ./holo-cube-algorithm.web-bundle.js
+    - name: Build NodeJS bundle
+      run: |
+        cat ./algorithm/* | grep -v '"use strict";' > ./holo-cube-algorithm.node-bundle.js
+        echo -e 'module.exports = {getResultOfCommand};\n' >> ./holo-cube-algorithm.node-bundle.js
+    - name: Publish NodeJS bundle artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: holo-cube-node-bundle
+        path: ./holo-cube-algorithm.node-bundle.js
 
   merge-to-release:
     name: Merge to release branch
@@ -42,7 +51,7 @@ jobs:
         message: Auto merge from main to release
   
   push-artifact:
-    name: Push artifact to release branch
+    name: Push artifacts to release branch
     needs: [ "build-bundles" , "merge-to-release" ]
     runs-on: ubuntu-latest
     steps:
@@ -54,6 +63,11 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: holo-cube-web-bundle
+        path: ./bundles/
+    - name: Download NodeJS bundle artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: holo-cube-node-bundle
         path: ./bundles/
     - name: Configure Git credentials
       run: |
