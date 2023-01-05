@@ -1319,7 +1319,7 @@ class Dodecahedron extends TwistyPuzzle {
 	};
 	static shape = "dodecahedron";
 }
-// todo remove this test line
+
 // Represents the information of a run (input, working, output). This is the entry point for everything related to Holo-Cube.
 
 /*
