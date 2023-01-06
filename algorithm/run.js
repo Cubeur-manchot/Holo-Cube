@@ -20,8 +20,9 @@ Object structure to give to Run class :
 		puzzleHeight: number, // height of the puzzle in px, default value is 100
 		puzzleWidth: number, // width of the puzzle in px, default value is 100
 		puzzleScale: number, // scale to apply to both height and width of the puzzle, default is 1
-		puzzleColor: color // color of the cube, excluding the stickers, (black, primary, stickerless, transparent, ...)
-		view: string // view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"
+		puzzleColor: color, // color of the cube, excluding the stickers, (black, primary, stickerless, transparent, ...)
+		view: string, // view of the puzzle ("plan"|"isometric"|"net"), default value is "plan"
+		document: object // document implementation, default value is the document calling the script
 	},
 	logger: {
 		verbosity: int, // level of verbosity for the logs (-1 = no logs, 0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1
@@ -344,6 +345,16 @@ class DrawingOptionsRunInput {
 					this.setColorValueFromDefault(drawingOptionsProperty);
 				}
 			}
+			if (![undefined, null].includes(drawingOptionsObject.document)) {
+				if (typeof drawingOptionsObject.document !== "object") {
+					this.run.throwError("Property drawingOptions.document must be an object.");
+				} else {
+					this.run.logger.detailedLog("Using specified document for SVG creation.");
+					this.document = drawingOptionsObject.document;
+				}
+			} else {
+				this.setDocumentFromDefault();
+			}
 		} else {
 			this.setAllValuesFromDefault();
 		}
@@ -355,6 +366,7 @@ class DrawingOptionsRunInput {
 		for (let drawingOptionsColorProperty of ["imageBackgroundColor", "puzzleColor"]) {
 			this.setColorValueFromDefault(drawingOptionsColorProperty);
 		}
+		this.setDocumentFromDefault();
 		this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
 	};
 	setNumericValueFromDefault = propertyName => {
@@ -364,6 +376,14 @@ class DrawingOptionsRunInput {
 	setColorValueFromDefault = propertyName => {
 		this[propertyName] = new Color(DrawingOptionsRunInput.defaultDrawingOptions[propertyName]);
 		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunInput.defaultDrawingOptions[propertyName]}.`);
+	};
+	setDocumentFromDefault = () => {
+		if (document) {
+			this.run.logger.detailedLog("Property drawingOptions.document was not provided, using default document for SVG creation.");
+			this.document = document;
+		} else {
+			this.run.throwError("No document was specified for SVG creation and none is available by default.");
+		}
 	};
 	checkNumberNotZero = (variableValue, variableName) => {
 		if (typeof variableValue !== "number") {

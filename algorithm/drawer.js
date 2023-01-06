@@ -2,32 +2,37 @@
 
 // Represent the information of an SVG object.
 
-class SVG {
+class SvgDrawer {
 	static pathElementMoveTo = "moveTo";
 	static pathElementLineTo = "lineTo";
 	static pathElementHorizontalLineTo = "horizontalLineTo";
 	static pathElementVerticalLineTo = "verticalLineTo";
 	static pathElementArc = "arc";
 	static pathElementClose = "close";
-	static createNode = (type, fields) => {
-		let node = document.createElementNS("http://www.w3.org/2000/svg", type);
+	constructor(document, run) {
+		this.run = run;
+		this.run.logger.detailedLog("Creating new SvgDrawer.");
+		this.document = document;
+	};
+	createNode = (type, fields) => {
+		let node = this.document.createElementNS("http://www.w3.org/2000/svg", type);
 		for (let property in fields) {
 			node.setAttributeNS(null, property, fields[property]);
 		}
 		return node;
 	};
-	static createSvgRootNode = (height, width) => {
-		return SVG.createNode("svg", {
+	createSvgRootNode = (height, width) => {
+		return this.createNode("svg", {
 			id: "svgRoot",
 			height: height,
 			width: width,
 			viewBox: `${-width/2} ${-height/2} ${width} ${height}`
 		});
 	};
-	static createSquareNode = (id, horizontalPosition, verticalPosition, size, cornerRadius, fillingColor) => {
-		return SVG.createRectNode(id, horizontalPosition, verticalPosition, size, size, cornerRadius, cornerRadius, fillingColor);
+	createSquareNode = (id, horizontalPosition, verticalPosition, size, cornerRadius, fillingColor) => {
+		return this.createRectNode(id, horizontalPosition, verticalPosition, size, size, cornerRadius, cornerRadius, fillingColor);
 	};
-	static createRectNode = (id, horizontalPosition, verticalPosition, width, height, cornerRadiusX, cornerRadiusY, fillingColor) => {
+	createRectNode = (id, horizontalPosition, verticalPosition, width, height, cornerRadiusX, cornerRadiusY, fillingColor) => {
 		let rectObject = {
 			id: id,
 			x: horizontalPosition,
@@ -41,42 +46,42 @@ class SVG {
 		if (cornerRadiusY) {
 			rectObject.ry = cornerRadiusY;
 		}
-		let svgRectTag = SVG.createNode("rect", rectObject);
+		let svgRectTag = this.createNode("rect", rectObject);
 		if (fillingColor) {
-			SVG.fill(svgRectTag, fillingColor);
+			this.fill(svgRectTag, fillingColor);
 		}
 		return svgRectTag;
 	};
-	static createPathNode = (id, pathElements, fillingColor) => {
+	createPathNode = (id, pathElements, fillingColor) => {
 		let dElements = [];
 		for (let pathElement of pathElements) {
 			switch (pathElement.type) {
-				case SVG.pathElementMoveTo:
+				case SvgDrawer.pathElementMoveTo:
 					dElements.push(`M ${pathElement.x} ${pathElement.y}`); break;
-				case SVG.pathElementLineTo:
+				case SvgDrawer.pathElementLineTo:
 					dElements.push(`L ${pathElement.x} ${pathElement.y}`); break;
-				case SVG.pathElementHorizontalLineTo:
+				case SvgDrawer.pathElementHorizontalLineTo:
 					dElements.push(`H ${pathElement.x}`); break;
-				case SVG.pathElementVerticalLineTo:
+				case SvgDrawer.pathElementVerticalLineTo:
 					dElements.push(`V ${pathElement.y}`); break;
-				case SVG.pathElementArc:
+				case SvgDrawer.pathElementArc:
 					dElements.push(`A ${pathElement.rx} ${pathElement.ry} ${pathElement.rotation ?? 0} ${pathElement.large ? 1 : 0} ${pathElement.sweep} ${pathElement.x} ${pathElement.y}`); break;
-				case SVG.pathElementClose:
+				case SvgDrawer.pathElementClose:
 					dElements.push("Z"); break;
 				default: this.run.throwError(`Unknown path element type ${pathElement.type}.`);
 			}
 		}
-		let pathTag = SVG.createNode("path", {id: id, d: dElements.join(" ")});
-		SVG.fill(pathTag, fillingColor);
+		let pathTag = this.createNode("path", {id: id, d: dElements.join(" ")});
+		this.fill(pathTag, fillingColor);
 		return pathTag;
 	};
-	static createGroupNode = properties => {
-		return SVG.createNode("g", properties);
+	createGroupNode = properties => {
+		return this.createNode("g", properties);
 	};
-	static clone = svgNode => {
+	clone = svgNode => {
 		return svgNode.cloneNode(true);
 	};
-	static fill = (svgElement, fillingColor) => {
+	fill = (svgElement, fillingColor) => {
 		svgElement.setAttribute("fill", fillingColor.getRgbHex6());
 		let alpha = fillingColor.getAlpha();
 		if (alpha !== 1) {
@@ -92,6 +97,7 @@ class TwistyPuzzleDrawer {
 		this.run = run;
 		this.run.logger.debugLog("Creating new TwistyPuzzleDrawer.");
 		this.options = this.run.drawingOptions;
+		this.svgDrawer = new SvgDrawer(this.options.document, this.run);
 		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
 			if (!this.options[drawingOptionColorProperty] instanceof Color) {
 				if ([null, undefined].includes(this.options[drawingOptionColorProperty])) {
@@ -109,6 +115,9 @@ class TwistyPuzzleDrawer {
 					this.run.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionNumericProperty}.`);
 				}
 			}
+		}
+		if (typeof this.options.document !== "object") {
+			this.run.throwError("Creating TwistyPuzzleDrawer with erroneous document property.");
 		}
 	};
 }
@@ -147,8 +156,8 @@ class CubePlanDrawer extends CubeDrawer {
 	};
 	createSvgSkeletton = () => {
 		this.run.logger.debugLog("Creating puzzle image skeletton");
-		let svg = SVG.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
-		let background = SVG.createRectNode(
+		let svg = this.svgDrawer.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
+		let background = this.svgDrawer.createRectNode(
 			"background",
 			-this.options.imageWidth / 2,
 			-this.options.imageHeight / 2,
@@ -158,14 +167,14 @@ class CubePlanDrawer extends CubeDrawer {
 			0,
 			this.options.imageBackgroundColor);
 		svg.appendChild(background);
-		let puzzleGroup = SVG.createGroupNode({
+		let puzzleGroup = this.svgDrawer.createGroupNode({
 			id: "puzzle",
 			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
 		});
 		this.run.logger.debugLog("Creating faces skeletton.");
 		let scale = this.cubeSize / (this.cubeSize + 1);
-		let uFace = SVG.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
-		uFace.appendChild(SVG.createSquareNode( // face background
+		let uFace = this.svgDrawer.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
+		uFace.appendChild(this.svgDrawer.createSquareNode( // face background
 			"face_U_background",
 			-50,
 			-50,
@@ -173,13 +182,13 @@ class CubePlanDrawer extends CubeDrawer {
 			0,
 			this.options.puzzleColor
 		));
-		let fFace = SVG.createGroupNode({id: "face_F", transform: `scale(${scale}, ${scale})`});
+		let fFace = this.svgDrawer.createGroupNode({id: "face_F", transform: `scale(${scale}, ${scale})`});
 		fFace.appendChild(this.createAdjacentFaceBackground("F"));
-		let rFace = SVG.createGroupNode({id: "face_R", transform: `scale(${scale}, ${scale}) rotate(-90 0 0)`});
+		let rFace = this.svgDrawer.createGroupNode({id: "face_R", transform: `scale(${scale}, ${scale}) rotate(-90 0 0)`});
 		rFace.appendChild(this.createAdjacentFaceBackground("R"));
-		let bFace = SVG.createGroupNode({id: "face_B", transform: `scale(${scale}, ${scale}) rotate(180 0 0)`});
+		let bFace = this.svgDrawer.createGroupNode({id: "face_B", transform: `scale(${scale}, ${scale}) rotate(180 0 0)`});
 		bFace.appendChild(this.createAdjacentFaceBackground("B"));
-		let lFace = SVG.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
+		let lFace = this.svgDrawer.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
 		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
 			this.run.logger.debugLog("Creating centers stickers skeletton.");
@@ -281,7 +290,7 @@ class CubePlanDrawer extends CubeDrawer {
 		this.skeletton = svg;
 	};
 	createUFaceSticker = (id, gridStartingX, gridStartingY) => {
-		return SVG.createSquareNode(
+		return this.svgDrawer.createSquareNode(
 			id,
 			this.options.startingValues[gridStartingX],
 			this.options.startingValues[gridStartingY],
@@ -291,20 +300,20 @@ class CubePlanDrawer extends CubeDrawer {
 	};
 	createAdjacentFaceBackground = faceName => {
 		this.options.faceCornerRadius
-		return SVG.createPathNode(`face_${faceName}_background`,
+		return this.svgDrawer.createPathNode(`face_${faceName}_background`,
 			[
-				{type: SVG.pathElementMoveTo, x: -50, y: 50},
-				{type: SVG.pathElementVerticalLineTo, y: 50 + 50 / this.cubeSize - this.options.faceCornerRadius / 2},
-				{type: SVG.pathElementArc, x: - 50 + this.options.faceCornerRadius, y: 50 + 50 / this.cubeSize, rx: this.options.faceCornerRadius, ry: this.options.faceCornerRadius / 2, sweep: 0, large: false},
-				{type: SVG.pathElementHorizontalLineTo, x: 50 - this.options.faceCornerRadius},
-				{type: SVG.pathElementArc, x: 50, y: 50 + 50 / this.cubeSize - this.options.faceCornerRadius / 2, rx: this.options.faceCornerRadius, ry: this.options.faceCornerRadius / 2, sweep: 0, large: false},
-				{type: SVG.pathElementVerticalLineTo, y: 50},
-				{type: SVG.pathElementClose}
+				{type: SvgDrawer.pathElementMoveTo, x: -50, y: 50},
+				{type: SvgDrawer.pathElementVerticalLineTo, y: 50 + 50 / this.cubeSize - this.options.faceCornerRadius / 2},
+				{type: SvgDrawer.pathElementArc, x: - 50 + this.options.faceCornerRadius, y: 50 + 50 / this.cubeSize, rx: this.options.faceCornerRadius, ry: this.options.faceCornerRadius / 2, sweep: 0, large: false},
+				{type: SvgDrawer.pathElementHorizontalLineTo, x: 50 - this.options.faceCornerRadius},
+				{type: SvgDrawer.pathElementArc, x: 50, y: 50 + 50 / this.cubeSize - this.options.faceCornerRadius / 2, rx: this.options.faceCornerRadius, ry: this.options.faceCornerRadius / 2, sweep: 0, large: false},
+				{type: SvgDrawer.pathElementVerticalLineTo, y: 50},
+				{type: SvgDrawer.pathElementClose}
 			],
 			this.options.puzzleColor);
 	};
 	createAdjacentFaceSticker = (id, gridStarting) => {
-		return SVG.createRectNode(
+		return this.svgDrawer.createRectNode(
 			id,
 			this.options.startingValues[gridStarting],
 			50 + this.options.adjacentFaceStickerMargin,
@@ -317,7 +326,7 @@ class CubePlanDrawer extends CubeDrawer {
 	drawPuzzle = puzzle => { // clone skeletton and apply colors on each displayed sticker
 		this.run.logger.generalLog("Drawing puzzle.");
 		this.run.logger.debugLog("Cloning skeletton.");
-		let svg = SVG.clone(this.skeletton);
+		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
 			this.run.logger.detailedLog(`Coloring stickers of orbit type ${orbit.type}`
 				+ (orbit.type === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
@@ -341,7 +350,7 @@ class CubePlanDrawer extends CubeDrawer {
 					this.run.throwError(`Unknown cube orbit type "${orbit.type}"`);
 			}
 			for (let slotIndex of slotIndexList) {
-				SVG.fill(svg.querySelector(`${selectorBegin}${slotIndex}`),
+				this.svgDrawer.fill(svg.querySelector(`${selectorBegin}${slotIndex}`),
 					orbit.slotList[slotIndex].getContent().color);
 			}
 		}
