@@ -131,8 +131,8 @@ class Color {
 // Represents one cycle of permutation on an orbit.
 
 class Cycle {
-	constructor(cycle, orbitType, run, orbitRankOrRanks) {
-		this.run = run;
+	constructor(cycle, orbitType, runner, orbitRankOrRanks) {
+		this.runner = runner;
 		this.slotIndexList = cycle;
 		this.orbitType = orbitType;
 		if (typeof orbitRankOrRanks === "number") {
@@ -149,34 +149,34 @@ class Cycle {
 	};
 	applyOnOrbit = orbit => {
 		if (!this.getLength()) {
-			this.run.throwError("Applying cycle of length 0.");
+			this.runner.throwError("Applying cycle of length 0.");
 		}
 		if (this.getLength() === 1) {
-			this.run.logger.debugLog("Ignoring cycle of length 1.");
+			this.runner.logger.debugLog("Ignoring cycle of length 1.");
 			return;
 		}
 		if (!orbit) {
-			this.run.throwError("Applying cycle on undefined orbit.");
+			this.runner.throwError("Applying cycle on undefined orbit.");
 		}
 		if (this.orbitType !== orbit.type) {
-		this.run.logger.debugLog(`Ignoring cycle because cycle orbit type (${this.orbitType}) and orbit type ({orbit.type}) are different.`);
+		this.runner.logger.debugLog(`Ignoring cycle because cycle orbit type (${this.orbitType}) and orbit type ({orbit.type}) are different.`);
 			return;
 		}
 		if (orbit instanceof WingCubeOrbit && this.orbitRank !== orbit.rank) {
-			this.run.logger.debugLog(`Ignoring cycle because cyle orbit rank (${this.orbitRank}) and orbit rank (${orbit.rank}) are different.`);
+			this.runner.logger.debugLog(`Ignoring cycle because cyle orbit rank (${this.orbitRank}) and orbit rank (${orbit.rank}) are different.`);
 			return;
 		}
 		if (orbit instanceof CenterBigCubeOrbit && !(this.orbitRanks[0] === orbit.ranks[0] && this.orbitRanks[1] === orbit.ranks[1])) {
-			this.run.logger.debugLog(`Ignoring cycle because cyle orbit ranks (${this.orbitRanks.join(", ")}) and orbit rank (${orbit.ranks.join(", ")}) are different.`);
+			this.runner.logger.debugLog(`Ignoring cycle because cyle orbit ranks (${this.orbitRanks.join(", ")}) and orbit rank (${orbit.ranks.join(", ")}) are different.`);
 			return;
 		}
 		if (!orbit.getSize()) {
-			this.run.throwError("Applying cycle on orbit of size 0.");
+			this.runner.throwError("Applying cycle on orbit of size 0.");
 		}
 		if (!orbit.slotList) {
-			this.run.throwError("Applying cycle on a cycle with no slot list.");
+			this.runner.throwError("Applying cycle on a cycle with no slot list.");
 		}
-		this.run.logger.debugLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
+		this.runner.logger.debugLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
 			+ ".");
@@ -197,9 +197,9 @@ class SvgDrawer {
 	static pathElementVerticalLineTo = "verticalLineTo";
 	static pathElementArc = "arc";
 	static pathElementClose = "close";
-	constructor(document, run) {
-		this.run = run;
-		this.run.logger.detailedLog("Creating new SvgDrawer.");
+	constructor(document, runner) {
+		this.runner = runner;
+		this.runner.logger.detailedLog("Creating new SvgDrawer.");
 		this.document = document;
 	};
 	createNode = (type, fields) => {
@@ -256,7 +256,7 @@ class SvgDrawer {
 					dElements.push(`A ${pathElement.rx} ${pathElement.ry} ${pathElement.rotation ?? 0} ${pathElement.large ? 1 : 0} ${pathElement.sweep} ${pathElement.x} ${pathElement.y}`); break;
 				case SvgDrawer.pathElementClose:
 					dElements.push("Z"); break;
-				default: this.run.throwError(`Unknown path element type ${pathElement.type}.`);
+				default: this.runner.throwError(`Unknown path element type ${pathElement.type}.`);
 			}
 		}
 		let pathTag = this.createNode("path", {id: id, d: dElements.join(" ")});
@@ -281,57 +281,57 @@ class SvgDrawer {
 // Represents the information of a puzzle image drawer.
 
 class TwistyPuzzleDrawer {
-	constructor(run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new TwistyPuzzleDrawer.");
-		this.options = this.run.drawingOptions;
-		this.svgDrawer = new SvgDrawer(this.options.document, this.run);
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new TwistyPuzzleDrawer.");
+		this.options = this.runner.drawingOptions;
+		this.svgDrawer = new SvgDrawer(this.options.document, this.runner);
 		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
 			if (!this.options[drawingOptionColorProperty] instanceof Color) {
 				if ([null, undefined].includes(this.options[drawingOptionColorProperty])) {
-					this.run.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionColorProperty}.`);
+					this.runner.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionColorProperty}.`);
 				} else {
-					this.run.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionColorProperty}.`);
+					this.runner.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionColorProperty}.`);
 				}
 			}
 		}
 		for (let drawingOptionNumericProperty of ["puzzleHeight", "puzzleWidth", "imageHeight", "imageWidth"]) {
 			if (typeof this.options[drawingOptionNumericProperty] !== "number") {
 				if (this.options[drawingOptionNumericProperty]) {
-					this.run.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionNumericProperty}.`);
+					this.runner.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionNumericProperty}.`);
 				} else {
-					this.run.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionNumericProperty}.`);
+					this.runner.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionNumericProperty}.`);
 				}
 			}
 		}
 		if (typeof this.options.document !== "object") {
-			this.run.throwError("Creating TwistyPuzzleDrawer with erroneous document property.");
+			this.runner.throwError("Creating TwistyPuzzleDrawer with erroneous document property.");
 		}
 	};
 }
 
 class CubeDrawer extends TwistyPuzzleDrawer {
-	constructor(run) {
-		super(run);
-		this.run.logger.debugLog("Creating new CubeDrawer.");
-		this.blankPuzzle = this.run.blankPuzzle;
-		this.cubeSize = this.run.puzzle.size;
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.debugLog("Creating new CubeDrawer.");
+		this.blankPuzzle = this.runner.blankPuzzle;
+		this.cubeSize = this.runner.puzzle.size;
 	};
 }
 
 class CubeIsometricDrawer extends CubeDrawer {
-	constructor(run) {
-		super(run);
+	constructor(runner) {
+		super(runner);
 	};
 	createSvgSkeletton = () => { // todo
 	};
 }
 
 class CubePlanDrawer extends CubeDrawer {
-	constructor(run) {
-		super(run);
-		this.run.logger.generalLog("Creating new CubePlanDrawer.");
-		this.run.logger.debugLog("Initializing dimensions.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.generalLog("Creating new CubePlanDrawer.");
+		this.runner.logger.debugLog("Initializing dimensions.");
 		this.options.faceCornerRadius = 20 / this.cubeSize;
 		this.options.stickerSize = 90 / this.cubeSize;
 		this.options.stickerCornerRadius = 20 / this.cubeSize;
@@ -343,7 +343,7 @@ class CubePlanDrawer extends CubeDrawer {
 		}
 	};
 	createSvgSkeletton = () => {
-		this.run.logger.debugLog("Creating puzzle image skeletton");
+		this.runner.logger.debugLog("Creating puzzle image skeletton");
 		let svg = this.svgDrawer.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
 		let background = this.svgDrawer.createRectNode(
 			"background",
@@ -359,7 +359,7 @@ class CubePlanDrawer extends CubeDrawer {
 			id: "puzzle",
 			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
 		});
-		this.run.logger.debugLog("Creating faces skeletton.");
+		this.runner.logger.debugLog("Creating faces skeletton.");
 		let scale = this.cubeSize / (this.cubeSize + 1);
 		let uFace = this.svgDrawer.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
 		uFace.appendChild(this.svgDrawer.createSquareNode( // face background
@@ -379,7 +379,7 @@ class CubePlanDrawer extends CubeDrawer {
 		let lFace = this.svgDrawer.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
 		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
-			this.run.logger.debugLog("Creating centers stickers skeletton.");
+			this.runner.logger.debugLog("Creating centers stickers skeletton.");
 			let startingValueIndex = (this.cubeSize - 1) / 2;
 			let idBegin = `sticker_${CenterCubeOrbit.type}_`;
 			uFace.appendChild(this.createUFaceSticker(`${idBegin}0`, startingValueIndex, startingValueIndex));
@@ -391,7 +391,7 @@ class CubePlanDrawer extends CubeDrawer {
 			}
 		}
 		if (this.blankPuzzle.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
-			this.run.logger.debugLog("Creating corners stickers skeletton.");
+			this.runner.logger.debugLog("Creating corners stickers skeletton.");
 			let highIndex = this.cubeSize - 1;
 			let idBegin = `sticker_${CornerCubeOrbit.type}_`;
 			uFace.appendChild(this.createUFaceSticker(`${idBegin}0`, 0, 0));
@@ -408,7 +408,7 @@ class CubePlanDrawer extends CubeDrawer {
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}21`, highIndex));
 		}
 		if (this.blankPuzzle.hasOrbitType(MidgeCubeOrbit.type)) { // stickers of type MidgeCubeOrbit
-			this.run.logger.debugLog("Creating midges stickers skeletton.");
+			this.runner.logger.debugLog("Creating midges stickers skeletton.");
 			let middleIndex = (this.cubeSize - 1) / 2;
 			let highIndex = this.cubeSize - 1;
 			let idBegin = `sticker_${MidgeCubeOrbit.type}_`;
@@ -422,7 +422,7 @@ class CubePlanDrawer extends CubeDrawer {
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}20`, middleIndex));
 		}
 		if (this.blankPuzzle.hasOrbitType(WingCubeOrbit.type)) { // stickers of type WingCubeOrbit
-			this.run.logger.debugLog("Creating wings stickers skeletton.");
+			this.runner.logger.debugLog("Creating wings stickers skeletton.");
 			let lowValue = this.options.startingValues[0];
 			let highIndex = this.cubeSize - 1;
 			let highValue = this.options.startingValues[this.cubeSize - 1];
@@ -449,7 +449,7 @@ class CubePlanDrawer extends CubeDrawer {
 			}
 		}
 		if (this.blankPuzzle.hasOrbitType(CenterBigCubeOrbit.type)) { // stickers of type CenterBigCubeOrbit
-			this.run.logger.debugLog("Creating big cube centers stickers skeletton.");
+			this.runner.logger.debugLog("Creating big cube centers stickers skeletton.");
 			for (let firstRank = 1; firstRank <= this.blankPuzzle.maxRankWithoutMiddle; firstRank++) {
 				let firstComplementaryIndex = this.cubeSize - firstRank - 1;
 				for (let secondRank = 1; secondRank <= this.blankPuzzle.maxRankWithMiddle; secondRank++) {
@@ -512,11 +512,11 @@ class CubePlanDrawer extends CubeDrawer {
 		);
 	};
 	drawPuzzle = puzzle => { // clone skeletton and apply colors on each displayed sticker
-		this.run.logger.generalLog("Drawing puzzle.");
-		this.run.logger.debugLog("Cloning skeletton.");
+		this.runner.logger.generalLog("Drawing puzzle.");
+		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			this.run.logger.detailedLog(`Coloring stickers of orbit type ${orbit.type}`
+			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbit.type}`
 				+ (orbit.type === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
 				+ (orbit.type === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
 				+ ".");
@@ -535,7 +535,7 @@ class CubePlanDrawer extends CubeDrawer {
 					selectorBegin += `${orbit.ranks[0]}_${orbit.ranks[1]}_`;
 					break;
 				default:
-					this.run.throwError(`Unknown cube orbit type "${orbit.type}"`);
+					this.runner.throwError(`Unknown cube orbit type "${orbit.type}"`);
 			}
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(svg.querySelector(`${selectorBegin}${slotIndex}`),
@@ -547,8 +547,8 @@ class CubePlanDrawer extends CubeDrawer {
 }
 
 class CubeNetDrawer extends CubeDrawer {
-	constructor(run) {
-		super(run);
+	constructor(runner) {
+		super(runner);
 	};
 	createSvgSkeletton = () => { // todo
 	};
@@ -565,21 +565,21 @@ class CubeNetDrawer extends CubeDrawer {
 class Logger { // doesn't write any log
 	static consoleLog = console.log;
 	resultLog = message => {
-		this.run.logs += message + "\n";
+		this.runner.logs += message + "\n";
 	};
 	static offLog = () => {};
 	htmlLog = message => {
 		this.logHtmlTag.innerHTML += message + "<br/>";
 	};
-	constructor (mode, run, htmlTag) {
-		this.run = run;
+	constructor (mode, runner, htmlTag) {
+		this.runner = runner;
 		this.mode = mode;
 		switch (mode) {
 			case "console":this.log = Logger.consoleLog; break;
-			case "result": this.run.logs = ""; this.log = this.resultLog; break;
+			case "result": this.runner.logs = ""; this.log = this.resultLog; break;
 			case "htmlTag": this.logHtmlTag = htmlTag; this.log = this.htmlLog; break;
 			case "off": this.log = Logger.offLog; break;
-			default: this.run.throwError(`Invalid log mode ${mode}.`);
+			default: this.runner.throwError(`Invalid log mode ${mode}.`);
 			// todo probably add Google Sheet cell as a mode
 		}
 	};
@@ -593,8 +593,8 @@ class Logger { // doesn't write any log
 }
 
 class ErrorLogger extends Logger { // writes only error logs
-	constructor (mode, run, htmlTag) {
-		super(mode, run, htmlTag);
+	constructor (mode, runner, htmlTag) {
+		super(mode, runner, htmlTag);
 	};
 	errorLog = message => {
 		this.log(`[Error] ${message}`);
@@ -602,22 +602,22 @@ class ErrorLogger extends Logger { // writes only error logs
 }
 
 class GeneralLogger extends ErrorLogger { // writes general informative logs
-	constructor (mode, run, htmlTag) {
-		super(mode, run, htmlTag);
+	constructor (mode, runner, htmlTag) {
+		super(mode, runner, htmlTag);
 	};
 	generalLog = this.log;
 }
 
 class DetailedLogger extends GeneralLogger { // writes detailed informative logs and warning logs
-	constructor (mode, run, htmlTag) {
-		super(mode, run, htmlTag);
+	constructor (mode, runner, htmlTag) {
+		super(mode, runner, htmlTag);
 	};
 	detailedLog = this.log;
 }
 
 class DebugLogger extends DetailedLogger { // writes all logs for debug
-	constructor (mode, run, htmlTag) {
-		super(mode, run, htmlTag);
+	constructor (mode, runner, htmlTag) {
+		super(mode, runner, htmlTag);
 	};
 	debugLog = this.log;
 }
@@ -625,16 +625,16 @@ class DebugLogger extends DetailedLogger { // writes all logs for debug
 // Represents the information of a move sequence.
 
 class MoveSequence {
-	constructor(moves, run) {
-		this.run = run;
-		this.run.logger.generalLog("Creating new MoveSequence.");
+	constructor(moves, runner) {
+		this.runner = runner;
+		this.runner.logger.generalLog("Creating new MoveSequence.");
 		this.moveList = moves ?? [];
 	};
 	appendMove = move => {
 		this.moveList.push(move);
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.logger.generalLog(`Applying move sequence of length ${this.moveList.length} on a solved puzzle.`);
+		this.runner.logger.generalLog(`Applying move sequence of length ${this.moveList.length} on a solved puzzle.`);
 		this.moveList.forEach(move => move.applyOnPuzzle(puzzle));
 	};
 };
@@ -642,9 +642,9 @@ class MoveSequence {
 // Represent the permutation induced by a move in terms of cycles.
 
 class Move {
-	constructor(run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new Move.");
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new Move.");
 		this.cycles = [];
 	};
 	getCycleList = () => {
@@ -652,11 +652,11 @@ class Move {
 	};
 	pushCycles = (cycles, orbitType, rankOrRanks) => {
 		for (let slotList of cycles) {
-			this.cycles.push(new Cycle(slotList, orbitType, this.run, rankOrRanks));
+			this.cycles.push(new Cycle(slotList, orbitType, this.runner, rankOrRanks));
 		}
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.logger.detailedLog("Applying move on puzzle.");
+		this.runner.logger.detailedLog("Applying move on puzzle.");
 		for (let cycle of this.getCycleList()) {
 			for (let orbit of puzzle.orbitList) {
 				if (cycle.orbitType === orbit.type) {
@@ -773,23 +773,23 @@ class CubeMove extends Move {
 			}
 		}
 	};
-	constructor({face, sliceBegin, sliceEnd, turnCount, run}) {
-		super(run);
-		this.run.logger.detailedLog("Creating new CubeMove.");
+	constructor({face, sliceBegin, sliceEnd, turnCount, runner}) {
+		super(runner);
+		this.runner.logger.detailedLog("Creating new CubeMove.");
 		this.face = face;
 		this.sliceBegin = sliceBegin;
 		this.sliceEnd = sliceEnd;
 		this.turnCount = turnCount;
-		this.cube = this.run.blankPuzzle;
+		this.cube = this.runner.blankPuzzle;
 		let isBigCube = this.cube instanceof BlankCubeBig;
 		if (this.sliceBegin < 1) {
-			this.run.throwError("Creating move with sliceBegin < 1.");
+			this.runner.throwError("Creating move with sliceBegin < 1.");
 		}
 		if (this.sliceEnd > this.cube.puzzleSize) {
-			this.run.throwError("Creating move with sliceEnd > cube size.");
+			this.runner.throwError("Creating move with sliceEnd > cube size.");
 		}
 		if (this.sliceBegin > this.sliceEnd) {
-			this.run.throwError("Creating move with sliceBegin > sliceEnd.");
+			this.runner.throwError("Creating move with sliceBegin > sliceEnd.");
 		}
 		if (this.sliceBegin === 1) { // first layer
 			this.treatFirstLayer(isBigCube);
@@ -935,21 +935,21 @@ class CubeMove extends Move {
 // Represents the information of a move sequence parser.
 
 class MoveSequenceParser {
-	constructor(run) {
-		this.run = run;
-		this.run.logger.generalLog("Creating new MoveSequenceParser.");
-		switch(this.run.blankPuzzle.shape) {
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.generalLog("Creating new MoveSequenceParser.");
+		switch(this.runner.blankPuzzle.shape) {
 			case Cube.shape:
-				this.moveParser = new CubeMoveParser(this.run);
-				this.run.logger.debugLog("Attaching CubeMoveParser to MoveSequenceParser.");
+				this.moveParser = new CubeMoveParser(this.runner);
+				this.runner.logger.debugLog("Attaching CubeMoveParser to MoveSequenceParser.");
 				break;
 			default:
-				this.run.throwError(`Cannot parse move sequence for puzzle type "${this.run.blankPuzzle.shape}."`);
+				this.runner.throwError(`Cannot parse move sequence for puzzle type "${this.runner.blankPuzzle.shape}."`);
 		}
 	};
 	parseMoveSequence = moveSequenceInput => {
-		this.run.logger.generalLog(`Parsing move sequence ${moveSequenceInput}.`);
-		let moveSequence = new MoveSequence([], this.run);
+		this.runner.logger.generalLog(`Parsing move sequence ${moveSequenceInput}.`);
+		let moveSequence = new MoveSequence([], this.runner);
 		for (let moveToParse of typeof moveSequenceInput === "string" ? moveSequenceInput.split(" ").filter(move => move !== "") : moveSequenceInput) {
 			moveSequence.appendMove(this.moveParser.parseMove(moveToParse));
 		}
@@ -960,10 +960,10 @@ class MoveSequenceParser {
 // Represents the information of a move parser, used by the move sequence parser to individually parse each move of the sequence.
 
 class MoveParser {
-	constructor(run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new MoveParser.");
-		this.blankPuzzle = run.blankPuzzle;
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new MoveParser.");
+		this.blankPuzzle = runner.blankPuzzle;
 	};
 }
 
@@ -985,13 +985,13 @@ class CubeMoveParser extends MoveParser {
 	static cleanTurnCount = turnCount => {
 		return turnCount % 4 + (turnCount < 0 ? 4 : 0);
 	};
-	constructor(run) {
-		super(run);
-		this.run.logger.generalLog("Creating new CubeMoveParser.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.generalLog("Creating new CubeMoveParser.");
 		this.cubeSize = this.blankPuzzle.puzzleSize;
 	};
 	parseMove = moveString => {
-		this.run.logger.detailedLog(`Parsing move ${moveString}.`);
+		this.runner.logger.detailedLog(`Parsing move ${moveString}.`);
 		let faceListSubRegExp = "[UFRDBL]";
 		let directionListSubRegExp = "('?\\d*|\\d+')"; // empty, ', 2, 2', '2
 		if (new RegExp(`^[xyz]${directionListSubRegExp}$`).test(moveString)) { // x, y', z2, ...
@@ -1000,33 +1000,33 @@ class CubeMoveParser extends MoveParser {
 				sliceBegin: 1,
 				sliceEnd: this.cubeSize,
 				turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(1)),
-				run: this.run
+				runner: this.runner
 			});
 		} else if (this.cubeSize === 1) {
-			this.run.throwError("Applying an incorrect move on a 1x1x1 cube.");
+			this.runner.throwError("Applying an incorrect move on a 1x1x1 cube.");
 		} else if (new RegExp(`^${faceListSubRegExp}${directionListSubRegExp}$`).test(moveString)) { // R, U', F2, ...
 			return new CubeMove({
 				face: moveString[0],
 				sliceBegin: 1,
 				sliceEnd: 1,
 				turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(1)),
-				run: this.run
+				runner: this.runner
 			});
 		} else if (this.cubeSize === 2) {
-			this.run.throwError("Applying an incorrect move on a 2x2x2 cube.");
+			this.runner.throwError("Applying an incorrect move on a 2x2x2 cube.");
 		} else if (new RegExp(`^${faceListSubRegExp.toLowerCase()}${directionListSubRegExp}$`).test(moveString)) { // r, u', f2
 			return new CubeMove({
 				face: CubeMoveParser.parseFace(moveString[0]),
 				sliceBegin: this.cubeSize === 3 ? 1 : 2,
 				sliceEnd: 2,
 				turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(1)),
-				run: this.run
+				runner: this.runner
 			});
 		} else if (new RegExp(`^\\d*[MES]${directionListSubRegExp}$`, "i").test(moveString)) { // M, E', S2
 			let middleSliceCountMatch = moveString.match(/^\d*/)[0];
 			let middleSliceCount = middleSliceCountMatch === "" ? 1 : parseInt(middleSliceCountMatch);
 			if ((middleSliceCount + this.cubeSize) % 2) {
-				this.run.throwError(`Wrong structure for CubeMove (${this.cubeSize % 2 ? "odd" : "even"} cube size and ${this.cubeSize % 2 ? "even" : "odd"}`
+				this.runner.throwError(`Wrong structure for CubeMove (${this.cubeSize % 2 ? "odd" : "even"} cube size and ${this.cubeSize % 2 ? "even" : "odd"}`
 				+ " number of slices for middle slice move).");
 			} else if (middleSliceCount < this.cubeSize && middleSliceCount > 0) {
 				return new CubeMove({
@@ -1034,39 +1034,39 @@ class CubeMoveParser extends MoveParser {
 					sliceBegin: (this.cubeSize - middleSliceCount) / 2 + 1,
 					sliceEnd: (this.cubeSize + middleSliceCount) / 2,
 					turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.replace(/^\d+/, "").substring(1)),
-					run: this.run
+					runner: this.runner
 				});
 			} else {
-				this.run.throwError(`Applying an inner slice move involving ${middleSliceCount} slices on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
+				this.runner.throwError(`Applying an inner slice move involving ${middleSliceCount} slices on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
 			}
 		} else if (new RegExp(`^\\d*${faceListSubRegExp}w${directionListSubRegExp}$`).test(moveString)) { // Rw, Uw', 3Fw2, ...
 			let numberOfSlicesString = moveString.match(new RegExp("^\\d*"))[0];
 			let numberOfSlices = numberOfSlicesString !== "" ? parseInt(numberOfSlicesString) : 2;
 			if (numberOfSlices <= 1) {
-				this.run.throwError(`Applying a wide move with less than 2 layers (${numberOfSlices}).`);
+				this.runner.throwError(`Applying a wide move with less than 2 layers (${numberOfSlices}).`);
 			} else if (numberOfSlices < this.cubeSize) {
 				return new CubeMove({
 					face: CubeMoveParser.parseFace(moveString),
 					sliceBegin: 1,
 					sliceEnd: numberOfSlices,
 					turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(moveString.indexOf("w") + 1)),
-					run: this.run
+					runner: this.runner
 				});
 			} else {
-				this.run.throwError(`Applying an outer slice move involving ${numberOfSlices} slices on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
+				this.runner.throwError(`Applying an outer slice move involving ${numberOfSlices} slices on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
 			}
 		} else if (new RegExp(`^\\d+${faceListSubRegExp}${directionListSubRegExp}$`, "i").test(moveString)) { // 2R, 3U', 4F2
 			let sliceNumber = moveString.match(/\d+/)[0];
 			let turnCount = CubeMoveParser.parseTurnCountFromSuffix(moveString.replace(/^\d+/, "").substring(1));
 			if (sliceNumber < 2 || sliceNumber >= this.cubeSize) {
-				this.run.throwError(`Applying an inner slice move involving the slice of rank ${sliceNumber} on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
+				this.runner.throwError(`Applying an inner slice move involving the slice of rank ${sliceNumber} on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
 			} else if (sliceNumber > (this.cubeSize + 1) / 2) {
 				return new CubeMove({
 					face: CubeMoveParser.getOppositeFace(CubeMoveParser.parseFace(moveString)),
 					sliceBegin: this.cubeSize + 1 - sliceNumber,
 					sliceEnd: this.cubeSize + 1 - sliceNumber,
 					turnCount: CubeMoveParser.cleanTurnCount(-turnCount),
-					run: this.run
+					runner: this.runner
 				});
 			} else {
 				return new CubeMove({
@@ -1074,7 +1074,7 @@ class CubeMoveParser extends MoveParser {
 					sliceBegin: sliceNumber,
 					sliceEnd: sliceNumber,
 					turnCount: turnCount,
-					run: this.run
+					runner: this.runner
 				});
 			}
 		} else if (new RegExp(`^\\d+-\\d+${faceListSubRegExp}w${directionListSubRegExp}`).test(moveString)) { // 2-3Rw, 3-4Uw', 4-6Fw2
@@ -1082,14 +1082,14 @@ class CubeMoveParser extends MoveParser {
 			[sliceBegin, sliceEnd] = [Math.min(sliceBegin, sliceEnd), Math.max(sliceBegin, sliceEnd)];
 			let turnCount = CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(moveString.indexOf("w") + 1));
 			if (sliceBegin < 2 || sliceEnd >= this.cubeSize) {
-				this.run.throwError(`Applying an inner slice move involving slices from ${sliceBegin} to ${sliceEnd} on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
+				this.runner.throwError(`Applying an inner slice move involving slices from ${sliceBegin} to ${sliceEnd} on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
 			} else if (sliceBegin - 1 > this.cubeSize - sliceEnd) {
 				return new CubeMove({
 					face: CubeMoveParser.getOppositeFace(CubeMoveParser.parseFace(moveString)),
 					sliceBegin: this.cubeSize + 1 - sliceEnd,
 					sliceEnd: this.cubeSize + 1 - sliceBegin,
 					turnCount: CubeMoveParser.cleanTurnCount(-turnCount),
-					run: this.run
+					runner: this.runner
 				});
 			} else {
 				return new CubeMove({
@@ -1097,11 +1097,11 @@ class CubeMoveParser extends MoveParser {
 					sliceBegin: sliceBegin,
 					sliceEnd: sliceEnd,
 					turnCount: turnCount,
-					run: this.run
+					runner: this.runner
 				});
 			}
 		} else {
-			this.run.throwError(`Wrong structure for CubeMove : ${moveString}.`);
+			this.runner.throwError(`Wrong structure for CubeMove : ${moveString}.`);
 		}
 	};
 }
@@ -1110,9 +1110,9 @@ class CubeMoveParser extends MoveParser {
 
 class Orbit {
 	static type = "unknown";
-	constructor(run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new Orbit.");
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new Orbit.");
 		this.slotList = undefined;
 		this.type = Orbit.type;
 	};
@@ -1121,7 +1121,7 @@ class Orbit {
 	};
 	buildSlotList(slotsPerColor) {
 		let slotList = [];
-		for (let color of this.run.puzzle.colorScheme) {
+		for (let color of this.runner.puzzle.colorScheme) {
 			for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
 				slotList.push(new Slot(new Sticker(color)));
 			}
@@ -1131,17 +1131,17 @@ class Orbit {
 }
 
 class CubeOrbit extends Orbit {
-	constructor (run) {
-		super(run);
-		this.run.logger.debugLog("Creating new CubeOrbit.");
+	constructor (runner) {
+		super(runner);
+		this.runner.logger.debugLog("Creating new CubeOrbit.");
 	};
 }
 
 class CenterCubeOrbit extends CubeOrbit {
 	static type = "centerCubeOrbit";
-	constructor(run) {
-		super(run);
-		this.run.logger.detailedLog("Creating new CenterCubeOrbit.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.detailedLog("Creating new CenterCubeOrbit.");
 		this.slotList = this.buildSlotList(1);
 		this.type = CenterCubeOrbit.type;
 	};
@@ -1149,9 +1149,9 @@ class CenterCubeOrbit extends CubeOrbit {
 
 class CornerCubeOrbit extends CubeOrbit {
 	static type = "cornerCubeOrbit";
-	constructor(run) {
-		super(run);
-		this.run.logger.detailedLog("Creating new CornerCubeOrbit.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.detailedLog("Creating new CornerCubeOrbit.");
 		this.slotList = this.buildSlotList(4);
 		this.type = CornerCubeOrbit.type;
 	};
@@ -1159,9 +1159,9 @@ class CornerCubeOrbit extends CubeOrbit {
 
 class MidgeCubeOrbit extends CubeOrbit {
 	static type = "midgeCubeOrbit";
-	constructor(run) {
-		super(run);
-		this.run.logger.detailedLog("Creating new MidgeCubeOrbit.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.detailedLog("Creating new MidgeCubeOrbit.");
 		this.slotList = this.buildSlotList(4);
 		this.type = MidgeCubeOrbit.type;
 	};
@@ -1169,9 +1169,9 @@ class MidgeCubeOrbit extends CubeOrbit {
 
 class WingCubeOrbit extends CubeOrbit {
 	static type = "wingCubeOrbit";
-	constructor(run, rank) {
-		super(run);
-		this.run.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
+	constructor(runner, rank) {
+		super(runner);
+		this.runner.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
 		this.slotList = this.buildSlotList(8);
 		this.rank = rank;
 		this.type = WingCubeOrbit.type;
@@ -1180,9 +1180,9 @@ class WingCubeOrbit extends CubeOrbit {
 
 class CenterBigCubeOrbit extends CubeOrbit {
 	static type = "centerBigCubeOrbit";
-	constructor(run, ranks) {
-		super(run);
-		this.run.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
+	constructor(runner, ranks) {
+		super(runner);
+		this.runner.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
 		this.slotList = this.buildSlotList(4);
 		this.ranks = ranks;
 		this.type = CenterBigCubeOrbit.type;
@@ -1193,10 +1193,10 @@ class CenterBigCubeOrbit extends CubeOrbit {
 // Every puzzle class inherits a "blank" puzzle class, which contains no orbit.
 
 class TwistyPuzzle {
-	constructor(run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new Puzzle.");
-		this.fullName = this.run.puzzle.fullName;
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new Puzzle.");
+		this.fullName = this.runner.puzzle.fullName;
 		this.orbitList = [];
 		this.orbitTypes = [];
 	};
@@ -1212,72 +1212,72 @@ class TwistyPuzzle {
 }
 
 class Cube extends TwistyPuzzle {
-	constructor(run) {
-		super(run);
-		this.run.logger.debugLog("Creating new Cube.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.debugLog("Creating new Cube.");
 		this.shape = Cube.shape;
 	};
 	static shape = "cube";
 }
 
 class BlankCube1x1x1 extends Cube {
-	constructor(run) {
-		super(run);
-		this.run.logger.debugLog("Creating new BlankCube1x1x1.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.debugLog("Creating new BlankCube1x1x1.");
 		this.puzzleSize = 1;
 		this.orbitTypes = [CenterCubeOrbit.type];
 	};
 }
 
 class Cube1x1x1 extends BlankCube1x1x1 {
-	constructor(run) {
-		super(run);
-		this.run.logger.generalLog("Creating new Cube1x1x1.");
-		this.addOrbit(new CenterCubeOrbit(this.run));
+	constructor(rurunnern) {
+		super(runner);
+		this.runner.logger.generalLog("Creating new Cube1x1x1.");
+		this.addOrbit(new CenterCubeOrbit(this.runner));
 	};
 }
 
 class BlankCube2x2x2 extends Cube {
-	constructor(run) {
-		super(run);
-		this.run.logger.debugLog("Creating new BlankCube2x2x2.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.debugLog("Creating new BlankCube2x2x2.");
 		this.puzzleSize = 2;
 		this.orbitTypes = [CornerCubeOrbit.type];
 	};
 }
 
 class Cube2x2x2 extends BlankCube2x2x2 {
-	constructor(run) {
-		super(run);
-		this.run.logger.generalLog("Creating new Cube2x2x2.");
-		this.addOrbit(new CornerCubeOrbit(this.run));
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.generalLog("Creating new Cube2x2x2.");
+		this.addOrbit(new CornerCubeOrbit(this.runner));
 	};
 }
 
 class BlankCube3x3x3 extends Cube {
-	constructor(run) {
-		super(run);
-		this.run.logger.debugLog("Creating new BlankCube3x3x3.");
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.debugLog("Creating new BlankCube3x3x3.");
 		this.puzzleSize = 3;
 		this.orbitTypes = [CenterCubeOrbit.type, MidgeCubeOrbit.type, CornerCubeOrbit.type];
 	};
 }
 
 class Cube3x3x3 extends BlankCube3x3x3 {
-	constructor(run) {
-		super(run);
-		this.run.logger.generalLog("Creating new Cube3x3x3.");
-		this.addOrbit(new CenterCubeOrbit(this.run));
-		this.addOrbit(new MidgeCubeOrbit(this.run));
-		this.addOrbit(new CornerCubeOrbit(this.run));
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.generalLog("Creating new Cube3x3x3.");
+		this.addOrbit(new CenterCubeOrbit(this.runner));
+		this.addOrbit(new MidgeCubeOrbit(this.runner));
+		this.addOrbit(new CornerCubeOrbit(this.runner));
 	};
 }
 
 class BlankCubeBig extends Cube {
-	constructor(run) {
-		super(run);
-		this.puzzleSize = this.run.puzzle.size;
-		this.run.logger.debugLog(`Creating new BlankCubeBig (puzzleSize = ${this.puzzleSize}).`);
+	constructor(runner) {
+		super(runner);
+		this.puzzleSize = this.runner.puzzle.size;
+		this.runner.logger.debugLog(`Creating new BlankCubeBig (puzzleSize = ${this.puzzleSize}).`);
 		this.orbitTypes = [CornerCubeOrbit.type, WingCubeOrbit.type, CenterBigCubeOrbit.type];
 		if (this.puzzleSize % 2) { // puzzle is odd
 			this.middleSlice = (this.puzzleSize + 1) / 2;
@@ -1294,45 +1294,45 @@ class BlankCubeBig extends Cube {
 }
 
 class CubeBig extends BlankCubeBig {
-	constructor(run) {
-		super(run);
-		this.run.logger.generalLog(`Creating new CubeBig (puzzleSize = ${this.puzzleSize}).`);
-		this.addOrbit(new CornerCubeOrbit(this.run));
+	constructor(runner) {
+		super(runner);
+		this.runner.logger.generalLog(`Creating new CubeBig (puzzleSize = ${this.puzzleSize}).`);
+		this.addOrbit(new CornerCubeOrbit(this.runner));
 		if (this.puzzleSize % 2) { // puzzle is odd
-			this.addOrbit(new MidgeCubeOrbit(this.run));
-			this.addOrbit(new CenterCubeOrbit(this.run));
+			this.addOrbit(new MidgeCubeOrbit(this.runner));
+			this.addOrbit(new CenterCubeOrbit(this.runner));
 		}
 		for (let wingRank = 1; wingRank <= this.maxRankWithoutMiddle; wingRank++) {
-			this.addOrbit(new WingCubeOrbit(this.run, wingRank));
+			this.addOrbit(new WingCubeOrbit(this.runner, wingRank));
 		}
 		for (let centerFirstRank = 1; centerFirstRank <= this.maxRankWithoutMiddle; centerFirstRank++) {
 			for (let centerSecondRank = 1; centerSecondRank <= this.maxRankWithMiddle; centerSecondRank++) {
-				this.addOrbit(new CenterBigCubeOrbit(this.run, [centerFirstRank, centerSecondRank]));
+				this.addOrbit(new CenterBigCubeOrbit(this.runner, [centerFirstRank, centerSecondRank]));
 			}
 		}
 	};
 }
 
 class Pyramid extends TwistyPuzzle {
-	constructor(run) {
-		super(run);
+	constructor(runner) {
+		super(runner);
 		this.shape = Pyramid.shape;
 	};
 	static shape = "pyramid";
 }
 
 class Dodecahedron extends TwistyPuzzle {
-	constructor(run) {
-		super(run);
+	constructor(runner) {
+		super(runner);
 		this.shape = Dodecahedron.shape;
 	};
 	static shape = "dodecahedron";
 }
-// todo remove this test line
-// Represents the information of a run (input, working, output). This is the entry point for everything related to Holo-Cube.
+
+// Represents the information of a runner (input, working, output). This is the entry point for everything related to Holo-Cube.
 
 /*
-Object structure to give to Run class :
+Object structure to give to Runner class :
 {
 	puzzle: {
 		fullName: string,
@@ -1365,18 +1365,18 @@ moveSequence XOR moveSequenceList is mandatory
 other inputs are optional
 */
 
-class Run {
+class Runner {
 	constructor(inputObject) {
 		this.setLogger(inputObject);
-		this.logger.generalLog("Creating new Run.");
+		this.logger.generalLog("Creating new Runner.");
 		this.setPuzzle(inputObject);
-		this.setMoveSequenceList(inputObject);
 		this.setDrawingOptions(inputObject);
 		this.setPuzzleClass();
 		this.setBlankPuzzle();
 		this.setMoveSequenceParser();
 		this.setPuzzleDrawer();
 		this.logger.generalLog("End of initialization phase.");
+		this.setMoveSequenceList(inputObject);
 	};
 	run = () => {
 		this.logger.generalLog("Beginning of execution phase.");
@@ -1441,7 +1441,7 @@ class Run {
 	};
 	setPuzzle = inputObject => {
 		this.logger.detailedLog("Reading input : puzzle.");
-		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
+		this.puzzle = new PuzzleRunnerInput(inputObject.puzzle, this);
 	};
 	setMoveSequenceList = inputObject => {
 		this.logger.detailedLog("Reading input : move sequence(s).");
@@ -1473,7 +1473,7 @@ class Run {
 	};
 	setDrawingOptions = inputObject => {
 		this.logger.detailedLog("Reading input : drawingOptions.");
-		this.drawingOptions = new DrawingOptionsRunInput(inputObject.drawingOptions, this);
+		this.drawingOptions = new DrawingOptionsRunnerInput(inputObject.drawingOptions, this);
 	};
 	setPuzzleClass = () => {
 		this.logger.debugLog("Setting puzzle class.");
@@ -1520,16 +1520,16 @@ class Run {
 	};
 }
 
-// Represents the information of a puzzle as an input of a run.
+// Represents the information of a puzzle as an input of a runner.
 
-class PuzzleRunInput {
-	constructor(puzzle, run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new PuzzleRunInput");
+class PuzzleRunnerInput {
+	constructor(puzzle, runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new PuzzleRunnerInput");
 		if ([undefined, null].includes(puzzle)) {
-			this.run.throwError("Property puzzle is required.");
+			this.runner.throwError("Property puzzle is required.");
 		} else if (typeof puzzle !== "object") {
-			this.run.throwError("Property puzzle must be an object.");
+			this.runner.throwError("Property puzzle must be an object.");
 		}
 		this.setPuzzleGeneral(puzzle);
 		this.setStage(puzzle);
@@ -1537,29 +1537,29 @@ class PuzzleRunInput {
 	};
 	setPuzzleGeneral = puzzle => {
 		if ([undefined, null].includes(puzzle.fullName)) {
-			this.run.throwError("Property puzzle.fullName is required.");
+			this.runner.throwError("Property puzzle.fullName is required.");
 		} else if (typeof puzzle.fullName !== "string") {
-			this.run.throwError("Property puzzle.fullName must be a string.");
+			this.runner.throwError("Property puzzle.fullName must be a string.");
 		} else if (!puzzle.fullName.startsWith("cube")) {
-			this.run.throwError("Wrong value for puzzle.fullName : only cubes are supported for now.");
+			this.runner.throwError("Wrong value for puzzle.fullName : only cubes are supported for now.");
 		} else if (!/^cube\d+x\d+x\d+$/.test(puzzle.fullName) || new Set(puzzle.fullName.substring(4).split("x")).size !== 1) {
-			this.run.throwError("Unrecognized or unsupported puzzle name. Available names are of the form cubeNxNxN, where N has to be replaced with the cube size.");
+			this.runner.throwError("Unrecognized or unsupported puzzle name. Available names are of the form cubeNxNxN, where N has to be replaced with the cube size.");
 		}
 		this.fullName = puzzle.fullName;
 		this.shape = "cube";
 		this.size = parseInt(puzzle.fullName.match(/\d+$/)[0]);
 		if (this.size === 0) {
-			this.run.throwError(`Creating cube with no layer.`);
+			this.runner.throwError(`Creating cube with no layer.`);
 		} else if (this.size > 13) {
-			this.run.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
+			this.runner.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
 		}
 	};
 	setStage = puzzle => {
 		if (![undefined, null].includes(puzzle.stage)) {
 			if (typeof puzzle.stage !== "string") {
-				this.run.throwError("Property puzzle.stage must be a string.");
+				this.runner.throwError("Property puzzle.stage must be a string.");
 			} else {
-				this.run.logger.warningLog("Stage option is not yet supported, current mode shows all stickers.");
+				this.runner.logger.warningLog("Stage option is not yet supported, current mode shows all stickers.");
 				this.stage = puzzle.stage;
 			}
 		}
@@ -1573,17 +1573,17 @@ class PuzzleRunInput {
 			}
 		} else {
 			if (typeof puzzle.colorScheme !== "object") {
-				this.run.throwError("Property puzzle.colorScheme must be an array of strings.");
+				this.runner.throwError("Property puzzle.colorScheme must be an array of strings.");
 			} else if (puzzle.colorScheme.length !== this.getColorSchemeLengthFromShape(this.shape)) {
-				this.run.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
+				this.runner.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
 					+ `(expected value = ${this.getColorSchemeLengthFromShape(puzzleShape)} because puzzle shape is ${this.puzzle.shape},`
 					+ `actual = ${puzzle.colorScheme.length}).`);
 			} else {
 				for (let color of puzzle.colorScheme) {
 					if (typeof color !== "string") {
-						this.run.throwError("Each color in property puzzle.colorScheme must be a string.");
+						this.runner.throwError("Each color in property puzzle.colorScheme must be a string.");
 					} else if (!Color.checkFormat(color)) {
-						this.run.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
+						this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
 					}
 					this.colorScheme.push(new Color(color));
 				}
@@ -1595,21 +1595,21 @@ class PuzzleRunInput {
 			case Cube.shape: return ["w", "g", "r", "y", "b", "o"]; // respectively for U, F, R, D, B, L faces
 			case Pyramid.shape: return ["g", "b", "r", "y"]; // respectively for F, BR, BL, D faces
 			case Dodecahedron.shape: return ["w", "g", "r", "b", "y", "pu", "gy", "lg", "o", "lb", "ly", "pi"]; // respectively for U, F, R, BR, BL, L, D, DB, DL, DFL, DFR, DR
-			default: this.run.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
+			default: this.runner.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
 		}
 	};
 	getColorSchemeLengthFromShape = puzzleShape => {
 		try {
 			return this.getDefaultColorSchemeFromShape(puzzleShape).length;
 		} catch {
-			this.run.throwError(`Getting length of color scheme from invalid puzzle shape ${puzzleShape}.`);
+			this.runner.throwError(`Getting length of color scheme from invalid puzzle shape ${puzzleShape}.`);
 		}
 	};
 }
 
-// Represent the drawing options as an input of a run.
+// Represent the drawing options as an input of a runner.
 
-class DrawingOptionsRunInput {
+class DrawingOptionsRunnerInput {
 	static defaultDrawingOptions = {
 		imageHeight: 100,
 		imageWidth: 100,
@@ -1619,9 +1619,9 @@ class DrawingOptionsRunInput {
 		puzzleColor: "black",
 		view: "plan"
 	};
-	constructor(drawingOptionsObject, run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new DrawingOptionsRunInput");
+	constructor(drawingOptionsObject, runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new DrawingOptionsRunnerInput");
 		if (drawingOptionsObject) {
 			let heightWidthList = ["Height", "Width"];
 			for (let imageOrPuzzle of ["image", "puzzle"]) {
@@ -1644,30 +1644,30 @@ class DrawingOptionsRunInput {
 			}
 			if (![undefined, null].includes(drawingOptionsObject.view)) {
 				if (typeof drawingOptionsObject.view !== "string") {
-					this.run.throwError("Property drawingOptions.view must be a string.");
+					this.runner.throwError("Property drawingOptions.view must be a string.");
 				} else if (!["plan", "isometric", "net"].includes(drawingOptionsObject.view)) {
-					this.run.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
+					this.runner.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
 				} else {
-					this.run.logger.warningLog("View option is not yet supported, using plan view by default");
-					this.view = DrawingOptionsRunInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
+					this.runner.logger.warningLog("View option is not yet supported, using plan view by default");
+					this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
 				}
 			} else {
-				this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
+				this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
 			}
 			for (let dimension of ["Height", "Width"]) {
 				if (Math.abs(this["puzzle" + dimension]) > Math.abs(this["image" + dimension])) {
-					this.run.throwError(`Puzzle is larger than image (puzzle${dimension} = this["puzzle" + dimension], image${dimension} = this["image" + dimension]).`);
+					this.runner.throwError(`Puzzle is larger than image (puzzle${dimension} = this["puzzle" + dimension], image${dimension} = this["image" + dimension]).`);
 				}
 				if (Math.abs(this["image" + dimension]) > 2000) {
-					this.run.logger.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
+					this.runner.logger.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
 				}
 			}
 			for (let drawingOptionsProperty of ["imageBackgroundColor", "puzzleColor"]) {
 				if (drawingOptionsObject[drawingOptionsProperty]) {
 					if (typeof drawingOptionsObject[drawingOptionsProperty] !== "string") {
-						this.run.throwError(`Property drawingOptions.${drawingOptionsProperty} must be a string.`);
+						this.runner.throwError(`Property drawingOptions.${drawingOptionsProperty} must be a string.`);
 					} else if (!Color.checkFormat(drawingOptionsObject[drawingOptionsProperty])) {
-						this.run.throwError(`Invalid or unrecognized color for property drawingOptions.${drawingOptionsProperty} : ${drawingOptionsObject[drawingOptionsProperty]}.`);
+						this.runner.throwError(`Invalid or unrecognized color for property drawingOptions.${drawingOptionsProperty} : ${drawingOptionsObject[drawingOptionsProperty]}.`);
 					}
 					this[drawingOptionsProperty] = new Color(drawingOptionsObject[drawingOptionsProperty]);
 				} else {
@@ -1676,9 +1676,9 @@ class DrawingOptionsRunInput {
 			}
 			if (![undefined, null].includes(drawingOptionsObject.document)) {
 				if (typeof drawingOptionsObject.document !== "object") {
-					this.run.throwError("Property drawingOptions.document must be an object.");
+					this.runner.throwError("Property drawingOptions.document must be an object.");
 				} else {
-					this.run.logger.detailedLog("Using specified document for SVG creation.");
+					this.runner.logger.detailedLog("Using specified document for SVG creation.");
 					this.document = drawingOptionsObject.document;
 				}
 			} else {
@@ -1696,29 +1696,29 @@ class DrawingOptionsRunInput {
 			this.setColorValueFromDefault(drawingOptionsColorProperty);
 		}
 		this.setDocumentFromDefault();
-		this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
+		this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
 	};
 	setNumericValueFromDefault = propertyName => {
-		this[propertyName] = DrawingOptionsRunInput.defaultDrawingOptions[propertyName];
-		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${this[propertyName]}.`);
+		this[propertyName] = DrawingOptionsRunnerInput.defaultDrawingOptions[propertyName];
+		this.runner.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${this[propertyName]}.`);
 	};
 	setColorValueFromDefault = propertyName => {
-		this[propertyName] = new Color(DrawingOptionsRunInput.defaultDrawingOptions[propertyName]);
-		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunInput.defaultDrawingOptions[propertyName]}.`);
+		this[propertyName] = new Color(DrawingOptionsRunnerInput.defaultDrawingOptions[propertyName]);
+		this.runner.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunnerInput.defaultDrawingOptions[propertyName]}.`);
 	};
 	setDocumentFromDefault = () => {
 		if (document) {
-			this.run.logger.detailedLog("Property drawingOptions.document was not provided, using default document for SVG creation.");
+			this.runner.logger.detailedLog("Property drawingOptions.document was not provided, using default document for SVG creation.");
 			this.document = document;
 		} else {
-			this.run.throwError("No document was specified for SVG creation and none is available by default.");
+			this.runner.throwError("No document was specified for SVG creation and none is available by default.");
 		}
 	};
 	checkNumberNotZero = (variableValue, variableName) => {
 		if (typeof variableValue !== "number") {
-			this.run.throwError(`Property drawingOptions.${variableName} must be a number.`);
+			this.runner.throwError(`Property drawingOptions.${variableName} must be a number.`);
 		} else if (variableValue === 0) {
-			this.run.throwError(`Property drawingOptions.${variableName} cannot be 0.`);
+			this.runner.throwError(`Property drawingOptions.${variableName} cannot be 0.`);
 		}
 	};
 }
