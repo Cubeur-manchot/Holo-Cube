@@ -3,8 +3,8 @@
 // Represents one cycle of permutation on an orbit.
 
 class Cycle {
-	constructor(cycle, orbitType, run, orbitRankOrRanks) {
-		this.run = run;
+	constructor(cycle, orbitType, runner, orbitRankOrRanks) {
+		this.runner = runner;
 		this.slotIndexList = cycle;
 		this.orbitType = orbitType;
 		if (typeof orbitRankOrRanks === "number") {
@@ -21,34 +21,34 @@ class Cycle {
 	};
 	applyOnOrbit = orbit => {
 		if (!this.getLength()) {
-			this.run.throwError("Applying cycle of length 0.");
+			this.runner.throwError("Applying cycle of length 0.");
 		}
 		if (this.getLength() === 1) {
-			this.run.logger.debugLog("Ignoring cycle of length 1.");
+			this.runner.logger.debugLog("Ignoring cycle of length 1.");
 			return;
 		}
 		if (!orbit) {
-			this.run.throwError("Applying cycle on undefined orbit.");
+			this.runner.throwError("Applying cycle on undefined orbit.");
 		}
 		if (this.orbitType !== orbit.type) {
-		this.run.logger.debugLog(`Ignoring cycle because cycle orbit type (${this.orbitType}) and orbit type ({orbit.type}) are different.`);
+		this.runner.logger.debugLog(`Ignoring cycle because cycle orbit type (${this.orbitType}) and orbit type ({orbit.type}) are different.`);
 			return;
 		}
 		if (orbit instanceof WingCubeOrbit && this.orbitRank !== orbit.rank) {
-			this.run.logger.debugLog(`Ignoring cycle because cyle orbit rank (${this.orbitRank}) and orbit rank (${orbit.rank}) are different.`);
+			this.runner.logger.debugLog(`Ignoring cycle because cyle orbit rank (${this.orbitRank}) and orbit rank (${orbit.rank}) are different.`);
 			return;
 		}
 		if (orbit instanceof CenterBigCubeOrbit && !(this.orbitRanks[0] === orbit.ranks[0] && this.orbitRanks[1] === orbit.ranks[1])) {
-			this.run.logger.debugLog(`Ignoring cycle because cyle orbit ranks (${this.orbitRanks.join(", ")}) and orbit rank (${orbit.ranks.join(", ")}) are different.`);
+			this.runner.logger.debugLog(`Ignoring cycle because cyle orbit ranks (${this.orbitRanks.join(", ")}) and orbit rank (${orbit.ranks.join(", ")}) are different.`);
 			return;
 		}
 		if (!orbit.getSize()) {
-			this.run.throwError("Applying cycle on orbit of size 0.");
+			this.runner.throwError("Applying cycle on orbit of size 0.");
 		}
 		if (!orbit.slotList) {
-			this.run.throwError("Applying cycle on a cycle with no slot list.");
+			this.runner.throwError("Applying cycle on a cycle with no slot list.");
 		}
-		this.run.logger.debugLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
+		this.runner.logger.debugLog(`Applying cycle of length ${this.getLength()} on orbit type ${this.orbitType}`
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
 			+ ".");

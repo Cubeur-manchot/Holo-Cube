@@ -1,9 +1,9 @@
 "use strict";
-// todo remove this test line
-// Represents the information of a run (input, working, output). This is the entry point for everything related to Holo-Cube.
+
+// Represents the information of a runner (input, working, output). This is the entry point for everything related to Holo-Cube.
 
 /*
-Object structure to give to Run class :
+Object structure to give to Runner class :
 {
 	puzzle: {
 		fullName: string,
@@ -36,18 +36,18 @@ moveSequence XOR moveSequenceList is mandatory
 other inputs are optional
 */
 
-class Run {
+class Runner {
 	constructor(inputObject) {
 		this.setLogger(inputObject);
-		this.logger.generalLog("Creating new Run.");
+		this.logger.generalLog("Creating new Runner.");
 		this.setPuzzle(inputObject);
-		this.setMoveSequenceList(inputObject);
 		this.setDrawingOptions(inputObject);
 		this.setPuzzleClass();
 		this.setBlankPuzzle();
 		this.setMoveSequenceParser();
 		this.setPuzzleDrawer();
 		this.logger.generalLog("End of initialization phase.");
+		this.setMoveSequenceList(inputObject);
 	};
 	run = () => {
 		this.logger.generalLog("Beginning of execution phase.");
@@ -112,7 +112,7 @@ class Run {
 	};
 	setPuzzle = inputObject => {
 		this.logger.detailedLog("Reading input : puzzle.");
-		this.puzzle = new PuzzleRunInput(inputObject.puzzle, this);
+		this.puzzle = new PuzzleRunnerInput(inputObject.puzzle, this);
 	};
 	setMoveSequenceList = inputObject => {
 		this.logger.detailedLog("Reading input : move sequence(s).");
@@ -144,7 +144,7 @@ class Run {
 	};
 	setDrawingOptions = inputObject => {
 		this.logger.detailedLog("Reading input : drawingOptions.");
-		this.drawingOptions = new DrawingOptionsRunInput(inputObject.drawingOptions, this);
+		this.drawingOptions = new DrawingOptionsRunnerInput(inputObject.drawingOptions, this);
 	};
 	setPuzzleClass = () => {
 		this.logger.debugLog("Setting puzzle class.");
@@ -191,16 +191,16 @@ class Run {
 	};
 }
 
-// Represents the information of a puzzle as an input of a run.
+// Represents the information of a puzzle as an input of a runner.
 
-class PuzzleRunInput {
-	constructor(puzzle, run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new PuzzleRunInput");
+class PuzzleRunnerInput {
+	constructor(puzzle, runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new PuzzleRunnerInput");
 		if ([undefined, null].includes(puzzle)) {
-			this.run.throwError("Property puzzle is required.");
+			this.runner.throwError("Property puzzle is required.");
 		} else if (typeof puzzle !== "object") {
-			this.run.throwError("Property puzzle must be an object.");
+			this.runner.throwError("Property puzzle must be an object.");
 		}
 		this.setPuzzleGeneral(puzzle);
 		this.setStage(puzzle);
@@ -208,29 +208,29 @@ class PuzzleRunInput {
 	};
 	setPuzzleGeneral = puzzle => {
 		if ([undefined, null].includes(puzzle.fullName)) {
-			this.run.throwError("Property puzzle.fullName is required.");
+			this.runner.throwError("Property puzzle.fullName is required.");
 		} else if (typeof puzzle.fullName !== "string") {
-			this.run.throwError("Property puzzle.fullName must be a string.");
+			this.runner.throwError("Property puzzle.fullName must be a string.");
 		} else if (!puzzle.fullName.startsWith("cube")) {
-			this.run.throwError("Wrong value for puzzle.fullName : only cubes are supported for now.");
+			this.runner.throwError("Wrong value for puzzle.fullName : only cubes are supported for now.");
 		} else if (!/^cube\d+x\d+x\d+$/.test(puzzle.fullName) || new Set(puzzle.fullName.substring(4).split("x")).size !== 1) {
-			this.run.throwError("Unrecognized or unsupported puzzle name. Available names are of the form cubeNxNxN, where N has to be replaced with the cube size.");
+			this.runner.throwError("Unrecognized or unsupported puzzle name. Available names are of the form cubeNxNxN, where N has to be replaced with the cube size.");
 		}
 		this.fullName = puzzle.fullName;
 		this.shape = "cube";
 		this.size = parseInt(puzzle.fullName.match(/\d+$/)[0]);
 		if (this.size === 0) {
-			this.run.throwError(`Creating cube with no layer.`);
+			this.runner.throwError(`Creating cube with no layer.`);
 		} else if (this.size > 13) {
-			this.run.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
+			this.runner.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
 		}
 	};
 	setStage = puzzle => {
 		if (![undefined, null].includes(puzzle.stage)) {
 			if (typeof puzzle.stage !== "string") {
-				this.run.throwError("Property puzzle.stage must be a string.");
+				this.runner.throwError("Property puzzle.stage must be a string.");
 			} else {
-				this.run.logger.warningLog("Stage option is not yet supported, current mode shows all stickers.");
+				this.runner.logger.warningLog("Stage option is not yet supported, current mode shows all stickers.");
 				this.stage = puzzle.stage;
 			}
 		}
@@ -244,17 +244,17 @@ class PuzzleRunInput {
 			}
 		} else {
 			if (typeof puzzle.colorScheme !== "object") {
-				this.run.throwError("Property puzzle.colorScheme must be an array of strings.");
+				this.runner.throwError("Property puzzle.colorScheme must be an array of strings.");
 			} else if (puzzle.colorScheme.length !== this.getColorSchemeLengthFromShape(this.shape)) {
-				this.run.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
+				this.runner.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
 					+ `(expected value = ${this.getColorSchemeLengthFromShape(puzzleShape)} because puzzle shape is ${this.puzzle.shape},`
 					+ `actual = ${puzzle.colorScheme.length}).`);
 			} else {
 				for (let color of puzzle.colorScheme) {
 					if (typeof color !== "string") {
-						this.run.throwError("Each color in property puzzle.colorScheme must be a string.");
+						this.runner.throwError("Each color in property puzzle.colorScheme must be a string.");
 					} else if (!Color.checkFormat(color)) {
-						this.run.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
+						this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
 					}
 					this.colorScheme.push(new Color(color));
 				}
@@ -266,21 +266,21 @@ class PuzzleRunInput {
 			case Cube.shape: return ["w", "g", "r", "y", "b", "o"]; // respectively for U, F, R, D, B, L faces
 			case Pyramid.shape: return ["g", "b", "r", "y"]; // respectively for F, BR, BL, D faces
 			case Dodecahedron.shape: return ["w", "g", "r", "b", "y", "pu", "gy", "lg", "o", "lb", "ly", "pi"]; // respectively for U, F, R, BR, BL, L, D, DB, DL, DFL, DFR, DR
-			default: this.run.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
+			default: this.runner.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
 		}
 	};
 	getColorSchemeLengthFromShape = puzzleShape => {
 		try {
 			return this.getDefaultColorSchemeFromShape(puzzleShape).length;
 		} catch {
-			this.run.throwError(`Getting length of color scheme from invalid puzzle shape ${puzzleShape}.`);
+			this.runner.throwError(`Getting length of color scheme from invalid puzzle shape ${puzzleShape}.`);
 		}
 	};
 }
 
-// Represent the drawing options as an input of a run.
+// Represent the drawing options as an input of a runner.
 
-class DrawingOptionsRunInput {
+class DrawingOptionsRunnerInput {
 	static defaultDrawingOptions = {
 		imageHeight: 100,
 		imageWidth: 100,
@@ -290,9 +290,9 @@ class DrawingOptionsRunInput {
 		puzzleColor: "black",
 		view: "plan"
 	};
-	constructor(drawingOptionsObject, run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new DrawingOptionsRunInput");
+	constructor(drawingOptionsObject, runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new DrawingOptionsRunnerInput");
 		if (drawingOptionsObject) {
 			let heightWidthList = ["Height", "Width"];
 			for (let imageOrPuzzle of ["image", "puzzle"]) {
@@ -315,30 +315,30 @@ class DrawingOptionsRunInput {
 			}
 			if (![undefined, null].includes(drawingOptionsObject.view)) {
 				if (typeof drawingOptionsObject.view !== "string") {
-					this.run.throwError("Property drawingOptions.view must be a string.");
+					this.runner.throwError("Property drawingOptions.view must be a string.");
 				} else if (!["plan", "isometric", "net"].includes(drawingOptionsObject.view)) {
-					this.run.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
+					this.runner.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
 				} else {
-					this.run.logger.warningLog("View option is not yet supported, using plan view by default");
-					this.view = DrawingOptionsRunInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
+					this.runner.logger.warningLog("View option is not yet supported, using plan view by default");
+					this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
 				}
 			} else {
-				this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
+				this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
 			}
 			for (let dimension of ["Height", "Width"]) {
 				if (Math.abs(this["puzzle" + dimension]) > Math.abs(this["image" + dimension])) {
-					this.run.throwError(`Puzzle is larger than image (puzzle${dimension} = this["puzzle" + dimension], image${dimension} = this["image" + dimension]).`);
+					this.runner.throwError(`Puzzle is larger than image (puzzle${dimension} = this["puzzle" + dimension], image${dimension} = this["image" + dimension]).`);
 				}
 				if (Math.abs(this["image" + dimension]) > 2000) {
-					this.run.logger.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
+					this.runner.logger.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
 				}
 			}
 			for (let drawingOptionsProperty of ["imageBackgroundColor", "puzzleColor"]) {
 				if (drawingOptionsObject[drawingOptionsProperty]) {
 					if (typeof drawingOptionsObject[drawingOptionsProperty] !== "string") {
-						this.run.throwError(`Property drawingOptions.${drawingOptionsProperty} must be a string.`);
+						this.runner.throwError(`Property drawingOptions.${drawingOptionsProperty} must be a string.`);
 					} else if (!Color.checkFormat(drawingOptionsObject[drawingOptionsProperty])) {
-						this.run.throwError(`Invalid or unrecognized color for property drawingOptions.${drawingOptionsProperty} : ${drawingOptionsObject[drawingOptionsProperty]}.`);
+						this.runner.throwError(`Invalid or unrecognized color for property drawingOptions.${drawingOptionsProperty} : ${drawingOptionsObject[drawingOptionsProperty]}.`);
 					}
 					this[drawingOptionsProperty] = new Color(drawingOptionsObject[drawingOptionsProperty]);
 				} else {
@@ -347,9 +347,9 @@ class DrawingOptionsRunInput {
 			}
 			if (![undefined, null].includes(drawingOptionsObject.document)) {
 				if (typeof drawingOptionsObject.document !== "object") {
-					this.run.throwError("Property drawingOptions.document must be an object.");
+					this.runner.throwError("Property drawingOptions.document must be an object.");
 				} else {
-					this.run.logger.detailedLog("Using specified document for SVG creation.");
+					this.runner.logger.detailedLog("Using specified document for SVG creation.");
 					this.document = drawingOptionsObject.document;
 				}
 			} else {
@@ -367,29 +367,29 @@ class DrawingOptionsRunInput {
 			this.setColorValueFromDefault(drawingOptionsColorProperty);
 		}
 		this.setDocumentFromDefault();
-		this.view = DrawingOptionsRunInput.defaultDrawingOptions.view;
+		this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
 	};
 	setNumericValueFromDefault = propertyName => {
-		this[propertyName] = DrawingOptionsRunInput.defaultDrawingOptions[propertyName];
-		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${this[propertyName]}.`);
+		this[propertyName] = DrawingOptionsRunnerInput.defaultDrawingOptions[propertyName];
+		this.runner.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${this[propertyName]}.`);
 	};
 	setColorValueFromDefault = propertyName => {
-		this[propertyName] = new Color(DrawingOptionsRunInput.defaultDrawingOptions[propertyName]);
-		this.run.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunInput.defaultDrawingOptions[propertyName]}.`);
+		this[propertyName] = new Color(DrawingOptionsRunnerInput.defaultDrawingOptions[propertyName]);
+		this.runner.logger.detailedLog(`Property drawingOptions.${propertyName} was not provided, using default value ${DrawingOptionsRunnerInput.defaultDrawingOptions[propertyName]}.`);
 	};
 	setDocumentFromDefault = () => {
 		if (document) {
-			this.run.logger.detailedLog("Property drawingOptions.document was not provided, using default document for SVG creation.");
+			this.runner.logger.detailedLog("Property drawingOptions.document was not provided, using default document for SVG creation.");
 			this.document = document;
 		} else {
-			this.run.throwError("No document was specified for SVG creation and none is available by default.");
+			this.runner.throwError("No document was specified for SVG creation and none is available by default.");
 		}
 	};
 	checkNumberNotZero = (variableValue, variableName) => {
 		if (typeof variableValue !== "number") {
-			this.run.throwError(`Property drawingOptions.${variableName} must be a number.`);
+			this.runner.throwError(`Property drawingOptions.${variableName} must be a number.`);
 		} else if (variableValue === 0) {
-			this.run.throwError(`Property drawingOptions.${variableName} cannot be 0.`);
+			this.runner.throwError(`Property drawingOptions.${variableName} cannot be 0.`);
 		}
 	};
 }

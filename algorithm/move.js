@@ -3,16 +3,16 @@
 // Represents the information of a move sequence.
 
 class MoveSequence {
-	constructor(moves, run) {
-		this.run = run;
-		this.run.logger.generalLog("Creating new MoveSequence.");
+	constructor(moves, runner) {
+		this.runner = runner;
+		this.runner.logger.generalLog("Creating new MoveSequence.");
 		this.moveList = moves ?? [];
 	};
 	appendMove = move => {
 		this.moveList.push(move);
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.logger.generalLog(`Applying move sequence of length ${this.moveList.length} on a solved puzzle.`);
+		this.runner.logger.generalLog(`Applying move sequence of length ${this.moveList.length} on a solved puzzle.`);
 		this.moveList.forEach(move => move.applyOnPuzzle(puzzle));
 	};
 };
@@ -20,9 +20,9 @@ class MoveSequence {
 // Represent the permutation induced by a move in terms of cycles.
 
 class Move {
-	constructor(run) {
-		this.run = run;
-		this.run.logger.debugLog("Creating new Move.");
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new Move.");
 		this.cycles = [];
 	};
 	getCycleList = () => {
@@ -30,11 +30,11 @@ class Move {
 	};
 	pushCycles = (cycles, orbitType, rankOrRanks) => {
 		for (let slotList of cycles) {
-			this.cycles.push(new Cycle(slotList, orbitType, this.run, rankOrRanks));
+			this.cycles.push(new Cycle(slotList, orbitType, this.runner, rankOrRanks));
 		}
 	};
 	applyOnPuzzle = puzzle => {
-		this.run.logger.detailedLog("Applying move on puzzle.");
+		this.runner.logger.detailedLog("Applying move on puzzle.");
 		for (let cycle of this.getCycleList()) {
 			for (let orbit of puzzle.orbitList) {
 				if (cycle.orbitType === orbit.type) {
@@ -151,23 +151,23 @@ class CubeMove extends Move {
 			}
 		}
 	};
-	constructor({face, sliceBegin, sliceEnd, turnCount, run}) {
-		super(run);
-		this.run.logger.detailedLog("Creating new CubeMove.");
+	constructor({face, sliceBegin, sliceEnd, turnCount, runner}) {
+		super(runner);
+		this.runner.logger.detailedLog("Creating new CubeMove.");
 		this.face = face;
 		this.sliceBegin = sliceBegin;
 		this.sliceEnd = sliceEnd;
 		this.turnCount = turnCount;
-		this.cube = this.run.blankPuzzle;
+		this.cube = this.runner.blankPuzzle;
 		let isBigCube = this.cube instanceof BlankCubeBig;
 		if (this.sliceBegin < 1) {
-			this.run.throwError("Creating move with sliceBegin < 1.");
+			this.runner.throwError("Creating move with sliceBegin < 1.");
 		}
 		if (this.sliceEnd > this.cube.puzzleSize) {
-			this.run.throwError("Creating move with sliceEnd > cube size.");
+			this.runner.throwError("Creating move with sliceEnd > cube size.");
 		}
 		if (this.sliceBegin > this.sliceEnd) {
-			this.run.throwError("Creating move with sliceBegin > sliceEnd.");
+			this.runner.throwError("Creating move with sliceBegin > sliceEnd.");
 		}
 		if (this.sliceBegin === 1) { // first layer
 			this.treatFirstLayer(isBigCube);

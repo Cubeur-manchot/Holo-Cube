@@ -136,8 +136,8 @@ const updateResults = () => { // update input object/json and Holo-Cube results
 	let svgResultsTag = document.querySelector("div#svgResults");
 	svgResultsTag.textContent = "";
 	document.querySelector("div#logs").textContent = "";
-	let run = new Run(jsonInput);
-	let runResults = run.run();
+	let runner = new Runner(jsonInput);
+	let runResults = runner.run();
 	for (let svg of runResults.svgList) {
 		svgResultsTag.appendChild(svg);
 	}
