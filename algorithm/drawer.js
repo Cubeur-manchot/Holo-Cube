@@ -93,6 +93,14 @@ class SvgDrawer {
 // Represents the information of a puzzle image drawer.
 
 class TwistyPuzzleDrawer {
+	static planView = "plan";
+	static isometricView = "isometric";
+	static netView = "net";
+	static views = [
+		TwistyPuzzleDrawer.planView,
+		TwistyPuzzleDrawer.isometricView,
+		TwistyPuzzleDrawer.netView
+	];
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new TwistyPuzzleDrawer.");
