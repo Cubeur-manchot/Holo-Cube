@@ -7,7 +7,7 @@ class Cycle {
 		this.runner = runner;
 		this.slotIndexList = cycle;
 		this.orbitType = orbitType;
-		if (typeof orbitRankOrRanks === "number") {
+		if (Utils.isNumber(orbitRankOrRanks)) {
 			this.orbitRank = orbitRankOrRanks;
 		} else if (orbitRankOrRanks?.length) {
 			this.orbitRanks = orbitRankOrRanks;
