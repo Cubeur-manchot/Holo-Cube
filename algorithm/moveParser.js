@@ -18,7 +18,7 @@ class MoveSequenceParser {
 	parseMoveSequence = moveSequenceInput => {
 		this.runner.logger.generalLog(`Parsing move sequence "${moveSequenceInput}".`);
 		let moveSequence = new MoveSequence([], this.runner);
-		for (let moveToParse of typeof moveSequenceInput === "string" ? moveSequenceInput.split(" ").filter(move => move !== "") : moveSequenceInput) {
+		for (let moveToParse of moveSequenceInput.split(" ").filter(move => move !== "")) {
 			moveSequence.appendMove(this.moveParser.parseMove(moveToParse));
 		}
 		return moveSequence;
