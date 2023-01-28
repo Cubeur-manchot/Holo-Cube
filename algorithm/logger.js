@@ -36,7 +36,8 @@ class Logger { // doesn't write any log
 	};
 	static consoleLog = console.log;
 	resultLog = message => {
-		this.runner.logs += message + "\n";
+		this.runner.logs.all += message + "\n";
+		this.runner.logs.partial += message + "\n";
 	};
 	static offLog = () => {};
 	htmlLog = message => {
@@ -74,6 +75,11 @@ class Logger { // doesn't write any log
 	generalLog = () => {};
 	detailedLog = () => {};
 	debugLog = () => {};
+	resetPartialLogs = () => {
+		if (this.inOutput) {
+			this.runner.logs.partial = "";
+		}
+	};
 }
 
 class ErrorLogger extends Logger { // writes only error logs
@@ -84,7 +90,7 @@ class ErrorLogger extends Logger { // writes only error logs
 		return `[Error] ${message}`;
 	};
 	errorLog = message => {
-		this.log(`[Error] ${message}`);
+		this.log(ErrorLogger.buildErrorMessage(message));
 	};
 }
 
