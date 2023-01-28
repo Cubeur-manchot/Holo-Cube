@@ -133,7 +133,7 @@
 									<select id="loggerMode" class="form-select" onchange="updateResults();">
 										<option value="console" selected>Console</option>
 										<option value="htmlTag">HTML tag</option>
-										<option value="off">Off</option>
+										<option value="none">None</option>
 									</select>
 									<label for="loggerMode">Mode</label>
 								</div>
@@ -332,7 +332,7 @@
 						<ul>
 							<li>Console (default) : Logs are written in the javascript console.</li>
 							<li>HTML tag : Logs are written in the HTML document, inside the tag specified by the selector (same as CSS or document.querySelector()). This option is only available in web pages.</li>
-							<li>Off : No logs are written.</li>
+							<li>None : No logs are written.</li>
 						</ul>
 						<p>Remark : Even if the selected mode is not "Console", the errors will also be displayed in the console. This way debug is easier when trying to use another log mode (for example if the HTML selector is invalid).</p>
 						<h2>In output</h2>
