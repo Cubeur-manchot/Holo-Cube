@@ -23,7 +23,7 @@ Object structure to give to Runner class :
 		document: object // document implementation, default value is the document calling the script
 	},
 	logger: {
-		verbosity: int, // level of verbosity for the logs (-1 = no logs, 0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1
+		verbosity: int, // level of verbosity for the logs (0 = no logs, 1 = errors only, 2 = general and warnings, 3 = detailed, 4 = debug), default value is 2
 		mode: string, // how the logs will be written ("console"|"htmlTag"|"off"), default value is "console"
 		inOutput: bool, // tells if the output must contain the logs, default value is false
 		htmlTagSelector: string // selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected
@@ -155,9 +155,9 @@ class Runner {
 	};
 	setLogger = inputObject => {
 		// default values
-		let verbosity = 1;
-		let mode = Logger.consoleLoggerMode;
-		let inOutput = false;
+		let verbosity = Logger.defaultOptions.verbosityLevel;
+		let mode = Logger.defaultOptions.mode;
+		let inOutput = Logger.defaultOptions.inOutput;
 		let htmlTag = undefined;
 		// check input and overwrite default values
 		if (!Utils.isUndefinedOrNull(inputObject.logger)) {

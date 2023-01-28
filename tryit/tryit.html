@@ -158,11 +158,11 @@
 								</div>
 								<div class="col form-floating">
 									<select id="verbosity" class="form-select" onchange="updateResults();">
-										<option value="-1">-1 - Disabled</option>
-										<option value="0">0 - Errors only</option>
-										<option value="1" selected>1 - General</option>
-										<option value="2">2 - Detailed</option>
-										<option value="3">3 - Debug</option>
+										<option value="0">0 - Disabled</option>
+										<option value="1">1 - Errors only</option>
+										<option value="2" selected>2 - General</option>
+										<option value="3">3 - Detailed</option>
+										<option value="4">4 - Debug</option>
 									</select>
 									<label for="verbosity">Verbosity</label>
 								</div>
@@ -353,11 +353,11 @@
 						<h2>Verbosity</h2>
 						<p>This field defines how much logs will be written. Each level of verbosity n will include all logs of level n-1.</p>
 						<ul>
-							<li>-1 : Logs are fully disabled (not recommended), for both console/htmlTag modes and in output.</li>
-							<li>0 : Only errors will be displayed.</li>
-							<li>1 (default): In addition to 0, some general logs are written.</li>
-							<li>2 : In addition to 1, some more detailed logs are written.</li>
-							<li>3 : In addition to 2, some debug logs are written.</li>
+							<li>0 : Logs are fully disabled (not recommended), for both console/htmlTag modes and in output.</li>
+							<li>1 : Only errors will be displayed.</li>
+							<li>2 (default): In addition to 1, some general logs are written.</li>
+							<li>3 : In addition to 2, some more detailed logs are written.</li>
+							<li>4 : In addition to 3, some debug logs are written.</li>
 						</ul>
 						<p>Here is the list of all written logs, depending on the verbosity level.</p>
 						<h3>Initialization phase :</h3>
