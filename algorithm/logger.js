@@ -11,11 +11,11 @@
 class Logger { // doesn't write any log
 	static consoleLoggerMode = "console";
 	static htmlTagLoggerMode = "htmlTag";
-	static offLoggerMode = "off";
+	static noneLoggerMode = "none";
 	static loggerModes = [
 		Logger.consoleLoggerMode,
 		Logger.htmlTagLoggerMode,
-		Logger.offLoggerMode
+		Logger.noneLoggerMode
 	];
 	static offVerbosityLevel = 0;
 	static errorVerbosityLevel = 1;
@@ -39,7 +39,7 @@ class Logger { // doesn't write any log
 		this.runner.logs.all += message + "\n";
 		this.runner.logs.partial += message + "\n";
 	};
-	static offLog = () => {};
+	static noLog = () => {};
 	htmlLog = message => {
 		this.logHtmlTag.innerHTML += message + "<br/>";
 	};
@@ -51,7 +51,7 @@ class Logger { // doesn't write any log
 		switch (mode) {
 			case Logger.consoleLoggerMode: logMethod = Logger.consoleLog; break;
 			case Logger.htmlTagLoggerMode: this.logHtmlTag = htmlTag; logMethod = this.htmlLog; break;
-			case Logger.offLoggerMode: logMethod = Logger.offLog; break;
+			case Logger.noneLoggerMode: logMethod = Logger.noLog; break;
 			default: this.runner.throwError(`Invalid log mode ${mode}.`);
 			// todo probably add Google Sheet cell as a mode
 		}

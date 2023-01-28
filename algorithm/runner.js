@@ -24,7 +24,7 @@ Object structure to give to Runner class :
 	},
 	logger: {
 		verbosity: int, // level of verbosity for the logs (0 = no logs, 1 = errors only, 2 = general and warnings, 3 = detailed, 4 = debug), default value is 2
-		mode: string, // how the logs will be written ("console"|"htmlTag"|"off"), default value is "console"
+		mode: string, // how the logs will be written ("console"|"htmlTag"|"none"), default value is "console"
 		inOutput: bool, // tells if the output must contain the logs, default value is false
 		htmlTagSelector: string // selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected
 	}
