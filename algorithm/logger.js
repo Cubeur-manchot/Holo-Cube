@@ -37,16 +37,29 @@ class Logger { // doesn't write any log
 	htmlLog = message => {
 		this.logHtmlTag.innerHTML += message + "<br/>";
 	};
-	constructor (mode, runner, htmlTag) {
+	constructor (mode, runner, inOutput, htmlTag) {
 		this.runner = runner;
 		this.mode = mode;
+		this.inOutput = inOutput;
+		let logMethod;
 		switch (mode) {
-			case "htmlTag": this.logHtmlTag = htmlTag; this.log = this.htmlLog; break;
 			case Logger.consoleLoggerMode: logMethod = Logger.consoleLog; break;
 			case Logger.htmlTagLoggerMode: this.logHtmlTag = htmlTag; logMethod = this.htmlLog; break;
 			case Logger.offLoggerMode: logMethod = Logger.offLog; break;
 			default: this.runner.throwError(`Invalid log mode ${mode}.`);
 			// todo probably add Google Sheet cell as a mode
+		}
+		if (inOutput) {
+			this.log = message => {
+				logMethod(message);
+				this.resultLog(message);
+			};
+			this.runner.logs = {
+				all: "",
+				partial: ""
+			};
+		} else {
+			this.log = logMethod;
 		}
 	};
 	errorLog = () => {};
@@ -59,8 +72,11 @@ class Logger { // doesn't write any log
 }
 
 class ErrorLogger extends Logger { // writes only error logs
-	constructor (mode, runner, htmlTag) {
-		super(mode, runner, htmlTag);
+	constructor (mode, runner, inOutput, htmlTag) {
+		super(mode, runner, inOutput, htmlTag);
+	};
+	static buildErrorMessage = message => {
+		return `[Error] ${message}`;
 	};
 	errorLog = message => {
 		this.log(`[Error] ${message}`);
@@ -68,22 +84,22 @@ class ErrorLogger extends Logger { // writes only error logs
 }
 
 class GeneralLogger extends ErrorLogger { // writes general informative logs
-	constructor (mode, runner, htmlTag) {
-		super(mode, runner, htmlTag);
+	constructor (mode, runner, inOutput, htmlTag) {
+		super(mode, runner, inOutput, htmlTag);
 	};
 	generalLog = this.log;
 }
 
 class DetailedLogger extends GeneralLogger { // writes detailed informative logs and warning logs
-	constructor (mode, runner, htmlTag) {
-		super(mode, runner, htmlTag);
+	constructor (mode, runner, inOutput, htmlTag) {
+		super(mode, runner, inOutput, htmlTag);
 	};
 	detailedLog = this.log;
 }
 
 class DebugLogger extends DetailedLogger { // writes all logs for debug
-	constructor (mode, runner, htmlTag) {
-		super(mode, runner, htmlTag);
+	constructor (mode, runner, inOutput, htmlTag) {
+		super(mode, runner, inOutput, htmlTag);
 	};
 	debugLog = this.log;
 }
