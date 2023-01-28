@@ -11,13 +11,13 @@ class ColorCollection {
 	static yellow = {r: 255, g: 255, b: 0, a: 1};
 	static orange = {r: 255, g: 127, b: 0, a: 1};
 	static blue = {r: 0, g: 0, b: 255, a: 1};
-	static grey = {r: 153, g: 153, b: 153};
-	static lightGreen = {r: 119, g: 238, b: 0};
-	static purple = {r: 136, g: 17, b: 255};
-	static lightYellow = {r: 255, g: 255, b: 187};
-	static lightBlue = {r: 136, g: 221, b: 255};
-	static brown = {r: 255, g: 136, b: 51};
-	static pink = {r: 255, g: 153, b: 255};
+	static grey = {r: 153, g: 153, b: 153, a: 1};
+	static lightGreen = {r: 119, g: 238, b: 0, a: 1};
+	static purple = {r: 136, g: 17, b: 255, a: 1};
+	static lightYellow = {r: 255, g: 255, b: 187, a: 1};
+	static lightBlue = {r: 136, g: 221, b: 255, a: 1};
+	static brown = {r: 255, g: 136, b: 51, a: 1};
+	static pink = {r: 255, g: 153, b: 255, a: 1};
 }
 
 // Represents the information of a color, including opacity.
