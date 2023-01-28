@@ -589,11 +589,11 @@ class CubeNetDrawer extends CubeDrawer {
 class Logger { // doesn't write any log
 	static consoleLoggerMode = "console";
 	static htmlTagLoggerMode = "htmlTag";
-	static offLoggerMode = "off";
+	static noneLoggerMode = "none";
 	static loggerModes = [
 		Logger.consoleLoggerMode,
 		Logger.htmlTagLoggerMode,
-		Logger.offLoggerMode
+		Logger.noneLoggerMode
 	];
 	static offVerbosityLevel = 0;
 	static errorVerbosityLevel = 1;
@@ -617,7 +617,7 @@ class Logger { // doesn't write any log
 		this.runner.logs.all += message + "\n";
 		this.runner.logs.partial += message + "\n";
 	};
-	static offLog = () => {};
+	static noLog = () => {};
 	htmlLog = message => {
 		this.logHtmlTag.innerHTML += message + "<br/>";
 	};
@@ -629,7 +629,7 @@ class Logger { // doesn't write any log
 		switch (mode) {
 			case Logger.consoleLoggerMode: logMethod = Logger.consoleLog; break;
 			case Logger.htmlTagLoggerMode: this.logHtmlTag = htmlTag; logMethod = this.htmlLog; break;
-			case Logger.offLoggerMode: logMethod = Logger.offLog; break;
+			case Logger.noneLoggerMode: logMethod = Logger.noLog; break;
 			default: this.runner.throwError(`Invalid log mode ${mode}.`);
 			// todo probably add Google Sheet cell as a mode
 		}
@@ -1424,7 +1424,7 @@ Object structure to give to Runner class :
 	},
 	logger: {
 		verbosity: int, // level of verbosity for the logs (0 = no logs, 1 = errors only, 2 = general and warnings, 3 = detailed, 4 = debug), default value is 2
-		mode: string, // how the logs will be written ("console"|"htmlTag"|"off"), default value is "console"
+		mode: string, // how the logs will be written ("console"|"htmlTag"|"none"), default value is "console"
 		inOutput: bool, // tells if the output must contain the logs, default value is false
 		htmlTagSelector: string // selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected
 	}
