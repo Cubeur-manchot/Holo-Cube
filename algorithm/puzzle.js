@@ -41,7 +41,7 @@ class BlankCube1x1x1 extends Cube {
 }
 
 class Cube1x1x1 extends BlankCube1x1x1 {
-	constructor(rurunnern) {
+	constructor(runner) {
 		super(runner);
 		this.runner.logger.generalLog("Creating new Cube1x1x1.");
 		this.addOrbit(new CenterCubeOrbit(this.runner));
