@@ -130,6 +130,13 @@ class Color {
 			+ (this.g <= 15 ? "0" : "") + this.g.toString(16)
 			+ (this.b <= 15 ? "0" : "") + this.b.toString(16);
 	};
+	getRgbHex = () => {
+		return "#"
+			+ (this.r < 16 ? "0" : "") + this.r.toString(16)
+			+ (this.g < 16 ? "0" : "") + this.g.toString(16)
+			+ (this.b < 16 ? "0" : "") + this.b.toString(16)
+			+ (this.a === 1 ? "" : (this.a <= 15 / 255 ? "0" : "") + (this.a * 255).toString(16));
+	};
 	getAlpha = () => {
 		return this.a;
 	};
