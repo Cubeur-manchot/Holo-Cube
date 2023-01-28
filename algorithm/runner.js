@@ -155,9 +155,9 @@ class Runner {
 	};
 	setLogger = inputObject => {
 		// default values
-		let verbosity = 1;
-		let mode = Logger.consoleLoggerMode;
-		let inOutput = false;
+		let verbosity = Logger.defaultOptions.verbosityLevel;
+		let mode = Logger.defaultOptions.mode;
+		let inOutput = Logger.defaultOptions.inOutput;
 		let htmlTag = undefined;
 		// check input and overwrite default values
 		if (!Utils.isUndefinedOrNull(inputObject.logger)) {
