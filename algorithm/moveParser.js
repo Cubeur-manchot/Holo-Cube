@@ -16,7 +16,7 @@ class MoveSequenceParser {
 		}
 	};
 	parseMoveSequence = moveSequenceInput => {
-		this.runner.logger.generalLog(`Parsing move sequence ${moveSequenceInput}.`);
+		this.runner.logger.generalLog(`Parsing move sequence "${moveSequenceInput}".`);
 		let moveSequence = new MoveSequence([], this.runner);
 		for (let moveToParse of typeof moveSequenceInput === "string" ? moveSequenceInput.split(" ").filter(move => move !== "") : moveSequenceInput) {
 			moveSequence.appendMove(this.moveParser.parseMove(moveToParse));
@@ -59,7 +59,7 @@ class CubeMoveParser extends MoveParser {
 		this.cubeSize = this.blankPuzzle.puzzleSize;
 	};
 	parseMove = moveString => {
-		this.runner.logger.detailedLog(`Parsing move ${moveString}.`);
+		this.runner.logger.detailedLog(`Parsing move "${moveString}".`);
 		let faceListSubRegExp = "[UFRDBL]";
 		let directionListSubRegExp = "('?\\d*|\\d+')"; // empty, ', 2, 2', '2
 		if (new RegExp(`^[xyz]${directionListSubRegExp}$`).test(moveString)) { // x, y', z2, ...
