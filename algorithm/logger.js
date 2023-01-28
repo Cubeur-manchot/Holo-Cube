@@ -29,6 +29,11 @@ class Logger { // doesn't write any log
 		Logger.detailedVerbosityLevel,
 		Logger.debugVerbosityLevel
 	];
+	static defaultOptions = {
+		mode: Logger.consoleLoggerMode,
+		verbosityLevel: Logger.generalVerbosityLevel,
+		inOutput: false
+	};
 	static consoleLog = console.log;
 	resultLog = message => {
 		this.runner.logs += message + "\n";
