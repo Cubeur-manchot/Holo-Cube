@@ -17,6 +17,18 @@ class Logger { // doesn't write any log
 		Logger.htmlTagLoggerMode,
 		Logger.offLoggerMode
 	];
+	static offVerbosityLevel = -1;
+	static errorVerbosityLevel = 0;
+	static generalVerbosityLevel = 1;
+	static detailedVerbosityLevel = 2;
+	static debugVerbosityLevel = 3;
+	static verbosityLevels = [
+		Logger.offVerbosityLevel,
+		Logger.errorVerbosityLevel,
+		Logger.generalVerbosityLevel,
+		Logger.detailedVerbosityLevel,
+		Logger.debugVerbosityLevel
+	];
 	static consoleLog = console.log;
 	resultLog = message => {
 		this.runner.logs += message + "\n";
