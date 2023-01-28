@@ -8,178 +8,207 @@
 		<!-- Bootstrap -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+		<!-- Pickr -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/>
+		<script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
 		<!-- Site styles -->
 		<link rel="stylesheet" href="../style.css">
 		<link rel="stylesheet" href="../bootstrap-fixes.css">
+		<!-- Holo-Cube algorithm -->
+		<!--<script src="https://cubeur-manchot.github.io/Holo-Cube/bundles/holo-cube-algorithm.web-bundle.js"></script>-->
+		<script src="../algorithm/color.js"></script>
+		<script src="../algorithm/cycle.js"></script>
+		<script src="../algorithm/drawer.js"></script>
+		<script src="../algorithm/logger.js"></script>
+		<script src="../algorithm/move.js"></script>
+		<script src="../algorithm/moveParser.js"></script>
+		<script src="../algorithm/orbit.js"></script>
+		<script src="../algorithm/puzzle.js"></script>
+		<script src="../algorithm/runner.js"></script>
+		<script src="../algorithm/slot.js"></script>
+		<script src="../algorithm/sticker.js"></script>
+		<script src="../algorithm/utils.js"></script>
 		<!-- Page style and script -->
 		<link rel="stylesheet" href="./tryit.css">
 		<script src="./tryit.js"></script>
-		<!-- Holo-Cube algorithm -->
-		<script src="https://cubeur-manchot.github.io/Holo-Cube/bundles/holo-cube-algorithm.web-bundle.js"></script>
+		<!-- Highlight.js -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 	</head>
-	<body onload="updateResults();">
+	<body onload="createColorPickers();">
 		<h1>Holo-Cube - Try it yourself</h1>
 		<div class="d-flex justify-content-evenly">
 			<div class="card card-3 bg-white">
 				<div class="card-body">
-					<h2 class="card-title">Input fields</h2>
-					<label class="inputCategoryLabel">Puzzle</label>
-					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#puzzleInputModal"></button>
-					<div class="row">
-						<div class="col form-floating">
-							<select id="puzzleShape" class="form-select" onchange="updateResults();">
-								<option selected>Cube</option>
-								<option disabled>Dodecahedron</option>
-								<option disabled>Pyramid</option>
-							</select>
-							<label for="puzzleShape" class="form-label">Shape</label>
+					<div id="runnerConfigurationInput">
+						<h2 class="card-title">Input fields</h2>
+						<div id="puzzleRunnerInputs">
+							<label class="inputCategoryLabel">Puzzle</label>
+							<button type="button" class="icon question-mark" data-bs-toggle="modal" data-bs-target="#puzzleInputModal"></button>
+							<div class="row">
+								<div class="col form-floating">
+									<select id="puzzleShape" class="form-select" onchange="updateResults();">
+										<option selected>Cube</option>
+										<option disabled>Dodecahedron</option>
+										<option disabled>Pyramid</option>
+									</select>
+									<label for="puzzleShape" class="form-label">Shape</label>
+								</div>
+								<div class="col form-floating">
+									<input type="text" id="puzzleSize" class="form-control" placeholder="Puzzle size is required" value="3" onchange="updateResults();">
+									<label for="puzzleSize">Puzzle size</label>
+								</div>
+								<div class="col form-floating">
+									<select id="stage" class="form-select" onchange="updateResults();" disabled>
+										<option selected>-</option>
+									</select>
+									<label for="stage">Stage</label>
+								</div>
+								<div id="colorScheme">
+									<div data-colorPickerId="colorSchemeUFace" data-face="U" class="colorPicker">U</div>
+									<br>
+									<div data-colorPickerId="colorSchemeLFace" data-face="L" class="colorPicker">L</div>
+									<div data-colorPickerId="colorSchemeFFace" data-face="F" class="colorPicker">F</div>
+									<div data-colorPickerId="colorSchemeRFace" data-face="R" class="colorPicker">R</div>
+									<div data-colorPickerId="colorSchemeBFace" data-face="B" class="colorPicker">B</div>
+									<br>
+									<div data-colorPickerId="colorSchemeDFace" data-face="D" class="colorPicker">D</div>
+								</div>
+							</div>
 						</div>
-						<div class="col form-floating">
-							<input type="text" id="puzzleSize" class="form-control" placeholder="Puzzle size is required" value="3" onchange="updateResults();">
-							<label for="puzzleSize">Puzzle size</label>
+						<div id="drawingOptionsRunnerInputs">
+							<label class="inputCategoryLabel">Drawing options</label>
+							<button type="button" class="icon question-mark" data-bs-toggle="modal" data-bs-target="#drawingOptionsInputModal"></button>
+							<div class="row">
+								<div class="col form-floating">
+									<select id="view" class="form-select" onchange="updateResults();">
+										<option selected>Plan</option>
+										<option disabled>Isometric</option>
+										<option disabled>Net</option>
+										<option disabled>Top-down</option>
+									</select>
+									<label for="view">View</label>
+								</div>
+								<div class="col"></div>
+								<div class="col"></div>
+							</div>
+							<label class="inputLabel">Image</label>
+							<div class="row">
+								<div class="col-10">
+									<div class="row">
+										<div class="col form-floating">
+											<input type="text" id="imageHeight" class="form-control" placeholder="px" value="100" onchange="updateResults();">
+											<label for="imageHeight">Height</label>
+										</div>
+										<div class="col form-floating">
+											<input type="text" id="imageWidth" class="form-control" placeholder="px" value="100" onchange="updateResults();">
+											<label for="imageWidth">Width</label>
+										</div>
+										<div class="col form-floating">
+											<input type="text" id="imageScale" class="form-control" placeholder="multiplier" value="1" onchange="updateResults();">
+											<label for="imageScale">Scale</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-2">
+									<div data-colorPickerId="imageBackgroundColor" data-color="transparent" class="colorPicker"></div>
+								</div>
+							</div>
+							<label class="inputLabel">Puzzle</label>
+							<div class="row">
+								<div class="col-10">
+									<div class="row">
+										<div class="col form-floating">
+											<input type="text" id="puzzleHeight" class="form-control" placeholder="px" value="100" onchange="updateResults();">
+											<label for="puzzleHeight">Height</label>
+										</div>
+										<div class="col form-floating">
+											<input type="text" id="puzzleWidth" class="form-control" placeholder="px" value="100" onchange="updateResults();">
+											<label for="puzzleWidth">Width</label>
+										</div>
+										<div class="col form-floating">
+											<input type="text" id="puzzleScale" class="form-control" placeholder="multiplier" value="1" onchange="updateResults();">
+											<label for="puzzleScale">Scale</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-2">
+									<div data-colorPickerId="puzzleColor" data-color="black" class="colorPicker"></div>
+								</div>
+							</div>
 						</div>
-						<div class="col form-floating">
-							<select id="stage" class="form-select" onchange="updateResults();" disabled>
-								<option selected>-</option>
-							</select>
-							<label for="stage">Stage</label>
+						<div id="loggerRunnerInputs">
+							<label class="inputCategoryLabel">Logger</label>
+							<button type="button" class="icon question-mark" data-bs-toggle="modal" data-bs-target="#loggerInputModal"></button>
+							<div class="row">
+								<div class="col form-floating">
+									<select id="loggerMode" class="form-select" onchange="updateResults();">
+										<option value="console" selected>Console</option>
+										<option value="htmlTag">HTML tag</option>
+										<option value="off">Off</option>
+									</select>
+									<label for="loggerMode">Mode</label>
+								</div>
+								<div class="col form-floating">
+									<select id="inOutput" class="form-select" onchange="updateResults();">
+										<option value="false" selected>False</option>
+										<option value="true">True</option>
+									</select>
+									<label for="inOutput">In output</label>
+								</div>
+								<div class="col form-floating">
+									<select id="verbosity" class="form-select" onchange="updateResults();">
+										<option value="-1">-1 - Disabled</option>
+										<option value="0">0 - Errors only</option>
+										<option value="1" selected>1 - General</option>
+										<option value="2">2 - Detailed</option>
+										<option value="3">3 - Debug</option>
+									</select>
+									<label for="verbosity">Verbosity</label>
+								</div>
+							</div>
+							<div id="htmlTagContainer" class="row">
+								<div class="col form-floating">
+									<input type="text" id="htmlTagSelector" class="form-control" placeholder="htmlTagSelector" value="pre#logs code" onchange="updateResults();">
+									<label for="htmlTagSelector">HTML tag selector</label>
+								</div>
+								<div class="col"></div>
+								<div class="col"></div>
+							</div>
 						</div>
 					</div>
-					<label>Color scheme</label>
-					<div class="row text-center">
-						<div class="col-2 colorSchemeFace">
-							<label for="colorSchemeUColor" class="colorSchemeLabel">U</label>
-							<input type="color" id="colorSchemeUColor" value="#FFFFFF" onchange="updateResults();">
-							<input type="range" id="colorSchemeUOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
+					<hr>
+					<div id="moveSequencesInputs">
+						<label class="inputCategoryLabel">Move sequences</label>
+						<button type="button" class="icon question-mark" data-bs-toggle="modal" data-bs-target="#moveSequenceInputModal"></button>
+						<div class="form-floating">
+							<textarea id="moveSequences" class="form-control" placeholder="Move sequences" onchange="updateResults();"></textarea>
+							<label for="moveSequences">Move sequences</label>
 						</div>
-						<div class="col-2 colorSchemeFace">
-							<label for="colorSchemeFColor" class="colorSchemeLabel">F</label>
-							<input type="color" id="colorSchemeFColor" value="#00D800" onchange="updateResults();">
-							<input type="range" id="colorSchemeFOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
-						</div>
-						<div class="col-2 colorSchemeFace">
-							<label for="colorSchemeRColor" class="colorSchemeLabel">R</label>
-							<input type="color" id="colorSchemeRColor" value="#FF0000" onchange="updateResults();">
-							<input type="range" id="colorSchemeROpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
-						</div>
-						<div class="col-2 colorSchemeFace">
-							<label for="colorSchemeDColor" class="colorSchemeLabel">D</label>
-							<input type="color" id="colorSchemeDColor" value="#FFFF00" onchange="updateResults();">
-							<input type="range" id="colorSchemeDOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
-						</div>
-						<div class="col-2 colorSchemeFace">
-							<label for="colorSchemeBColor" class="colorSchemeLabel">B</label>
-							<input type="color" id="colorSchemeBColor" value="#0000FF" onchange="updateResults();">
-							<input type="range" id="colorSchemeBOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
-						</div>
-						<div class="col-2 colorSchemeFace">
-							<label for="colorSchemeRColor" class="colorSchemeLabel">L</label>
-							<input type="color" id="colorSchemeLColor" value="#FF7F00" onchange="updateResults();">
-							<input type="range" id="colorSchemeLOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
-						</div>
-					</div>
-					<label class="inputCategoryLabel">Move sequences</label>
-					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#moveSequenceInputModal"></button>
-					<div class="form-floating">
-						<textarea id="moveSequences" class="form-control" placeholder="Move sequences" onchange="updateResults();"></textarea>
-						<label for="moveSequences">Move sequences</label>
-					</div>
-					<label class="inputCategoryLabel">Drawing options</label>
-					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#drawingOptionsInputModal"></button>
-					<div class="form-floating">
-						<select id="view" class="form-select" onchange="updateResults();">
-							<option selected>Plan (default)</option>
-							<option disabled>Isometric</option>
-							<option disabled>Net</option>
-							<option disabled>Top-down</option>
-						</select>
-						<label for="view">View</label>
-					</div>
-					<label class="inputLabel">Image</label>
-					<div class="row">
-						<div class="col form-floating">
-							<input type="text" id="imageHeight" class="form-control" placeholder="px" onchange="updateResults();">
-							<label for="imageHeight">Height</label>
-						</div>
-						<div class="col form-floating">
-							<input type="text" id="imageWidth" class="form-control" placeholder="px" onchange="updateResults();">
-							<label for="imageWidth">Width</label>
-						</div>
-						<div class="col form-floating">
-							<input type="text" id="imageScale" class="form-control" placeholder="multiplier" onchange="updateResults();">
-							<label for="imageScale">Scale</label>
-						</div>
-						<div class="col">
-							<label for="imageBackgroundColor">Background color</label><br>
-							<input type="color" id="imageBackgroundColor" value="#FFFFFF" onchange="updateResults();"><br>
-							<input type="range" id="imageBackgroundOpacity" min="0" max="1" step="0.01" value="0" onchange="updateResults();">
-						</div>
-					</div>
-					<label class="inputLabel">Puzzle</label>
-					<div class="row">
-						<div class="col form-floating">
-							<input type="text" id="puzzleHeight" class="form-control" placeholder="px" onchange="updateResults();">
-							<label for="puzzleHeight">Height</label>
-						</div>
-						<div class="col form-floating">
-							<input type="text" id="puzzleWidth" class="form-control" placeholder="px" onchange="updateResults();">
-							<label for="puzzleWidth">Width</label>
-						</div>
-						<div class="col form-floating">
-							<input type="text" id="puzzleScale" class="form-control" placeholder="multiplier" onchange="updateResults();">
-							<label for="puzzleScale">Scale</label>
-						</div>
-						<div class="col">
-							<label for="puzzleColor">Color</label><br>
-							<input type="color" id="puzzleColor" value="#000000" onchange="updateResults();"><br>
-							<input type="range" id="puzzleOpacity" min="0" max="1" step="0.01" value="1" onchange="updateResults();">
-						</div>
-					</div>
-					<label class="inputCategoryLabel">Logger</label>
-					<button type="button" class="question-mark" data-bs-toggle="modal" data-bs-target="#loggerInputModal"></button>
-					<div class="row">
-						<div class="col form-floating">
-							<select id="loggerMode" class="form-select" onchange="updateHtmlTagSelectorVisibility(this.value); updateResults();">
-								<option value="console" selected>Console (default)</option>
-								<option value="result">Result</option>
-								<option value="htmlTag">HTML tag</option>
-								<option value="off">Off</option>
-							</select>
-							<label for="loggerMode">Mode</label>
-						</div>
-						<div class="col form-floating">
-							<select id="verbosity" class="form-select" onchange="updateResults();">
-								<option value="0">0 - Errors only</option>
-								<option value="1" selected>1 - General (default)</option>
-								<option value="2">2 - Advanced</option>
-								<option value="3">3 - Debug</option>
-							</select>
-							<label for="verbosity">Verbosity</label>
-						</div>
-					</div>
-					<div id="htmlTagContainer" class="row" hidden>
-						<div class="col form-floating">
-							<input type="text" id="htmlTagSelector" class="form-control" placeholder="div#logs" value="div#logs" onchange="updateResults();">
-							<label for="htmlTagSelector">HTML tag selector</label>
-						</div>
-						<div class="col"></div>
 					</div>
 				</div>
 			</div>
 			<div class="card card-3 bg-white">
 				<div class="card-body">
-					<h2 class="card-title">Input object</h2>
+					<h2 class="card-title">Code</h2>
 					<ul class="nav nav-pills" role="tablist">
 						<li class="nav-item">
-							<a class="nav-link active" data-bs-toggle="pill" href="#javascriptObjectInput">Javascript object</a>
+							<a class="nav-link active" data-bs-toggle="pill" href="#runner">Runner</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-bs-toggle="pill" href="#jsonInput">JSON</a>
+							<a class="nav-link" data-bs-toggle="pill" href="#execution">Execution</a>
 						</li>
 					</ul>
 					<div class="tab-content">
-						<pre id="javascriptObjectInput" class="container tab-pane active"></pre>
-						<pre id="jsonInput" class="container tab-pane"></pre>
+						<div id="runner" class="container tab-pane active">
+							<pre id="runnerCode"><code class="javascript"></code></pre>
+							<div id="runnerErrors">
+								<button type="button" class="icon warning"></button>
+								<label>Errors</label>
+								<pre id="runnerErrorsContainer"><code class="no-highlight hljs"></code></pre>
+							</div>
+						</div>
+						<pre id="execution" class="container tab-pane"><code class="javascript"></code></pre>
 					</div>
 				</div>
 			</div>
@@ -191,12 +220,22 @@
 							<a class="nav-link active" data-bs-toggle="pill" href="#svgResults">SVG results</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-bs-toggle="pill" href="#logs">Logs</a>
+							<a class="nav-link" data-bs-toggle="pill" href="#output">Output</a>
+						</li>
+						<li id="logsHtmlTagTabNavItem" class="nav-item">
+							<a class="nav-link" data-bs-toggle="pill" href="#logs">Logs (HTML tag mode)</a>
 						</li>
 					</ul>
 					<div class="tab-content">
-						<div id="svgResults" class="container tab-pane active"></div>
-						<div id="logs" class="container tab-pane"></div>
+						<div id="svgResults" class="container tab-pane active">
+							<div id="svgResultsOutlineSelector" class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="svgResultsOutlineSwitch">
+								<label class="form-check-label" id="svgResultsOutlineLabel" for="svgResultsOutlineSwitch">Outlines</label>
+							</div>
+							<div id="svgResultsContainer"></div>
+						</div>
+						<pre id="output" class="container tab-pane"><code class="javascript"></code></pre>
+						<pre id="logs" class="container tab-pane"><code class="no-highlight hljs"></code></pre>
 					</div>
 				</div>
 			</div>
@@ -209,15 +248,17 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<p>These fields defines the puzzle to apply move sequences to.</p>
+						<p>These fields define the puzzle to apply move sequences to.</p>
 						<h2>Shape</h2>
-						<p>This field defines the shape of the puzzle (regular NxNxN cube, dodecahedron, pyramid, ...). For now, only the cube shape is supported.</p>
+						<p>This field defines the shape of the puzzle (cube, dodecahedron, pyramid, ...). For now, only the cube shape is supported.</p>
 						<h2>Size</h2>
-						<p>This field defines the number of layers of the puzzle, assuming the puzzle is regular.</p>
+						<p>This field defines the number of layers of the puzzle.</p>
+						<h2>Stage</h2>
+						<p>This field defines the stage at which the puzzle must be displayed (OLL, PLL, F2B, ...). This option is not yet supported.</p>
 						<h2>Color scheme</h2>
-						<p>This field defines for each face, the color (and transparency if desired) of all stickers of the face.</p>
+						<p>This field defines for each face, the color of all stickers of the face.</p>
 						<br>
-						<p>Remark : In the input object required by Holo-Cube, the puzzle is described by the single property "fullName". Here the shape and size of the puzzle are artificially separated for onboarding purposes.</p>
+						<p>Remark : In the input object required by Holo-Cube, the puzzle is described by the single property "fullName". On this page the shape and size of the puzzle are artificially separated to ease the understanding.</p>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -255,24 +296,33 @@
 					<div class="modal-body">
 						<p>These fields define some options for drawing the images. The default values are :</p>
 						<ul>
+							<li>View : "plan"</li>
 							<li>Image height = 100px, image width = 100px, image scale = 1</li>
 							<li>Image background color : transparent</li>
 							<li>Puzzle height = 100px, puzzle width = 100px, puzzle scale = 1</li>
 							<li>Puzzle color : black</li>
 						</ul>
+						<h2>View</h2>
+						<p>This defines the view mode of the puzzle :</p>
+						<ul>
+							<li>Plan : view from above, showing the U face and the adjacent stickers</li>
+							<li>Isometric : view from 45° above and 45° aside, showing the up, front and right sides</li>
+							<li>Top-down : view from 45° above, showing the up and front sides</li>
+							<li>Net : net representation showing all stickers</li>
+						</ul>
 						<h2>Image height and width</h2>
-						<p>These fields define the height and width of the resulting image, in pixels.</p>
+						<p>These fields define the height and width of the image, in pixels.</p>
 						<h2>Image scale</h2>
 						<p>This field defines a multiplier to apply to both image dimensions. If some of the image dimensions are not specified, the multiplier will be applied after taking the respective default values.</p>
 						<h2>Image background color</h2>
-						<p>This field defines the background color of the image, including opacity.</p>
+						<p>This field defines the background color of the image.</p>
 						<h2>Puzzle height and width</h2>
-						<p>These fields define the height and width of the puzzle, in pixels. Both puzzle dimensions must not exceed the respective image dimension (except when the puzzle scale is specified and is < 1).</p>
+						<p>These fields define the height and width of the puzzle, in pixels.</p>
 						<h2>Puzzle scale</h2>
 						<p>This field defines a multiplier to apply to both puzzle dimensions. If some of the puzzle dimensions are not specified, the multiplier will be applied after taking the respective default values.
 						<br>After the multiplier is applied, both puzzle dimensions must not exceed the image dimensions.</p>
 						<h2>Puzzle color</h2>
-						<p>This field defines the color, including opacity, of the puzzle between the stickers (= plastic color).</p>
+						<p>This field defines the color of the puzzle between the stickers (= plastic color).</p>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -288,25 +338,29 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<p>During its execution, Holo-Cube writes some logs to help following its execution. These fields define how much and where they will be written.</p>
+						<p>During its execution, Holo-Cube writes some logs to help following the different steps. These fields define how much logs and where these logs will be written.</p>
 						<h2>Mode</h2>
-						<p>This field defines where the logs will be written. Use the most relevant, depending on how the code is called.
+						<p>This field defines where the logs will be written.</p>
 						<ul>
+							<li>Console (default) : Logs are written in the javascript console.</li>
+							<li>HTML tag : Logs are written in the HTML document, inside the tag specified by the selector (same as CSS or document.querySelector()). This option is only available in web pages.</li>
 							<li>Off : No logs are written.</li>
-							<li>Console : Logs are written in the javascript console.</li>
-							<li>Result : Logs are written in json result. Notice that if an error occurs during the execution, the result will not be written and you will get no logs.</li>
-							<li>HTML tag : Logs are written in the HTML document, inside the tag specified by the selector (same as CSS or document.querySelector()).</li>
 						</ul>
-						<p>Even if the mode you selected is not "Console", the errors will also be displayed in the console. This way you can still debug when trying to use another log mode (for example if the HTML selector is invalid).</p>
+						<p>Remark : Even if the selected mode is not "Console", the errors will also be displayed in the console. This way debug is easier when trying to use another log mode (for example if the HTML selector is invalid).</p>
+						<h2>In output</h2>
+						<p>This field defines if the logs should also be included in the result object, under the "log" node at root level. These logs include the logs of initialization phase, the logs of execution phase, and both combined.</p>
+						<p>Remark : If the execution handles a list of move sequences instead of a single move sequence, the logs of execution phase are also written in the result of each move sequence, in addition to the logs at root level.</p>
 						<h2>Verbosity</h2>
 						<p>This field defines how much logs will be written. Each level of verbosity n will include all logs of level n-1.</p>
 						<ul>
-							<li>0 : Only errors will be displayed. Notice that the execution will stop once the first error is reached, so you will have at most 1 log with this mode.</li>
-							<li>1 : In addition to 0, some general logs are written.</li>
+							<li>-1 : Logs are fully disabled (not recommended), for both console/htmlTag modes and in output.</li>
+							<li>0 : Only errors will be displayed.</li>
+							<li>1 (default): In addition to 0, some general logs are written.</li>
 							<li>2 : In addition to 1, some more detailed logs are written.</li>
 							<li>3 : In addition to 2, some debug logs are written.</li>
 						</ul>
-						<p>Here is the list of all written logs, depending on the verbosity level :</p>
+						<p>Here is the list of all written logs, depending on the verbosity level.</p>
+						<h3>Initialization phase :</h3>
 						<table class="table table-striped table-hover">
 							<thead>
 								<th scope="col">Log</th>
@@ -314,7 +368,7 @@
 								<th scope="col">1 : General</th>
 								<th scope="col">2 : Detailed</th>
 								<th scope="col">3 : Debug</th>
-								</thead>
+							</thead>
 							<tbody>
 								<tr><td>Any execution error</td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
@@ -330,8 +384,6 @@
 									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Warning : stage option is not yet supported (if stage is specified)</td><td></td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
-								<tr><td>Reading input : move sequences</td><td></td><td></td>
-									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Reading input : drawingOptions</td><td></td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Creating new drawing options runner input</td><td></td><td></td><td></td>
@@ -344,7 +396,7 @@
 									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Setting puzzle class</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
-								<tr><td>Creating blank puzzle</td><td></td><td></td><td></td>
+								<tr><td>Creating the blank puzzle</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
 								<tr><td>Creating new puzzle</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
@@ -362,6 +414,8 @@
 									<td><div class="check"></div></td></tr>
 								<tr><td>Creating new twisty puzzle drawer</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
+								<tr><td>Creating new SVG drawer</td><td></td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Creating new cube drawer</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
 								<tr><td>Creating new cube plan drawer</td><td></td>
@@ -370,24 +424,44 @@
 									<td><div class="check"></div></td></tr>
 								<tr><td>Creating puzzle image skeleton</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
+								<tr><td>Creating faces skeletton</td><td></td><td></td><td></td>
+									<td><div class="check"></div></td></tr>
+								<tr><td>Creating stickers skeletton per piece type</td><td></td><td></td><td></td>
+									<td><div class="check"></div></td></tr>
 								<tr><td>End of initialization phase</td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-								<tr><td>Beginning of execution phase</td><td></td>
+							</tbody>
+						</table>
+						<h3>Execution phase :</h3>
+						<table class="table table-striped table-hover">
+							<thead>
+								<th scope="col">Log</th>
+								<th scope="col">0 : Errors</th>
+								<th scope="col">1 : General</th>
+								<th scope="col">2 : Detailed</th>
+								<th scope="col">3 : Debug</th>
+								</thead>
+							<tbody>
+								<tr><td>Any execution error</td>
+									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Beginning of run phase</td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Running for a single or list of move sequence(s)</td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Creating new puzzle</td><td></td><td></td><td></td>
+									<td><div class="check"></div></td></tr>
 								<tr><td>Creating new cube</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
 								<tr><td>Creating new blank cube (1x1x1 | 2x2x2 | 3x3x3 | big)</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
 								<tr><td>Creating new (1x1x1 | 2x2x2 | 3x3x3 | big) cube</td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-								<tr><td>Creating new move sequence parser</td><td></td>
-									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-								<tr><td>Creating new move parser</td><td></td><td></td><td></td>
-									<td><div class="check"></div></td></tr>
-								<tr><td>Creating new cube move parser</td><td></td>
-									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-								<tr><td>Attaching cube move parser to move sequence parser</td><td></td><td></td><td></td>
-									<td><div class="check"></div></td></tr>
+								<tr><td>Creating new orbit</td><td></td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Creating new cube orbit</td><td></td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Creating new orbit with orbit type</td><td></td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Parsing move sequence</td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Creating new move sequence</td><td></td>
@@ -402,15 +476,21 @@
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Applying move on puzzle</td><td></td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Applying cycle on orbit</td><td></td><td></td><td></td>
+									<td><div class="check"></div></td></tr>
 								<tr><td>Ignoring cycle of length 1 (should never happen)</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
 								<tr><td>Ignoring cycle because orbit types are different (if applicable)</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
 								<tr><td>Ignoring cycle because cyle orbit ranks are different (if applicable)</td><td></td><td></td><td></td>
 									<td><div class="check"></div></td></tr>
+								<tr><td>Drawing puzzle</td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
+								<tr><td>Coloring stickers per orbit type</td><td></td><td></td>
+									<td><div class="check"></div></td><td><div class="check"></div></td></tr>
 								<tr><td>Adding image to output</td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
-								<tr><td>End of execution phase</td><td></td>
+								<tr><td>End of run phase</td><td></td>
 									<td><div class="check"></div></td><td><div class="check"></div></td><td><div class="check"></div></td></tr>
 							</tbody>
 						</table>
