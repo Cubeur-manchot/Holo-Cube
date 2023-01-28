@@ -41,10 +41,10 @@ class Logger { // doesn't write any log
 		this.runner = runner;
 		this.mode = mode;
 		switch (mode) {
-			case "console":this.log = Logger.consoleLog; break;
-			case "result": this.runner.logs = ""; this.log = this.resultLog; break;
 			case "htmlTag": this.logHtmlTag = htmlTag; this.log = this.htmlLog; break;
-			case "off": this.log = Logger.offLog; break;
+			case Logger.consoleLoggerMode: logMethod = Logger.consoleLog; break;
+			case Logger.htmlTagLoggerMode: this.logHtmlTag = htmlTag; logMethod = this.htmlLog; break;
+			case Logger.offLoggerMode: logMethod = Logger.offLog; break;
 			default: this.runner.throwError(`Invalid log mode ${mode}.`);
 			// todo probably add Google Sheet cell as a mode
 		}
