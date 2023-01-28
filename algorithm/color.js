@@ -29,6 +29,11 @@ class Color {
 			this.g = parseInt(colorString.substr(3, 2), 16);
 			this.b = parseInt(colorString.substr(5, 2), 16);
 			this.a = 1;
+		} else if (Color.isHex8(colorString)) {
+			this.r = parseInt(colorString.substr(1, 2), 16);
+			this.g = parseInt(colorString.substr(3, 2), 16);
+			this.b = parseInt(colorString.substr(5, 2), 16);
+			this.a = parseInt(colorString.substr(7, 2), 16) / 255;
 		} else if (Color.isHex3(colorString)) {
 			this.r = 17 * parseInt(colorString[1]);
 			this.g = 17 * parseInt(colorString[2]);
@@ -49,6 +54,7 @@ class Color {
 	};
 	static checkFormat = colorString => {
 		return Color.isHex6(colorString)
+			|| Color.isHex8(colorString)
 			|| Color.isHex3(colorString)
 			|| Color.isRgb(colorString)
 			|| Color.isRgba(colorString)
@@ -56,6 +62,9 @@ class Color {
 	};
 	static isHex6 = colorString => {
 		return /^#[0-9a-f]{6}$/i.test(colorString);
+	};
+	static isHex8 = colorString => {
+		return /^#[0-9a-f]{8}$/i.test(colorString);
 	};
 	static isHex3 = colorString => {
 		return /^#[0-9a-f]{3}$/i.test(colorString);
