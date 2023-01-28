@@ -17,11 +17,11 @@ class Logger { // doesn't write any log
 		Logger.htmlTagLoggerMode,
 		Logger.offLoggerMode
 	];
-	static offVerbosityLevel = -1;
-	static errorVerbosityLevel = 0;
-	static generalVerbosityLevel = 1;
-	static detailedVerbosityLevel = 2;
-	static debugVerbosityLevel = 3;
+	static offVerbosityLevel = 0;
+	static errorVerbosityLevel = 1;
+	static generalVerbosityLevel = 2;
+	static detailedVerbosityLevel = 3;
+	static debugVerbosityLevel = 4;
 	static verbosityLevels = [
 		Logger.offVerbosityLevel,
 		Logger.errorVerbosityLevel,
