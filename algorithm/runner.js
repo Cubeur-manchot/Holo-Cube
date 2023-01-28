@@ -10,8 +10,6 @@ Object structure to give to Runner class :
 		stage: string, // stage to show (OLL, PLL, CMLL, F2L, ...)
 		colorScheme: array of colors
 	},
-	moveSequence: string or array of strings, // sequence to apply on one puzzle
-	moveSequenceList: array of strings // sequences to apply, each one on a different puzzle
 	drawingOptions: {
 		imageHeight: number, // height of the image in px, default value is 100
 		imageWidth: number, // width of the image in px, default value is 100
@@ -26,17 +24,18 @@ Object structure to give to Runner class :
 	},
 	logger: {
 		verbosity: int, // level of verbosity for the logs (-1 = no logs, 0 = errors only, 1 = general and warnings, 2 = advanced, 3 = debug), default value is 1
-		mode: string, // how the logs will be written ("console"|"result"|"htmlTag"), default value is "console"
+		mode: string, // how the logs will be written ("console"|"htmlTag"|"off"), default value is "console"
+		inOutput: bool, // tells if the output must contain the logs, default value is false
 		htmlTagSelector: string // selector to find the HTML tag in which to write, when "htmlTag" logger mode is selected
 	}
 }
 
-puzzle.fullName is mandatory
-moveSequence XOR moveSequenceList is mandatory
-other inputs are optional
+puzzle.fullName is mandatory, other inputs are optional
 */
 
 class Runner {
+	static successStatus = "success";
+	static failStatus = "fail";
 	constructor(inputObject) {
 		this.setLogger(inputObject);
 		this.logger.generalLog("Creating new Runner.");
@@ -47,100 +46,168 @@ class Runner {
 		this.setMoveSequenceParser();
 		this.setPuzzleDrawer();
 		this.logger.generalLog("End of initialization phase.");
-		this.setMoveSequenceList(inputObject);
+		this.closeInitializationPhase();
 	};
-	run = () => {
-		this.logger.generalLog("Beginning of execution phase.");
+	run = moveSequenceInput => {
+		this.logger.resetPartialLogs(); // partial logs should contain only the logs of run phase
+		this.logger.generalLog("Beginning of run phase.");
 		let result = {
-			svgList: []
+			status: undefined,
+			errors: []
 		};
-		for (let moveSequence of this.moveSequenceList) {
-			let puzzle = new this.puzzleClass(this);
-			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
-			this.logger.generalLog("Adding image to output.");
-			result.svgList.push(this.puzzleDrawer.drawPuzzle(puzzle));
+		if (Utils.isUndefinedOrNull(moveSequenceInput)) {
+			result.status = Runner.failStatus;
+			let errorMessage = "Error : run() method must be called with move sequence or move sequence list as an argument.";
+			this.logger.errorLog(errorMessage);
+			result.errors.push({
+				scope: "general",
+				message: errorMessage
+			});
+		} else if (Utils.isString(moveSequenceInput)) {
+			this.logger.generalLog("Running for a single move sequence.");
+			this.runForOneMoveSequence(result, moveSequenceInput, undefined);
+		} else if (Utils.isArrayOfStrings(moveSequenceInput)) {
+			this.logger.generalLog(`Running for a list of move sequences containing ${moveSequenceInput.length} element${moveSequenceInput.length > 1 ? "s" : ""}.`);
+			result.results = [];
+			for (let moveSequenceIndex = 0; moveSequenceIndex < moveSequenceInput.length; moveSequenceIndex++) {
+				this.runForOneMoveSequence(result, moveSequenceInput[moveSequenceIndex], moveSequenceIndex);
+			}
+		} else {
+			let errorMessage = "Error : move sequence must either be a string (single move sequence) or an array of strings (list of move sequences).";
+			this.logger.errorLog(errorMessage);
+			result.errors.push({
+				scope: "general",
+				message: errorMessage
+			});
 		}
-		if (this.logger.mode === "result") {
-			result.logs = this.logs;
+		this.logger.generalLog("End of run phase.");
+		if (this.logger.inOutput) {
+			result.logs = {
+				all: this.logs.initializationPhase + "\n" + this.logs.partial,
+				initializationPhase: this.logs.initializationPhase,
+				runPhase: this.logs.partial
+			};
 		}
-		this.logger.generalLog("End of execution phase.");
 		return result;
 	};
+	runForOneMoveSequence = (result, moveSequence, moveSequenceIndex) => {
+		let isMultiple = !Utils.isUndefinedOrNull(moveSequenceIndex);
+		let previousPartialLogs = this.logger.inOutput ? this.logs.partial : null;
+		this.logger.resetPartialLogs();
+		try {
+			let puzzle = new this.puzzleClass(this);
+			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
+			let svg = this.puzzleDrawer.drawPuzzle(puzzle);
+			if (isMultiple) { // multiple move sequences
+				this.logger.generalLog(`Adding result of move sequence ${moveSequenceIndex} to output.`);
+				let moveSequenceResult = {
+					moveSequenceIndex: moveSequenceIndex,
+					status: Runner.successStatus,
+					svg: svg,
+					errorMessage: null,
+				};
+				if (this.logger.inOutput) {
+					moveSequenceResult.logs = this.logs.partial;
+				}
+				result.results.push(moveSequenceResult);
+				if (!result.status) {
+					result.status = Runner.successStatus;
+				}
+			} else { // single move sequences
+				this.logger.generalLog("Adding result of move sequence to output.");
+				result.svg = svg;
+				result.status = Runner.successStatus;
+			}
+		} catch (errorMessage) {
+			result.status = Runner.failStatus;
+			let rootLevelError = {
+				message: errorMessage
+			};
+			if (isMultiple) {
+				rootLevelError.scope = `Move sequence ${moveSequenceIndex} (${moveSequence}).`;
+				rootLevelError.moveSequenceIndex = moveSequenceIndex;
+				let moveSequenceResult = {
+					moveSequenceIndex: moveSequenceIndex,
+					status: Runner.failStatus,
+					svg: null,
+					errorMessage: errorMessage
+				};
+				if (this.logger.inOutput) {
+					moveSequenceResult.logs = this.logs.partial;
+				}
+				result.results.push(moveSequenceResult);
+			} else {
+				rootLevelError.scope = `Move sequence (${moveSequence}).`;
+			}
+			result.errors.push(rootLevelError);
+		}
+		if (this.logger.inOutput) {
+			this.logs.partial = previousPartialLogs + "\n" + this.logs.partial;
+		}
+	};
 	throwError = message => {
-		let errorMessage = `[ERROR] ${message}`;
+		let errorMessage = ErrorLogger.buildErrorMessage(message);
 		Logger.consoleLog(errorMessage); // always display errors in the console
-		if (this.logger && this.logger.mode !== "console") {
+		if (this.logger && this.logger.mode !== Logger.consoleLoggerMode) {
 			this.logger.errorLog(message);
 		}
 		throw errorMessage;
 	};
 	setLogger = inputObject => {
-		let verbosity = 1; // default value
-		let mode = "console"; // default value
+		// default values
+		let verbosity = 1;
+		let mode = Logger.consoleLoggerMode;
+		let inOutput = false;
 		let htmlTag = undefined;
-		if (![undefined, null].includes(inputObject.logger)) {
-			if (![undefined, null].includes(inputObject.logger.verbosity)) { // check verbosity
-				if (typeof inputObject.logger.verbosity !== "number") {
+		// check input and overwrite default values
+		if (!Utils.isUndefinedOrNull(inputObject.logger)) {
+			if (!Utils.isUndefinedOrNull(inputObject.logger.verbosity)) { // check verbosity
+				if (!Utils.isNumber(inputObject.logger.verbosity)) {
 					this.throwError("Property verbosity must be a number.");
-				} else if (![-1, 0, 1, 2, 3].includes(inputObject.logger.verbosity)) {
-					this.throwError(`Property verbosity only accept values -1, 0, 1, 2 and 3 (received value = ${inputObject.logger.verbosity}).`);
+				} else if (!Logger.verbosityLevels.includes(inputObject.logger.verbosity)) {
+					this.throwError(`Property verbosity only accept values ${Logger.verbosityLevels.join(", ")} (received value = ${inputObject.logger.verbosity}).`);
 				}
 				verbosity = inputObject.logger.verbosity;
 			}
-			if (verbosity !== -1 && ![undefined, null].includes(inputObject.logger.mode)) { // check mode
-				if (typeof inputObject.logger.mode !== "string") {
-					this.throwError("Property mode must be a string.");
-				} else if (!["console", "result", "htmlTag", "off"].includes(inputObject.logger.mode)) {
-					this.throwError(`Property mode only accept values "console", "result" and "htmlTag" (received value = ${inputObject.logger.mode}).`);
+			if (verbosity !== Logger.offVerbosityLevel) { // check other logger parameters
+				if (!Utils.isUndefinedOrNull(inputObject.logger.mode)) { // check mode
+					if (!Utils.isString(inputObject.logger.mode)) {
+						this.throwError("Property mode must be a string.");
+					} else if (!Logger.loggerModes.includes(inputObject.logger.mode)) {
+						this.throwError(`Property mode only accept values ${Logger.loggerModes.join(", ")} (received value = ${inputObject.logger.mode}).`);
+					}
+					mode = inputObject.logger.mode;
+					if (mode === Logger.htmlTagLoggerMode) { // check HTML tag selector if htmlTag mode is chosen
+						if (Utils.isUndefinedOrNull(inputObject.logger.htmlTagSelector)) {
+							this.throwError(`Property logger.htmlTagSelector is required when mode is "${Logger.htmlTagLoggerMode}".`);
+						} else if (!Utils.isString(inputObject.logger.htmlTagSelector)) {
+							this.throwError("Property htmlTagSelector must be a string.");
+						}
+						htmlTag = document.querySelector(inputObject.logger.htmlTagSelector);
+						if (htmlTag === null) {
+							this.throwError(`No HTML tag was found with selector ${inputObject.logger.htmlTagSelector}.`);
+						}
+					}
 				}
-				mode = inputObject.logger.mode;
-				if (mode === "htmlTag") { // htmlTag mode is chosen, the HTML tag is required
-					if ([undefined, null].includes(inputObject.logger.htmlTagSelector)) {
-						this.throwError("Property logger.htmlTagSelector is required when mode is \"htmlTag\".");
-					} else if (typeof inputObject.logger.htmlTagSelector !== "string") {
-						this.throwError("Property htmlTagSelector must be a string.");
+				if (!Utils.isUndefinedOrNull(inputObject.logger.inOutput)) { // check if logs must appear in output
+					if (!Utils.isBoolean(inputObject.logger.inOutput)) {
+						this.throwError("Property inOutput must be a boolean.");
 					}
-					htmlTag = document.querySelector(inputObject.logger.htmlTagSelector);
-					if (htmlTag === null) {
-						this.throwError(`No HTML tag was found with selector ${inputObject.logger.htmlTagSelector}.`);
-					}
+					inOutput = inputObject.logger.inOutput;
 				}
 			}
 		}
-		this.logger = new (this.getLoggerClass(verbosity))(mode, this, htmlTag);
+		this.logger = new (this.getLoggerClass(verbosity))(mode, this, inOutput, htmlTag);
 		this.logger.detailedLog("Logger is created.");
+	};
+	closeInitializationPhase = () => {
+		if (this.logger.inOutput) {
+			this.logs.initializationPhase = this.logs.all;
+		}
 	};
 	setPuzzle = inputObject => {
 		this.logger.detailedLog("Reading input : puzzle.");
 		this.puzzle = new PuzzleRunnerInput(inputObject.puzzle, this);
-	};
-	setMoveSequenceList = inputObject => {
-		this.logger.detailedLog("Reading input : move sequence(s).");
-		let isMoveSequenceDefined = ![undefined, null].includes(inputObject.moveSequence);
-		let isMoveSequenceListDefined = ![undefined, null].includes(inputObject.moveSequenceList);
-		if (isMoveSequenceDefined) {
-			if (isMoveSequenceListDefined) {
-				this.throwError("Both properties moveSequence and moveSequenceList were provided, please set one of them to null or undefined.");
-			}
-			if (typeof inputObject.moveSequence !== "string") {
-				this.throwError("Property moveSequence must of a string.");
-			}
-			this.moveSequenceList = [inputObject.moveSequence];
-		} else {
-			if (!isMoveSequenceListDefined) {
-				this.throwError("Property moveSequence or moveSequenceList must be provided.");
-			}
-			if (typeof inputObject.moveSequenceList !== "object") {
-				this.throwError("Property moveSequenceList must be an array of strings.");
-			} else {
-				for (let moveSequence of inputObject.moveSequenceList) {
-					if (typeof moveSequence !== "string") {
-						this.throwError("Each move sequence in property moveSequenceList must be a string.");
-					}
-				}
-			}
-			this.moveSequenceList = inputObject.moveSequenceList;
-		}
 	};
 	setDrawingOptions = inputObject => {
 		this.logger.detailedLog("Reading input : drawingOptions.");
@@ -159,7 +226,7 @@ class Runner {
 		}
 	};
 	setBlankPuzzle = () => { // blank puzzle is an instance of the blank parent class, which has the same structure without the orbits
-		this.logger.debugLog("Creating blank puzzle.");
+		this.logger.debugLog("Creating the blank puzzle.");
 		this.blankPuzzle = new (TwistyPuzzle.getBlankParentClass(this.puzzleClass))(this);
 	};
 	setMoveSequenceParser = () => {
@@ -173,20 +240,20 @@ class Runner {
 	getPuzzleDrawerClass = () => {
 		switch(this.puzzle.shape) {
 			case "cube": switch(this.drawingOptions.view) {
-				case "plan": return CubePlanDrawer;
-				case "isometric": return CubeIsometricDrawer;
-				case "net": return CubeNetDrawer;
+				case TwistyPuzzleDrawer.planView: return CubePlanDrawer;
+				case TwistyPuzzleDrawer.isometricView: return CubeIsometricDrawer;
+				case TwistyPuzzleDrawer.netView: return CubeNetDrawer;
 			}
 			default: this.throwError("Getting puzzle drawer class for a non-cubic shaped puzzle.");
 		}
 	};
 	getLoggerClass = verbosity => {
 		switch(verbosity) {
-			case -1: return Logger;
-			case 0: return ErrorLogger;
-			case 1: return GeneralLogger;
-			case 2: return DetailedLogger;
-			case 3: return DebugLogger;
+			case Logger.offVerbosityLevel: return Logger;
+			case Logger.errorVerbosityLevel: return ErrorLogger;
+			case Logger.generalVerbosityLevel: return GeneralLogger;
+			case Logger.detailedVerbosityLevel: return DetailedLogger;
+			case Logger.debugVerbosityLevel: return DebugLogger;
 		}
 	};
 }
@@ -197,9 +264,9 @@ class PuzzleRunnerInput {
 	constructor(puzzle, runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new PuzzleRunnerInput");
-		if ([undefined, null].includes(puzzle)) {
+		if (Utils.isUndefinedOrNull(puzzle)) {
 			this.runner.throwError("Property puzzle is required.");
-		} else if (typeof puzzle !== "object") {
+		} else if (!Utils.isObject(puzzle)) {
 			this.runner.throwError("Property puzzle must be an object.");
 		}
 		this.setPuzzleGeneral(puzzle);
@@ -207,9 +274,9 @@ class PuzzleRunnerInput {
 		this.setColorScheme(puzzle);
 	};
 	setPuzzleGeneral = puzzle => {
-		if ([undefined, null].includes(puzzle.fullName)) {
+		if (Utils.isUndefinedOrNull(puzzle.fullName)) {
 			this.runner.throwError("Property puzzle.fullName is required.");
-		} else if (typeof puzzle.fullName !== "string") {
+		} else if (!Utils.isString(puzzle.fullName)) {
 			this.runner.throwError("Property puzzle.fullName must be a string.");
 		} else if (!puzzle.fullName.startsWith("cube")) {
 			this.runner.throwError("Wrong value for puzzle.fullName : only cubes are supported for now.");
@@ -226,11 +293,11 @@ class PuzzleRunnerInput {
 		}
 	};
 	setStage = puzzle => {
-		if (![undefined, null].includes(puzzle.stage)) {
-			if (typeof puzzle.stage !== "string") {
+		if (!Utils.isUndefinedOrNull(puzzle.stage)) {
+			if (!Utils.isString(puzzle.stage)) {
 				this.runner.throwError("Property puzzle.stage must be a string.");
 			} else {
-				this.runner.logger.warningLog("Stage option is not yet supported, current mode shows all stickers.");
+				this.runner.logger.warningLog("Stage option is not yet supported, current stage shows all stickers.");
 				this.stage = puzzle.stage;
 			}
 		}
@@ -238,22 +305,22 @@ class PuzzleRunnerInput {
 	};
 	setColorScheme = puzzle => {
 		this.colorScheme = [];
-		if ([undefined, null].includes(puzzle.colorScheme)) {
-			for (let color of this.getDefaultColorSchemeFromShape(this.shape)) {
+		if (Utils.isUndefinedOrNull(puzzle.colorScheme)) {
+			let defaultColorScheme = this.getDefaultColorSchemeFromShape(this.shape);
+			for (let color of defaultColorScheme) {
 				this.colorScheme.push(new Color(color));
 			}
+			this.runner.logger.detailedLog(`Property puzzle.colorScheme was not provided, using default color scheme ["${defaultColorScheme.join('", "')}"].`);
 		} else {
-			if (typeof puzzle.colorScheme !== "object") {
+			if (!Utils.isArrayOfStrings(puzzle.colorScheme)) {
 				this.runner.throwError("Property puzzle.colorScheme must be an array of strings.");
 			} else if (puzzle.colorScheme.length !== this.getColorSchemeLengthFromShape(this.shape)) {
 				this.runner.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
-					+ `(expected value = ${this.getColorSchemeLengthFromShape(puzzleShape)} because puzzle shape is ${this.puzzle.shape},`
+					+ `(expected value = ${this.getColorSchemeLengthFromShape(puzzleShape)} because puzzle shape is ${this.puzzle.shape}, `
 					+ `actual = ${puzzle.colorScheme.length}).`);
 			} else {
 				for (let color of puzzle.colorScheme) {
-					if (typeof color !== "string") {
-						this.runner.throwError("Each color in property puzzle.colorScheme must be a string.");
-					} else if (!Color.checkFormat(color)) {
+					if (!Color.checkFormat(color)) {
 						this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
 					}
 					this.colorScheme.push(new Color(color));
@@ -263,10 +330,39 @@ class PuzzleRunnerInput {
 	};
 	getDefaultColorSchemeFromShape = puzzleShape => {
 		switch (puzzleShape) {
-			case Cube.shape: return ["w", "g", "r", "y", "b", "o"]; // respectively for U, F, R, D, B, L faces
-			case Pyramid.shape: return ["g", "b", "r", "y"]; // respectively for F, BR, BL, D faces
-			case Dodecahedron.shape: return ["w", "g", "r", "b", "y", "pu", "gy", "lg", "o", "lb", "ly", "pi"]; // respectively for U, F, R, BR, BL, L, D, DB, DL, DFL, DFR, DR
-			default: this.runner.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
+			case Cube.shape:
+				return [ // respectively for U, F, R, D, B, L faces
+					"white",
+					"green",
+					"red",
+					"yellow",
+					"blue",
+					"orange"
+				];
+			case Pyramid.shape:
+				return [ // respectively for F, BR, BL, D faces
+					"green",
+					"blue",
+					"red",
+					"yellow"
+				];
+			case Dodecahedron.shape:
+				return [ // respectively for U, F, R, BR, BL, L, D, DB, DL, DFL, DFR, DR
+					"white",
+					"green",
+					"red",
+					"blue",
+					"yellow",
+					"purple",
+					"grey",
+					"lightGreen",
+					"orange",
+					"lightBlue",
+					"lightYellow",
+					"pink"
+				];
+			default:
+				this.runner.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
 		}
 	};
 	getColorSchemeLengthFromShape = puzzleShape => {
@@ -284,9 +380,11 @@ class DrawingOptionsRunnerInput {
 	static defaultDrawingOptions = {
 		imageHeight: 100,
 		imageWidth: 100,
+		imageScale: 1,
 		imageBackgroundColor: "transparent",
 		puzzleHeight: 100,
 		puzzleWidth: 100,
+		puzzleScale: 1,
 		puzzleColor: "black",
 		view: "plan"
 	};
@@ -298,7 +396,7 @@ class DrawingOptionsRunnerInput {
 			for (let imageOrPuzzle of ["image", "puzzle"]) {
 				for (let heightOrWidth of heightWidthList) {
 					let dimensionProperty = imageOrPuzzle + heightOrWidth;
-					if (![undefined, null].includes(drawingOptionsObject[dimensionProperty])) {
+					if (!Utils.isUndefinedOrNull(drawingOptionsObject[dimensionProperty])) {
 						this.checkNumberNotZero(drawingOptionsObject[dimensionProperty], dimensionProperty);
 						this[dimensionProperty] = drawingOptionsObject[dimensionProperty];
 					} else {
@@ -306,36 +404,40 @@ class DrawingOptionsRunnerInput {
 					}
 				}
 				let scaleProperty = imageOrPuzzle + "Scale";
-				if (![undefined, null].includes(drawingOptionsObject[scaleProperty])) {
+				if (!Utils.isUndefinedOrNull(drawingOptionsObject[scaleProperty])) {
 					this.checkNumberNotZero(drawingOptionsObject[scaleProperty], scaleProperty);
 					for (let heightOrWidth of heightWidthList) {
 						this[imageOrPuzzle + heightOrWidth] *= drawingOptionsObject[scaleProperty];
 					}
 				}
 			}
-			if (![undefined, null].includes(drawingOptionsObject.view)) {
-				if (typeof drawingOptionsObject.view !== "string") {
+			if (!Utils.isUndefinedOrNull(drawingOptionsObject.view)) {
+				if (!Utils.isString(drawingOptionsObject.view)) {
 					this.runner.throwError("Property drawingOptions.view must be a string.");
-				} else if (!["plan", "isometric", "net"].includes(drawingOptionsObject.view)) {
-					this.runner.throwError(`Invalid value for property drawingOptions.view (current = ${drawingOptionsObject.view}, allowed = "plan"|"isometric"|"net").`);
+				} else if (!TwistyPuzzleDrawer.views.includes(drawingOptionsObject.view)) {
+					this.runner.throwError(`Property view only accept values "${TwistyPuzzleDrawer.view.join("\", \"")}" (received value = ${drawingOptionsObject.view}).`);
 				} else {
 					this.runner.logger.warningLog("View option is not yet supported, using plan view by default");
-					this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view; // todo replace with this.view = drawingOptionsObject.view;
+					this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
 				}
 			} else {
 				this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
 			}
+			let dimensionIssues = [];
 			for (let dimension of ["Height", "Width"]) {
 				if (Math.abs(this["puzzle" + dimension]) > Math.abs(this["image" + dimension])) {
-					this.runner.throwError(`Puzzle is larger than image (puzzle${dimension} = this["puzzle" + dimension], image${dimension} = this["image" + dimension]).`);
+					dimensionIssues.push(`puzzle${dimension} = ${this["puzzle" + dimension]}, image${dimension} = ${this["image" + dimension]}`);
 				}
 				if (Math.abs(this["image" + dimension]) > 2000) {
-					this.runner.logger.warningLog(`Creating large image (image${dimension} = this["image" + dimension]).`);
+					this.runner.logger.warningLog(`Creating large image (image${dimension} = ${this["image" + dimension]}).`);
 				}
+			}
+			if (dimensionIssues.length) {
+				this.runner.throwError(`Puzzle is larger than image (${dimensionIssues.join(", ")}).`);
 			}
 			for (let drawingOptionsProperty of ["imageBackgroundColor", "puzzleColor"]) {
 				if (drawingOptionsObject[drawingOptionsProperty]) {
-					if (typeof drawingOptionsObject[drawingOptionsProperty] !== "string") {
+					if (!Utils.isString(drawingOptionsObject[drawingOptionsProperty])) {
 						this.runner.throwError(`Property drawingOptions.${drawingOptionsProperty} must be a string.`);
 					} else if (!Color.checkFormat(drawingOptionsObject[drawingOptionsProperty])) {
 						this.runner.throwError(`Invalid or unrecognized color for property drawingOptions.${drawingOptionsProperty} : ${drawingOptionsObject[drawingOptionsProperty]}.`);
@@ -345,8 +447,8 @@ class DrawingOptionsRunnerInput {
 					this.setColorValueFromDefault(drawingOptionsProperty);
 				}
 			}
-			if (![undefined, null].includes(drawingOptionsObject.document)) {
-				if (typeof drawingOptionsObject.document !== "object") {
+			if (!Utils.isUndefinedOrNull(drawingOptionsObject.document)) {
+				if (!Utils.isObject(drawingOptionsObject.document)) {
 					this.runner.throwError("Property drawingOptions.document must be an object.");
 				} else {
 					this.runner.logger.detailedLog("Using specified document for SVG creation.");
@@ -358,7 +460,7 @@ class DrawingOptionsRunnerInput {
 		} else {
 			this.setAllValuesFromDefault();
 		}
-	}; // todo add debug logs when setting values with default values ?
+	};
 	setAllValuesFromDefault = () => {
 		for (let drawingOptionsNumericProperty of ["imageHeight", "imageWidth", "puzzleHeight", "puzzleWidth"]) {
 			this.setNumericValueFromDefault(drawingOptionsNumericProperty);
@@ -386,7 +488,7 @@ class DrawingOptionsRunnerInput {
 		}
 	};
 	checkNumberNotZero = (variableValue, variableName) => {
-		if (typeof variableValue !== "number") {
+		if (Utils.isNumber(variableValue !== "number")) {
 			this.runner.throwError(`Property drawingOptions.${variableName} must be a number.`);
 		} else if (variableValue === 0) {
 			this.runner.throwError(`Property drawingOptions.${variableName} cannot be 0.`);

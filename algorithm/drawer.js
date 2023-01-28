@@ -93,6 +93,14 @@ class SvgDrawer {
 // Represents the information of a puzzle image drawer.
 
 class TwistyPuzzleDrawer {
+	static planView = "plan";
+	static isometricView = "isometric";
+	static netView = "net";
+	static views = [
+		TwistyPuzzleDrawer.planView,
+		TwistyPuzzleDrawer.isometricView,
+		TwistyPuzzleDrawer.netView
+	];
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new TwistyPuzzleDrawer.");
@@ -100,7 +108,7 @@ class TwistyPuzzleDrawer {
 		this.svgDrawer = new SvgDrawer(this.options.document, this.runner);
 		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
 			if (!this.options[drawingOptionColorProperty] instanceof Color) {
-				if ([null, undefined].includes(this.options[drawingOptionColorProperty])) {
+				if (Utils.isUndefinedOrNull(this.options[drawingOptionColorProperty])) {
 					this.runner.throwError(`Creating TwistyPuzzleDrawer with no property ${drawingOptionColorProperty}.`);
 				} else {
 					this.runner.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionColorProperty}.`);
@@ -108,7 +116,7 @@ class TwistyPuzzleDrawer {
 			}
 		}
 		for (let drawingOptionNumericProperty of ["puzzleHeight", "puzzleWidth", "imageHeight", "imageWidth"]) {
-			if (typeof this.options[drawingOptionNumericProperty] !== "number") {
+			if (!Utils.isNumber(this.options[drawingOptionNumericProperty])) {
 				if (this.options[drawingOptionNumericProperty]) {
 					this.runner.throwError(`Creating TwistyPuzzleDrawer with erroneous ${drawingOptionNumericProperty}.`);
 				} else {
@@ -116,7 +124,7 @@ class TwistyPuzzleDrawer {
 				}
 			}
 		}
-		if (typeof this.options.document !== "object") {
+		if (Utils.isObject(this.options.document !== "object")) {
 			this.runner.throwError("Creating TwistyPuzzleDrawer with erroneous document property.");
 		}
 	};

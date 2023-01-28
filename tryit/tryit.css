@@ -1,18 +1,39 @@
-/* General */
-
-button.question-mark {
-	height: 16px;
-	width: 16px;
-	background-image: url("./images/question-mark.svg");
-	background-color: transparent;
-	border: none;
-	margin-left: 5px;
-}
+/* Cards */
 
 div.card-3 {
 	background-color: rgba(0,0,0,0.1);
 	width: 32%;
 	margin-bottom: 15px;
+}
+
+/* Tabs */
+
+.tab-pane {
+	padding: 1rem 0rem 1rem 0rem;
+}
+
+div:has(div#runnerConfigurationInput option[value=htmlTag]:not(:checked)) li#logsHtmlTagTabNavItem {
+	display: none;
+}
+
+/* Icons */
+
+button.icon {
+	height: 16px;
+	width: 16px;
+	background-color: transparent;
+	border: none;
+}
+
+button.question-mark {
+	background-image: url("./images/question-mark.svg");
+	margin-left: 5px;
+}
+
+button.warning {
+	background-image: url("./images/warning.svg");
+	margin-right: 5px;
+	cursor: default !important;
 }
 
 /* Modals */
@@ -21,6 +42,13 @@ div.modal h2 {
 	font-size: 15px;
 	font-weight: 600;
 	margin-top: 15px;
+	margin-bottom: 0px;
+}
+
+div.modal h3 {
+	font-size: 14px;
+	font-weight: 600;
+	margin-top: 10px;
 	margin-bottom: 0px;
 }
 
@@ -37,19 +65,59 @@ td div.check {
 	background-repeat: no-repeat;
 }
 
-/* Input fields zone */
+/* Color pickers */
 
-div.colorSchemeFace input[type=range] {
-	width: 50px;
+div.pickr button.pcr-button::after {
+	border: 1px solid #ced4da;
+	content: attr(data-face);
+	padding-top: 2px;
+	font-weight: bolder;
 }
+
+div.pickr[data-fontColor=white] button.pcr-button::after {
+	color: white;
+}
+
+div.pickr[data-fontColor=black] button.pcr-button::after {
+	color: black;
+}
+
+/* Color scheme */
+
+div#colorScheme {
+	margin-top: 10px;
+}
+
+div#colorScheme div.pickr {
+	display: inline-block;
+}
+
+div#colorScheme div.pickr:has(button.pcr-button[data-face=U]),
+div#colorScheme div.pickr:has(button.pcr-button[data-face=D]) {
+	margin: 2px 0px 2px 32px;
+}
+
+div#colorScheme :has(button.pcr-button[data-face=L]),
+div#colorScheme :has(button.pcr-button[data-face=F]),
+div#colorScheme :has(button.pcr-button[data-face=R]),
+div#colorScheme :has(button.pcr-button[data-face=B]) {
+	margin: 0px;
+}
+
+/* Input fields */
 
 label.inputCategoryLabel {
 	font-size: 1.3rem;
 	font-weight: 600;
 }
 
-label.inputCategoryLabel:not(:nth-child(2)) { /* all except first one */
-	margin-top: 10px;
+div#runnerConfigurationInput div#drawingOptionsRunnerInputs,
+div#runnerConfigurationInput div#loggerRunnerInputs {
+	padding-top: 1rem;
+}
+
+div#runnerConfigurationInput label, div#moveSequencesInputs label {
+	margin-bottom: 5px;
 }
 
 label.inputLabel {
@@ -57,8 +125,10 @@ label.inputLabel {
 	font-weight: 500;
 }
 
-label {
-	margin-bottom: 5px;
+div.pickr[data-colorPickerId=imageBackgroundColor],
+div.pickr[data-colorPickerId=puzzleColor] {
+	margin-top: calc(1.75rem - 13px);
+	margin-left: calc(50% - 14px);
 }
 
 textarea#moveSequences {
@@ -69,8 +139,63 @@ div#htmlTagContainer{
 	margin-top: 10px;
 }
 
-/* Intermediate input and Output zones */
+div#loggerRunnerInputs:has(select#loggerMode option[value=htmlTag]:not(:checked)) div#htmlTagContainer {
+	display: none;
+}
 
-pre#javascriptObjectInput, pre#jsonInput, div#svgResults, div#logs {
-	padding: 10px 0px;
+input#inOutput, label[for=inOutput] {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+/* Code blocks */
+
+.hljs { /* syntax highlighting from Highlight.js */
+	border-radius: 5px;
+	background-color: #333333;
+}
+
+pre:has(code.hljs) {
+	overflow: unset;
+}
+
+/* Runner errors */
+
+div#runnerErrors:has(code:empty) {
+	display: none;
+}
+
+div#runnerErrors label {
+	font-size: 1.3rem;
+	font-weight: 600;
+}
+
+/* SVG results */
+
+div#svgResults svg {
+	margin: 0px 10px 10px 0px;
+}
+
+div#svgResults:has(input#svgResultsOutlineSwitch:checked) svg {
+	outline: 1px dashed #AAAAAA;
+}
+
+div#svgResultsOutlineSelector {
+	margin-bottom: 0.5rem;
+	transform: translateY(-4px);
+}
+
+label#svgResultsOutlineLabel {
+	transform: translate(-35px, -1px);
+	padding-left: 35px;
+	padding-right: 10px;
+	user-select: none;
+}
+
+input#svgResultsOutlineSwitch, label#svgResultsOutlineLabel {
+	vertical-align: middle;
+}
+
+input#svgResultsOutlineSwitch, label#svgResultsOutlineLabel {
+	cursor: pointer;
 }
