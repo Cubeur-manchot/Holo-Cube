@@ -9,6 +9,14 @@
 */
 
 class Logger { // doesn't write any log
+	static consoleLoggerMode = "console";
+	static htmlTagLoggerMode = "htmlTag";
+	static offLoggerMode = "off";
+	static loggerModes = [
+		Logger.consoleLoggerMode,
+		Logger.htmlTagLoggerMode,
+		Logger.offLoggerMode
+	];
 	static consoleLog = console.log;
 	resultLog = message => {
 		this.runner.logs += message + "\n";
