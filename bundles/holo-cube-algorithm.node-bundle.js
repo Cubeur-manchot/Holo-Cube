@@ -1945,4 +1945,4 @@ class Utils {
 	};
 }
 
-module.exports = {Runner};
+export {Runner};
