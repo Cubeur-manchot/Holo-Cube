@@ -40,10 +40,8 @@ class Runner {
 		this.setLogger(inputObject);
 		this.logger.generalLog("Creating new Runner.");
 		this.setPuzzle(inputObject);
-		this.setDrawingOptions(inputObject);
-		this.setPuzzleClass();
-		this.setBlankPuzzle();
 		this.setMoveSequenceParser();
+		this.setDrawingOptions(inputObject);
 		this.setPuzzleDrawer();
 		this.logger.generalLog("End of initialization phase.");
 		this.closeInitializationPhase();
@@ -95,7 +93,7 @@ class Runner {
 		let previousPartialLogs = this.logger.inOutput ? this.logs.partial : null;
 		this.logger.resetPartialLogs();
 		try {
-			let puzzle = new this.puzzleClass(this);
+			let puzzle = new this.puzzle.class(this);
 			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
 			let svg = this.puzzleDrawer.drawPuzzle(puzzle);
 			if (isMultiple) { // multiple move sequences
@@ -213,22 +211,6 @@ class Runner {
 		this.logger.detailedLog("Reading input : drawingOptions.");
 		this.drawingOptions = new DrawingOptionsRunnerInput(inputObject.drawingOptions, this);
 	};
-	setPuzzleClass = () => {
-		this.logger.debugLog("Setting puzzle class.");
-		switch(this.puzzle.shape) {
-			case "cube": switch(this.puzzle.fullName) {
-				case "cube1x1x1": this.puzzleClass = Cube1x1x1; break;
-				case "cube2x2x2": this.puzzleClass = Cube2x2x2; break;
-				case "cube3x3x3": this.puzzleClass = Cube3x3x3; break;
-				default: this.puzzleClass = CubeBig;
-			}; break;
-			default: this.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
-		}
-	};
-	setBlankPuzzle = () => { // blank puzzle is an instance of the blank parent class, which has the same structure without the orbits
-		this.logger.debugLog("Creating the blank puzzle.");
-		this.blankPuzzle = new (TwistyPuzzle.getBlankParentClass(this.puzzleClass))(this);
-	};
 	setMoveSequenceParser = () => {
 		this.moveSequenceParser = new MoveSequenceParser(this);
 	};
@@ -238,7 +220,7 @@ class Runner {
 		this.puzzleDrawer.createSvgSkeletton();
 	};
 	getPuzzleDrawerClass = () => {
-		switch(this.puzzle.shape) {
+		switch(this.puzzle.class.shape) {
 			case "cube": switch(this.drawingOptions.view) {
 				case TwistyPuzzleDrawer.planView: return CubePlanDrawer;
 				case TwistyPuzzleDrawer.isometricView: return CubeIsometricDrawer;
@@ -269,11 +251,11 @@ class PuzzleRunnerInput {
 		} else if (!Utils.isObject(puzzle)) {
 			this.runner.throwError("Property puzzle must be an object.");
 		}
-		this.setPuzzleGeneral(puzzle);
-		this.setStage(puzzle);
-		this.setColorScheme(puzzle);
+		let {puzzleShape, puzzleSize} = this.getPuzzleGeneral(puzzle);
+		let colorScheme = this.getColorScheme(puzzle, puzzleShape);
+		this.class = this.getPuzzleClass(puzzleShape, puzzleSize, colorScheme, mask);
 	};
-	setPuzzleGeneral = puzzle => {
+	getPuzzleGeneral = puzzle => {
 		if (Utils.isUndefinedOrNull(puzzle.fullName)) {
 			this.runner.throwError("Property puzzle.fullName is required.");
 		} else if (!Utils.isString(puzzle.fullName)) {
@@ -283,50 +265,44 @@ class PuzzleRunnerInput {
 		} else if (!/^cube\d+x\d+x\d+$/.test(puzzle.fullName) || new Set(puzzle.fullName.substring(4).split("x")).size !== 1) {
 			this.runner.throwError("Unrecognized or unsupported puzzle name. Available names are of the form cubeNxNxN, where N has to be replaced with the cube size.");
 		}
-		this.fullName = puzzle.fullName;
-		this.shape = "cube";
-		this.size = parseInt(puzzle.fullName.match(/\d+$/)[0]);
-		if (this.size === 0) {
+		let puzzleSize = parseInt(puzzle.fullName.match(/\d+$/)[0]);
+		if (puzzleSize === 0) {
 			this.runner.throwError(`Creating cube with no layer.`);
-		} else if (this.size > 13) {
-			this.runner.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
+		} else if (puzzleSize > 13) {
+			this.runner.logger.warningLog(`Creating cube with large number of layers (${puzzleSize}).`);
+		}
+		return {
+			puzzleShape: Cube.shape,
+			puzzleSize: puzzleSize,
 		}
 	};
-	setStage = puzzle => {
-		if (!Utils.isUndefinedOrNull(puzzle.stage)) {
-			if (!Utils.isString(puzzle.stage)) {
-				this.runner.throwError("Property puzzle.stage must be a string.");
-			} else {
-				this.runner.logger.warningLog("Stage option is not yet supported, current stage shows all stickers.");
-				this.stage = puzzle.stage;
 			}
 		}
-		this.stage = puzzle.stage ?? "full";
 	};
-	setColorScheme = puzzle => {
-		this.colorScheme = [];
+	getColorScheme = (puzzle, puzzleShape) => {
+		let colorScheme = [];
+		let defaultColorScheme = this.getDefaultColorSchemeFromShape(puzzleShape);
 		if (Utils.isUndefinedOrNull(puzzle.colorScheme)) {
-			let defaultColorScheme = this.getDefaultColorSchemeFromShape(this.shape);
 			for (let color of defaultColorScheme) {
-				this.colorScheme.push(new Color(color));
+				colorScheme.push(new Color(color));
 			}
 			this.runner.logger.detailedLog(`Property puzzle.colorScheme was not provided, using default color scheme ["${defaultColorScheme.join('", "')}"].`);
 		} else {
 			if (!Utils.isArrayOfStrings(puzzle.colorScheme)) {
 				this.runner.throwError("Property puzzle.colorScheme must be an array of strings.");
-			} else if (puzzle.colorScheme.length !== this.getColorSchemeLengthFromShape(this.shape)) {
+			} else if (puzzle.colorScheme.length !== defaultColorScheme.length) {
 				this.runner.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
-					+ `(expected value = ${this.getColorSchemeLengthFromShape(puzzleShape)} because puzzle shape is ${this.puzzle.shape}, `
+					+ `(expected value = ${defaultColorScheme.length} because puzzle shape is ${puzzleShape}, `
 					+ `actual = ${puzzle.colorScheme.length}).`);
-			} else {
-				for (let color of puzzle.colorScheme) {
-					if (!Color.checkFormat(color)) {
-						this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
-					}
-					this.colorScheme.push(new Color(color));
+			}
+			for (let color of puzzle.colorScheme) {
+				if (!Color.checkFormat(color)) {
+					this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
 				}
+				colorScheme.push(new Color(color));
 			}
 		}
+		return colorScheme;
 	};
 	getDefaultColorSchemeFromShape = puzzleShape => {
 		switch (puzzleShape) {
@@ -362,14 +338,16 @@ class PuzzleRunnerInput {
 					"pink"
 				];
 			default:
-				this.runner.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
+				this.runner.throwError(`Getting default color scheme from invalid puzzle shape "${puzzleShape}".`);
 		}
 	};
-	getColorSchemeLengthFromShape = puzzleShape => {
-		try {
-			return this.getDefaultColorSchemeFromShape(puzzleShape).length;
-		} catch {
-			this.runner.throwError(`Getting length of color scheme from invalid puzzle shape ${puzzleShape}.`);
+	getPuzzleClass = (puzzleShape, puzzleSize, colorScheme, mask) => {
+		this.runner.logger.debugLog("Getting puzzle class.");
+		switch(puzzleShape) {
+			case Cube.shape:
+				return Cube.buildCustomClass(this.runner, puzzleSize, colorScheme, mask);
+			default:
+				this.runner.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
 		}
 	};
 }

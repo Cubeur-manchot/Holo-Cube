@@ -106,7 +106,7 @@ const updateResults = () => { // update code and Holo-Cube results
 	svgResultsContainer.textContent = "";
 	outputContainer.textContent = "";
 	logsContainer.textContent = "";
-	// Puzzle section, mandatory
+	// Puzzle section and fullName, mandatory
 	let puzzleSize = document.querySelector("input#puzzleSize").value;
 	if (puzzleSize === "") { // input is incomplete, calling function should not update the view
 		return;
