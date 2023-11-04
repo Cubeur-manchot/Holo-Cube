@@ -16,11 +16,7 @@ class Utils {
 	static isObject = object => {
 		return typeof object === "object";
 	};
-	static isArray = object => {
-		return !Utils.isUndefinedOrNull(object)
-			&& typeof object === "object"
-			&& typeof object[Symbol.iterator] === "function";
-	};
+	static isArray = Array.isArray;
 	static isArrayOfStrings = object => {
 		return Utils.isArray(object)
 			&& !object.find(element => !Utils.isString(element));
