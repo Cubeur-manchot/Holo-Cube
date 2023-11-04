@@ -158,12 +158,12 @@ class CubeMove extends Move {
 		this.sliceBegin = sliceBegin;
 		this.sliceEnd = sliceEnd;
 		this.turnCount = turnCount;
-		this.cube = this.runner.blankPuzzle;
-		let isBigCube = this.cube instanceof BlankCubeBig;
+		this.puzzleClass = this.runner.puzzle.class;
+		let isBigCube = this.puzzleClass.puzzleSize >= 4;
 		if (this.sliceBegin < 1) {
 			this.runner.throwError("Creating move with sliceBegin < 1.");
 		}
-		if (this.sliceEnd > this.cube.puzzleSize) {
+		if (this.sliceEnd > this.puzzleClass.puzzleSize) {
 			this.runner.throwError("Creating move with sliceEnd > cube size.");
 		}
 		if (this.sliceBegin > this.sliceEnd) {
@@ -173,17 +173,17 @@ class CubeMove extends Move {
 			this.treatFirstLayer(isBigCube);
 		}
 		if (isBigCube && this.sliceEnd > 1) { // between first layer and middle layer
-			this.treatBetweenFirstAndMiddleLayer(Math.max(1, this.sliceBegin - 1), Math.min(this.sliceEnd - 1, this.cube.maxRankWithoutMiddle));
+			this.treatBetweenFirstAndMiddleLayer(Math.max(1, this.sliceBegin - 1), Math.min(this.sliceEnd - 1, this.puzzleClass.maxRankWithoutMiddle));
 		}
-		if ((this.cube.puzzleSize === 3 && this.sliceBegin <= 2 && this.sliceEnd >= 2)
-			|| (this.cube.middleSlice && this.sliceBegin <= this.cube.middleSlice && this.sliceEnd >= this.cube.middleSlice)) { // middle layer
+		if ((this.puzzleClass.puzzleSize === 3 && this.sliceBegin <= 2 && this.sliceEnd >= 2)
+			|| (this.puzzleClass.middleSlice && this.sliceBegin <= this.puzzleClass.middleSlice && this.sliceEnd >= this.puzzleClass.middleSlice)) { // middle layer
 			this.treatMiddleLayer(isBigCube);
 		}
-		if (isBigCube && this.sliceEnd > this.cube.maxRankWithMiddle + 1) { // between middle layer and last layer
-			this.treatBetweenMiddleAndLastLayer(Math.max(1, this.cube.puzzleSize - this.sliceEnd),
-				Math.min(this.cube.puzzleSize - this.sliceBegin, this.cube.maxRankWithoutMiddle));
+		if (isBigCube && this.sliceEnd > this.puzzleClass.maxRankWithMiddle + 1) { // between middle layer and last layer
+			this.treatBetweenMiddleAndLastLayer(Math.max(1, this.puzzleClass.puzzleSize - this.sliceEnd),
+				Math.min(this.puzzleClass.puzzleSize - this.sliceBegin, this.puzzleClass.maxRankWithoutMiddle));
 		}
-		if (this.sliceEnd === this.cube.puzzleSize) { // last layer
+		if (this.sliceEnd === this.puzzleClass.puzzleSize) { // last layer
 			this.treatLastLayer(isBigCube);
 		}
 	};
@@ -191,9 +191,9 @@ class CubeMove extends Move {
 		this.addCornerElementaryCycles();
 		this.addMidgeElementaryCycles(CubeMove.externalMode);
 		if (isBigCube) {
-			for (let firstRank = 1; firstRank <= this.cube.maxRankWithoutMiddle; firstRank++) {
+			for (let firstRank = 1; firstRank <= this.puzzleClass.maxRankWithoutMiddle; firstRank++) {
 				this.addWingElementaryCycles(CubeMove.externalMode, firstRank);
-				for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+				for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 					if (firstRank === secondRank) {
 						this.addXCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
 					} else {
@@ -201,14 +201,14 @@ class CubeMove extends Move {
 					}
 				}
 			}
-		} else if (this.cube instanceof BlankCube1x1x1) {
+		} else if (this.puzzleClass.puzzleSize === 1) {
 			this.addCenterElementaryCycles();
 		}
 	};
 	treatBetweenFirstAndMiddleLayer = (firstRankBegin, firstRankEnd) => {
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) { // between first layer and middle layer
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank);
-			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+			for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 				if (firstRank === secondRank) {
 					this.addXCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank]);
 				} else if (firstRank > secondRank) {
@@ -225,9 +225,9 @@ class CubeMove extends Move {
 		this.addCenterElementaryCycles();
 		this.addMidgeElementaryCycles(CubeMove.internalMode);
 		if (isBigCube) {
-			for (let centerRank = 1; centerRank <= this.cube.maxRankWithoutMiddle; centerRank++) {
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [centerRank, this.cube.middleSlice - 1]);
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [centerRank, this.cube.middleSlice - 1]);
+			for (let centerRank = 1; centerRank <= this.puzzleClass.maxRankWithoutMiddle; centerRank++) {
+				this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [centerRank, this.puzzleClass.middleSlice - 1]);
+				this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [centerRank, this.puzzleClass.middleSlice - 1]);
 			}
 		}
 	};
@@ -236,7 +236,7 @@ class CubeMove extends Move {
 		let oppositeFace = CubeMoveParser.getOppositeFace(this.face);
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) {
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank, oppositeFace, oppositeTurnCount);
-			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+			for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 				if (firstRank === secondRank) {
 					this.addXCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
 				} else if (firstRank > secondRank) {
@@ -255,9 +255,9 @@ class CubeMove extends Move {
 		this.addCornerElementaryCycles(oppositeFace, oppositeTurnCount);
 		this.addMidgeElementaryCycles(CubeMove.externalMode, oppositeFace, oppositeTurnCount);
 		if (isBigCube) {
-			for (let firstRank = 1; firstRank <= this.cube.maxRankWithoutMiddle; firstRank++) {
+			for (let firstRank = 1; firstRank <= this.puzzleClass.maxRankWithoutMiddle; firstRank++) {
 				this.addWingElementaryCycles(CubeMove.externalMode, firstRank, oppositeFace, oppositeTurnCount);
-				for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+				for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 					if (firstRank === secondRank) {
 						this.addXCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
 					} else {
@@ -268,18 +268,18 @@ class CubeMove extends Move {
 		}
 	};
 	addCornerElementaryCycles = (face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(CornerCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CornerCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][CubeMove.externalMode][face][turnCount], CornerCubeOrbit.type);
 			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], CornerCubeOrbit.type);
 		}
 	};
 	addCenterElementaryCycles = () => {
-		if (this.cube.hasOrbitType(CenterCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CenterCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[CenterCubeOrbit.type][CubeMove.internalMode][this.face][this.turnCount], CenterCubeOrbit.type);
 		}
 	};
 	addMidgeElementaryCycles = (midgeMode, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(MidgeCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(MidgeCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[MidgeCubeOrbit.type][midgeMode][face][turnCount], MidgeCubeOrbit.type);
 			if (midgeMode === CubeMove.externalMode) {
 				this.pushCycles(CubeMove.elementaryCycles[MidgeCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], MidgeCubeOrbit.type);
@@ -287,7 +287,7 @@ class CubeMove extends Move {
 		}
 	};
 	addWingElementaryCycles = (wingMode, wingRank, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(WingCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(WingCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[WingCubeOrbit.type][wingMode][face][turnCount], WingCubeOrbit.type, wingRank);
 			if (wingMode === CubeMove.externalMode) {
 				this.pushCycles(CubeMove.elementaryCycles[WingCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], WingCubeOrbit.type, wingRank);
@@ -295,12 +295,12 @@ class CubeMove extends Move {
 		}
 	};
 	addXCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(CenterBigCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
 		}
 	};
 	addCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(CenterBigCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) {
 			if (centerMode === CubeMove.internalDirectMode || centerMode === CubeMove.internalIndirectMode) {
 				this.pushCycles(CubeMove.elementaryCycles[CenterBigCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
 			} else {

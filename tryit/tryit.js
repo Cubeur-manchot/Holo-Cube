@@ -106,7 +106,7 @@ const updateResults = () => { // update code and Holo-Cube results
 	svgResultsContainer.textContent = "";
 	outputContainer.textContent = "";
 	logsContainer.textContent = "";
-	// Puzzle section, mandatory
+	// Puzzle section and fullName, mandatory
 	let puzzleSize = document.querySelector("input#puzzleSize").value;
 	if (puzzleSize === "") { // input is incomplete, calling function should not update the view
 		return;
@@ -124,6 +124,11 @@ const updateResults = () => { // update code and Holo-Cube results
 	}
 	if (Object.values(defaultColorScheme2).map((color, index) => colorScheme[index] === color).includes(false)) {
 		puzzle.colorScheme = colorScheme;
+	}
+	// Puzzle mask, aliases only (no custom mask here)
+	let stage = document.querySelector("select#stage").value;
+	if (stage !== "-") {
+		puzzle.mask = {stage: stage};
 	}
 	// Create input
 	let input = {

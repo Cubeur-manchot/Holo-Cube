@@ -6,6 +6,12 @@ class Slot {
 	constructor(sticker) {
 		this.content = sticker;
 	};
+	clone = () => {
+		let clone = Object.create(this.constructor.prototype);
+		Object.assign(clone, this);
+		clone.content = this.content.clone();
+		return clone;
+	};
 	getContent = () => {
 		return this.content;
 	};
