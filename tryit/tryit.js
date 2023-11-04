@@ -125,6 +125,11 @@ const updateResults = () => { // update code and Holo-Cube results
 	if (Object.values(defaultColorScheme2).map((color, index) => colorScheme[index] === color).includes(false)) {
 		puzzle.colorScheme = colorScheme;
 	}
+	// Puzzle mask, aliases only (no custom mask here)
+	let stage = document.querySelector("select#stage").value;
+	if (stage !== "-") {
+		puzzle.mask = {stage: stage};
+	}
 	// Create input
 	let input = {
 		puzzle: puzzle

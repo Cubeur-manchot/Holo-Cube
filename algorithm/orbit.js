@@ -13,11 +13,31 @@ class Orbit {
 	getSize = () => {
 		return this.slotList?.length ?? null;
 	};
-	buildSlotList(slotsPerColor) {
+	clone = () => {
+		this.runner.logger.debugLog(`Cloning orbit of type ${this.type}.`);
+		let clone = Object.create(this.constructor.prototype);
+		Object.assign(clone, this);
+		clone.slotList = this.slotList.map(slot => slot.clone());
+		return clone;
+	};
+	buildSlotList(slotsPerColor, colorScheme, mask) {
+		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.type);
 		let slotList = [];
-		for (let color of this.runner.puzzle.colorScheme) {
-			for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
-				slotList.push(new Slot(new Sticker(color)));
+		if (matchingOrbitMask) {
+			for (let colorIndex in colorScheme) {
+				for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
+					slotList.push(new Slot(new Sticker(
+						matchingOrbitMask.stickers[colorIndex * slotsPerColor + slotIndexForColor]
+							? colorScheme[colorIndex]
+							: Color.blank
+					)));
+				}
+			}
+		} else {
+			for (let color of colorScheme) {
+				for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
+					slotList.push(new Slot(new Sticker(color)));
+				}
 			}
 		}
 		return slotList;
@@ -25,7 +45,7 @@ class Orbit {
 }
 
 class CubeOrbit extends Orbit {
-	constructor (runner) {
+	constructor(runner) {
 		super(runner);
 		this.runner.logger.debugLog("Creating new CubeOrbit.");
 	};
@@ -33,52 +53,52 @@ class CubeOrbit extends Orbit {
 
 class CenterCubeOrbit extends CubeOrbit {
 	static type = "centerCubeOrbit";
-	constructor(runner) {
+	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CenterCubeOrbit.");
-		this.slotList = this.buildSlotList(1);
 		this.type = CenterCubeOrbit.type;
+		this.slotList = this.buildSlotList(1, colorScheme, mask);
 	};
 }
 
 class CornerCubeOrbit extends CubeOrbit {
 	static type = "cornerCubeOrbit";
-	constructor(runner) {
+	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CornerCubeOrbit.");
-		this.slotList = this.buildSlotList(4);
 		this.type = CornerCubeOrbit.type;
+		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
 
 class MidgeCubeOrbit extends CubeOrbit {
 	static type = "midgeCubeOrbit";
-	constructor(runner) {
+	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new MidgeCubeOrbit.");
-		this.slotList = this.buildSlotList(4);
 		this.type = MidgeCubeOrbit.type;
+		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
 
 class WingCubeOrbit extends CubeOrbit {
 	static type = "wingCubeOrbit";
-	constructor(runner, rank) {
+	constructor(runner, rank, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
-		this.slotList = this.buildSlotList(8);
-		this.rank = rank;
 		this.type = WingCubeOrbit.type;
+		this.rank = rank;
+		this.slotList = this.buildSlotList(8, colorScheme, mask);
 	};
 }
 
 class CenterBigCubeOrbit extends CubeOrbit {
 	static type = "centerBigCubeOrbit";
-	constructor(runner, ranks) {
+	constructor(runner, ranks, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
-		this.slotList = this.buildSlotList(4);
-		this.ranks = ranks;
 		this.type = CenterBigCubeOrbit.type;
+		this.ranks = ranks;
+		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }

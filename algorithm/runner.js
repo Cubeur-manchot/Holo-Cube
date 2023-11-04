@@ -7,8 +7,16 @@ Object structure to give to Runner class :
 {
 	puzzle: {
 		fullName: string,
-		stage: string, // stage to show (OLL, PLL, CMLL, F2L, ...)
-		colorScheme: array of colors
+		colorScheme: array of colors,
+		mask: {
+			stage: string, // stage to show (OLL, PLL, CMLL, F2L, ...)
+			custom: [
+				{
+					orbitType: string, // type of the orbit
+					stickers: array of bools // tells for each individual sticker if it must be shown or not
+				}
+			]
+		}
 	},
 	drawingOptions: {
 		imageHeight: number, // height of the image in px, default value is 100
@@ -252,6 +260,7 @@ class PuzzleRunnerInput {
 			this.runner.throwError("Property puzzle must be an object.");
 		}
 		let {puzzleShape, puzzleSize} = this.getPuzzleGeneral(puzzle);
+		let mask = this.getMask(puzzle);
 		let colorScheme = this.getColorScheme(puzzle, puzzleShape);
 		this.class = this.getPuzzleClass(puzzleShape, puzzleSize, colorScheme, mask);
 	};
@@ -276,8 +285,232 @@ class PuzzleRunnerInput {
 			puzzleSize: puzzleSize,
 		}
 	};
+	getMask = puzzle => {
+		let mask = [];
+		if (!Utils.isUndefinedOrNull(puzzle.mask)) {
+			// mask aliases
+			if (!Utils.isUndefinedOrNull(puzzle.mask.stage)) {
+				if (!Utils.isString(puzzle.mask.stage)) {
+					this.runner.throwError("Property puzzle.mask.stage must be a string.");
+				} else {
+					mask = this.getMaskFromAlias(puzzle.mask.stage);
+					if (mask === null) {
+						this.runner.throwError(`Invalid or unrecognized value for puzzle.mask.stage : ${puzzle.mask.stage}.`);
+					}
+				}
+			}
+			// custom masks
+			if (!Utils.isUndefinedOrNull(puzzle.mask.custom)) {
+				if (!Utils.isArray(puzzle.mask.custom)) {
+					this.runner.throwError("Property puzzle.mask.custom must be an array.");
+				}
+				for (let orbitMask of puzzle.mask.custom) {
+					if (Utils.isUndefinedOrNull(orbitMask.orbitType)) {
+						this.runner.throwError("Property orbitType is required to define custom masks.");
+					} else if (!Utils.isString(orbitMask.orbitType)) {
+						this.runner.throwError("Property orbitType under puzzle.mask.custom is required.");
+					}
+					let existingMatchingOrbitMask = mask.find(existingOrbitMask => existingOrbitMask.orbitType === orbitMask.orbitType);
+					if (existingMatchingOrbitMask) {
+						existingMatchingOrbitMask = orbitMask; // replace orbit mask
+					} else {
+						mask.push(orbitMask); // add orbit mask
+					}
+				}
 			}
 		}
+		return mask;
+	};
+	getMaskFromAlias = stage => {
+		switch (stage) {
+			case "PLL": case "ZBLL": case "ELL": case "1LLL": case "LSE": case "LSEP": case "L4C": case "ZZLL":
+				return [];
+			case "OLLCP": case "COLL": case "CPEOLL":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "OLL": case "OCLL": case "VLS": case "HLS": case "OLS": case "WV": case "SV": case "MW": case "CLS": case "JTLE":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [true, true, true, true, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "ZBLS": case "EOLS": case "VHLS": case "ELS": case "EOLL":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "LLEF":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}
+				];
+			case "CLL":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "CMLL":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, false, true, false, true, true, true,
+							false, true, false, true, false, true, false, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true,
+							false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true]
+					}, {
+						orbitType: CenterCubeOrbit.type,
+						stickers: [false, false, true,
+							false, false, true]
+					}, {
+						orbitType: CenterBigCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, false, true, false, true, true, true,
+							false, true, false, true, false, true, false, true, false, true, true, true]
+					}
+				];
+			case "EOLR":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, false, true, true, true, true, true,
+							true, true, true, true, false, true, false, true, true, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, false, false, true, true, true, true, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, false, false, true, true, true, true, true, true, true, true, true, true]
+					}
+				];
+			case "Cross": case "cross":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, false, false, false, true, false,
+							true, true, true, true, false, false, false, true, false, false, false, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false,
+							true, true, true, true, true, true, true, true, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false]
+					}
+				];
+			case "FB":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, true, false, false, false, false,
+							true, false, false, true, false, false, false, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, true, false, false, false, false,
+							false, false, false, true, false, true, false, false, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, true, true, false, false, true, true, false, false, false, false, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "SB":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, false, true, false, true, true, true,
+							false, true, false, true, false, true, false, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true,
+							false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "FL":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, false, false, false, true, false,
+							true, true, true, true, false, false, false, true, false, false, false, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false,
+							true, true, true, true, true, true, true, true, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false]
+					}
+				];
+			case "L2C":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+					}
+				];
+			case "L2E":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}
+				];
+			default: return null; // unrecognized alias
+		};
 	};
 	getColorScheme = (puzzle, puzzleShape) => {
 		let colorScheme = [];
