@@ -4,6 +4,7 @@
 
 class ColorCollection {
 	static transparent = {r: 0, g: 0, b: 0, a: 0};
+	static blank = {r: 64, g: 64, b: 64, a: 1};
 	static white = {r: 255, g: 255, b: 255, a: 1};
 	static black = {r: 0, g: 0, b: 0, a: 1};
 	static green = {r: 0, g: 216, b: 0, a: 1};
@@ -23,34 +24,38 @@ class ColorCollection {
 // Represents the information of a color, including opacity.
 
 class Color {
-	constructor(colorString) {
-		if (Color.isHex6(colorString)) {
-			this.r = parseInt(colorString.substr(1, 2), 16);
-			this.g = parseInt(colorString.substr(3, 2), 16);
-			this.b = parseInt(colorString.substr(5, 2), 16);
-			this.a = 1;
-		} else if (Color.isHex8(colorString)) {
-			this.r = parseInt(colorString.substr(1, 2), 16);
-			this.g = parseInt(colorString.substr(3, 2), 16);
-			this.b = parseInt(colorString.substr(5, 2), 16);
-			this.a = parseInt(colorString.substr(7, 2), 16) / 255;
-		} else if (Color.isHex3(colorString)) {
-			this.r = 17 * parseInt(colorString[1]);
-			this.g = 17 * parseInt(colorString[2]);
-			this.b = 17 * parseInt(colorString[3]);
-			this.a = 1;
-		} else if (Color.isRgb(colorString)) {
-			[this.r, this.g, this.b] = colorString.match(/\d+/g);
-			this.a = 1;
-		} else if (Color.isRgba(colorString)) {
-			let numbers = colorString.replace(/^.*\(/g, "").replace(/\).*$/g, "").replace(/\s+/g, "").split(",");
-			this.r = parseInt(numbers[0]);
-			this.g = parseInt(numbers[1]);
-			this.b = parseInt(numbers[2]);
-			this.a = parseFloat(numbers[3]);
-		} else if (Color.isKnownColor(colorString)) {
-			Object.assign(this, Color.getKnownColor(colorString));
+	static knownColors = {
+		transparent: ColorCollection.transparent,  t: ColorCollection.transparent,
+		blank:       ColorCollection.blank,       bk: ColorCollection.blank,
+		black:       ColorCollection.black,       bl: ColorCollection.black,
+		white:       ColorCollection.white,        w: ColorCollection.white,
+		green:       ColorCollection.green,        g: ColorCollection.green,
+		red:         ColorCollection.red,          r: ColorCollection.red,
+		yellow:      ColorCollection.yellow,       y: ColorCollection.yellow,
+		blue:        ColorCollection.blue,         b: ColorCollection.blue,
+		orange:      ColorCollection.orange,       o: ColorCollection.orange,
+		purple:      ColorCollection.purple,      pu: ColorCollection.purple,
+		grey:        ColorCollection.grey,        gy: ColorCollection.grey,
+		lightGreen:  ColorCollection.lightGreen,  lg: ColorCollection.lightGreen,
+		lightYellow: ColorCollection.lightYellow, ly: ColorCollection.lightYellow,
+		lightBlue:   ColorCollection.lightBlue,   lb: ColorCollection.lightBlue,
+		brown:       ColorCollection.brown,       br: ColorCollection.brown,
+		pink:        ColorCollection.pink,        pi: ColorCollection.pink,
+	};
+	static isKnownColor = colorString => {
+		return Color.knownColors[colorString] !== undefined;
+	};
+	static getKnownColorString = color => {
+		for (let knownColorName in Color.knownColors) {
+			let knownColor = Color.knownColors[knownColorName];
+			if (color.r === knownColor.r && color.g === knownColor.g && color.b === knownColor.b) {
+				return knownColorName;
+			}
 		}
+		return null;
+	};
+	static getKnownColor = colorString => {
+		return Color.knownColors[colorString];
 	};
 	static checkFormat = colorString => {
 		return Color.isHex6(colorString)
@@ -92,37 +97,35 @@ class Color {
 		}
 		return true;
 	};
-	static knownColors = {
-		transparent: ColorCollection.transparent,  t: ColorCollection.transparent,
-		black:       ColorCollection.black,       bl: ColorCollection.black,
-		white:       ColorCollection.white,        w: ColorCollection.white,
-		green:       ColorCollection.green,        g: ColorCollection.green,
-		red:         ColorCollection.red,          r: ColorCollection.red,
-		yellow:      ColorCollection.yellow,       y: ColorCollection.yellow,
-		blue:        ColorCollection.blue,         b: ColorCollection.blue,
-		orange:      ColorCollection.orange,       o: ColorCollection.orange,
-		purple:      ColorCollection.purple,      pu: ColorCollection.purple,
-		grey:        ColorCollection.grey,        gy: ColorCollection.grey,
-		lightGreen:  ColorCollection.lightGreen,  lg: ColorCollection.lightGreen,
-		lightYellow: ColorCollection.lightYellow, ly: ColorCollection.lightYellow,
-		lightBlue:   ColorCollection.lightBlue,   lb: ColorCollection.lightBlue,
-		brown:       ColorCollection.brown,       br: ColorCollection.brown,
-		pink:        ColorCollection.pink,        pi: ColorCollection.pink,
-	};
-	static isKnownColor = colorString => {
-		return Color.knownColors[colorString] !== undefined;
-	};
-	static getKnownColorString = color => {
-		for (let knownColorName in Color.knownColors) {
-			let knownColor = Color.knownColors[knownColorName];
-			if (color.r === knownColor.r && color.g === knownColor.g && color.b === knownColor.b) {
-				return knownColorName;
-			}
+	static blank = new Color("blank");
+	constructor(colorString) {
+		if (Color.isHex6(colorString)) {
+			this.r = parseInt(colorString.substr(1, 2), 16);
+			this.g = parseInt(colorString.substr(3, 2), 16);
+			this.b = parseInt(colorString.substr(5, 2), 16);
+			this.a = 1;
+		} else if (Color.isHex8(colorString)) {
+			this.r = parseInt(colorString.substr(1, 2), 16);
+			this.g = parseInt(colorString.substr(3, 2), 16);
+			this.b = parseInt(colorString.substr(5, 2), 16);
+			this.a = parseInt(colorString.substr(7, 2), 16) / 255;
+		} else if (Color.isHex3(colorString)) {
+			this.r = 17 * parseInt(colorString[1]);
+			this.g = 17 * parseInt(colorString[2]);
+			this.b = 17 * parseInt(colorString[3]);
+			this.a = 1;
+		} else if (Color.isRgb(colorString)) {
+			[this.r, this.g, this.b] = colorString.match(/\d+/g);
+			this.a = 1;
+		} else if (Color.isRgba(colorString)) {
+			let numbers = colorString.replace(/^.*\(/g, "").replace(/\).*$/g, "").replace(/\s+/g, "").split(",");
+			this.r = parseInt(numbers[0]);
+			this.g = parseInt(numbers[1]);
+			this.b = parseInt(numbers[2]);
+			this.a = parseFloat(numbers[3]);
+		} else if (Color.isKnownColor(colorString)) {
+			Object.assign(this, Color.getKnownColor(colorString));
 		}
-		return null;
-	};
-	static getKnownColor = colorString => {
-		return Color.knownColors[colorString];
 	};
 	getRgbHex6 = () => {
 		return "#"
