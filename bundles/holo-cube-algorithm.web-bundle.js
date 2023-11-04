@@ -3,6 +3,7 @@
 
 class ColorCollection {
 	static transparent = {r: 0, g: 0, b: 0, a: 0};
+	static blank = {r: 64, g: 64, b: 64, a: 1};
 	static white = {r: 255, g: 255, b: 255, a: 1};
 	static black = {r: 0, g: 0, b: 0, a: 1};
 	static green = {r: 0, g: 216, b: 0, a: 1};
@@ -22,34 +23,38 @@ class ColorCollection {
 // Represents the information of a color, including opacity.
 
 class Color {
-	constructor(colorString) {
-		if (Color.isHex6(colorString)) {
-			this.r = parseInt(colorString.substr(1, 2), 16);
-			this.g = parseInt(colorString.substr(3, 2), 16);
-			this.b = parseInt(colorString.substr(5, 2), 16);
-			this.a = 1;
-		} else if (Color.isHex8(colorString)) {
-			this.r = parseInt(colorString.substr(1, 2), 16);
-			this.g = parseInt(colorString.substr(3, 2), 16);
-			this.b = parseInt(colorString.substr(5, 2), 16);
-			this.a = parseInt(colorString.substr(7, 2), 16) / 255;
-		} else if (Color.isHex3(colorString)) {
-			this.r = 17 * parseInt(colorString[1]);
-			this.g = 17 * parseInt(colorString[2]);
-			this.b = 17 * parseInt(colorString[3]);
-			this.a = 1;
-		} else if (Color.isRgb(colorString)) {
-			[this.r, this.g, this.b] = colorString.match(/\d+/g);
-			this.a = 1;
-		} else if (Color.isRgba(colorString)) {
-			let numbers = colorString.replace(/^.*\(/g, "").replace(/\).*$/g, "").replace(/\s+/g, "").split(",");
-			this.r = parseInt(numbers[0]);
-			this.g = parseInt(numbers[1]);
-			this.b = parseInt(numbers[2]);
-			this.a = parseFloat(numbers[3]);
-		} else if (Color.isKnownColor(colorString)) {
-			Object.assign(this, Color.getKnownColor(colorString));
+	static knownColors = {
+		transparent: ColorCollection.transparent,  t: ColorCollection.transparent,
+		blank:       ColorCollection.blank,       bk: ColorCollection.blank,
+		black:       ColorCollection.black,       bl: ColorCollection.black,
+		white:       ColorCollection.white,        w: ColorCollection.white,
+		green:       ColorCollection.green,        g: ColorCollection.green,
+		red:         ColorCollection.red,          r: ColorCollection.red,
+		yellow:      ColorCollection.yellow,       y: ColorCollection.yellow,
+		blue:        ColorCollection.blue,         b: ColorCollection.blue,
+		orange:      ColorCollection.orange,       o: ColorCollection.orange,
+		purple:      ColorCollection.purple,      pu: ColorCollection.purple,
+		grey:        ColorCollection.grey,        gy: ColorCollection.grey,
+		lightGreen:  ColorCollection.lightGreen,  lg: ColorCollection.lightGreen,
+		lightYellow: ColorCollection.lightYellow, ly: ColorCollection.lightYellow,
+		lightBlue:   ColorCollection.lightBlue,   lb: ColorCollection.lightBlue,
+		brown:       ColorCollection.brown,       br: ColorCollection.brown,
+		pink:        ColorCollection.pink,        pi: ColorCollection.pink,
+	};
+	static isKnownColor = colorString => {
+		return Color.knownColors[colorString] !== undefined;
+	};
+	static getKnownColorString = color => {
+		for (let knownColorName in Color.knownColors) {
+			let knownColor = Color.knownColors[knownColorName];
+			if (color.r === knownColor.r && color.g === knownColor.g && color.b === knownColor.b) {
+				return knownColorName;
+			}
 		}
+		return null;
+	};
+	static getKnownColor = colorString => {
+		return Color.knownColors[colorString];
 	};
 	static checkFormat = colorString => {
 		return Color.isHex6(colorString)
@@ -91,37 +96,35 @@ class Color {
 		}
 		return true;
 	};
-	static knownColors = {
-		transparent: ColorCollection.transparent,  t: ColorCollection.transparent,
-		black:       ColorCollection.black,       bl: ColorCollection.black,
-		white:       ColorCollection.white,        w: ColorCollection.white,
-		green:       ColorCollection.green,        g: ColorCollection.green,
-		red:         ColorCollection.red,          r: ColorCollection.red,
-		yellow:      ColorCollection.yellow,       y: ColorCollection.yellow,
-		blue:        ColorCollection.blue,         b: ColorCollection.blue,
-		orange:      ColorCollection.orange,       o: ColorCollection.orange,
-		purple:      ColorCollection.purple,      pu: ColorCollection.purple,
-		grey:        ColorCollection.grey,        gy: ColorCollection.grey,
-		lightGreen:  ColorCollection.lightGreen,  lg: ColorCollection.lightGreen,
-		lightYellow: ColorCollection.lightYellow, ly: ColorCollection.lightYellow,
-		lightBlue:   ColorCollection.lightBlue,   lb: ColorCollection.lightBlue,
-		brown:       ColorCollection.brown,       br: ColorCollection.brown,
-		pink:        ColorCollection.pink,        pi: ColorCollection.pink,
-	};
-	static isKnownColor = colorString => {
-		return Color.knownColors[colorString] !== undefined;
-	};
-	static getKnownColorString = color => {
-		for (let knownColorName in Color.knownColors) {
-			let knownColor = Color.knownColors[knownColorName];
-			if (color.r === knownColor.r && color.g === knownColor.g && color.b === knownColor.b) {
-				return knownColorName;
-			}
+	static blank = new Color("blank");
+	constructor(colorString) {
+		if (Color.isHex6(colorString)) {
+			this.r = parseInt(colorString.substr(1, 2), 16);
+			this.g = parseInt(colorString.substr(3, 2), 16);
+			this.b = parseInt(colorString.substr(5, 2), 16);
+			this.a = 1;
+		} else if (Color.isHex8(colorString)) {
+			this.r = parseInt(colorString.substr(1, 2), 16);
+			this.g = parseInt(colorString.substr(3, 2), 16);
+			this.b = parseInt(colorString.substr(5, 2), 16);
+			this.a = parseInt(colorString.substr(7, 2), 16) / 255;
+		} else if (Color.isHex3(colorString)) {
+			this.r = 17 * parseInt(colorString[1]);
+			this.g = 17 * parseInt(colorString[2]);
+			this.b = 17 * parseInt(colorString[3]);
+			this.a = 1;
+		} else if (Color.isRgb(colorString)) {
+			[this.r, this.g, this.b] = colorString.match(/\d+/g);
+			this.a = 1;
+		} else if (Color.isRgba(colorString)) {
+			let numbers = colorString.replace(/^.*\(/g, "").replace(/\).*$/g, "").replace(/\s+/g, "").split(",");
+			this.r = parseInt(numbers[0]);
+			this.g = parseInt(numbers[1]);
+			this.b = parseInt(numbers[2]);
+			this.a = parseFloat(numbers[3]);
+		} else if (Color.isKnownColor(colorString)) {
+			Object.assign(this, Color.getKnownColor(colorString));
 		}
-		return null;
-	};
-	static getKnownColor = colorString => {
-		return Color.knownColors[colorString];
 	};
 	getRgbHex6 = () => {
 		return "#"
@@ -308,6 +311,7 @@ class TwistyPuzzleDrawer {
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new TwistyPuzzleDrawer.");
+		this.puzzleClass = this.runner.puzzle.class;
 		this.options = this.runner.drawingOptions;
 		this.svgDrawer = new SvgDrawer(this.options.document, this.runner);
 		for (let drawingOptionColorProperty of ["puzzleColor", "imageBackgroundColor"]) {
@@ -338,8 +342,7 @@ class CubeDrawer extends TwistyPuzzleDrawer {
 	constructor(runner) {
 		super(runner);
 		this.runner.logger.debugLog("Creating new CubeDrawer.");
-		this.blankPuzzle = this.runner.blankPuzzle;
-		this.cubeSize = this.runner.puzzle.size;
+		this.cubeSize = this.runner.puzzle.class.puzzleSize;
 	};
 }
 
@@ -402,19 +405,19 @@ class CubePlanDrawer extends CubeDrawer {
 		bFace.appendChild(this.createAdjacentFaceBackground("B"));
 		let lFace = this.svgDrawer.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
-		if (this.blankPuzzle.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
+		if (this.puzzleClass.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
 			this.runner.logger.debugLog("Creating centers stickers skeletton.");
 			let startingValueIndex = (this.cubeSize - 1) / 2;
 			let idBegin = `sticker_${CenterCubeOrbit.type}_`;
 			uFace.appendChild(this.createUFaceSticker(`${idBegin}0`, startingValueIndex, startingValueIndex));
-			if (this.blankPuzzle instanceof BlankCube1x1x1) {
+			if (this.puzzleClass.puzzleSize === 1) {
 				fFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}1`, 0));
 				rFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}2`, 0));
 				bFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}4`, 0));
 				lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}5`, 0));
 			}
 		}
-		if (this.blankPuzzle.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
+		if (this.puzzleClass.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
 			this.runner.logger.debugLog("Creating corners stickers skeletton.");
 			let highIndex = this.cubeSize - 1;
 			let idBegin = `sticker_${CornerCubeOrbit.type}_`;
@@ -431,7 +434,7 @@ class CubePlanDrawer extends CubeDrawer {
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}20`, 0));
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}21`, highIndex));
 		}
-		if (this.blankPuzzle.hasOrbitType(MidgeCubeOrbit.type)) { // stickers of type MidgeCubeOrbit
+		if (this.puzzleClass.hasOrbitType(MidgeCubeOrbit.type)) { // stickers of type MidgeCubeOrbit
 			this.runner.logger.debugLog("Creating midges stickers skeletton.");
 			let middleIndex = (this.cubeSize - 1) / 2;
 			let highIndex = this.cubeSize - 1;
@@ -445,12 +448,10 @@ class CubePlanDrawer extends CubeDrawer {
 			bFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}16`, middleIndex));
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}20`, middleIndex));
 		}
-		if (this.blankPuzzle.hasOrbitType(WingCubeOrbit.type)) { // stickers of type WingCubeOrbit
+		if (this.puzzleClass.hasOrbitType(WingCubeOrbit.type)) { // stickers of type WingCubeOrbit
 			this.runner.logger.debugLog("Creating wings stickers skeletton.");
-			let lowValue = this.options.startingValues[0];
 			let highIndex = this.cubeSize - 1;
-			let highValue = this.options.startingValues[this.cubeSize - 1];
-			let wingMaxIndex = this.blankPuzzle.maxRankWithoutMiddle;
+			let wingMaxIndex = this.puzzleClass.maxRankWithoutMiddle;
 			for (let wingRank = 1; wingRank <= wingMaxIndex; wingRank++) {
 				let idBegin = `sticker_${WingCubeOrbit.type}_${wingRank}_`;
 				let middleComplementaryIndex = this.cubeSize - wingRank - 1;
@@ -472,11 +473,11 @@ class CubePlanDrawer extends CubeDrawer {
 				lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}41`, middleComplementaryIndex));
 			}
 		}
-		if (this.blankPuzzle.hasOrbitType(CenterBigCubeOrbit.type)) { // stickers of type CenterBigCubeOrbit
+		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) { // stickers of type CenterBigCubeOrbit
 			this.runner.logger.debugLog("Creating big cube centers stickers skeletton.");
-			for (let firstRank = 1; firstRank <= this.blankPuzzle.maxRankWithoutMiddle; firstRank++) {
+			for (let firstRank = 1; firstRank <= this.puzzleClass.maxRankWithoutMiddle; firstRank++) {
 				let firstComplementaryIndex = this.cubeSize - firstRank - 1;
-				for (let secondRank = 1; secondRank <= this.blankPuzzle.maxRankWithMiddle; secondRank++) {
+				for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 					let idBegin = `sticker_${CenterBigCubeOrbit.type}_${firstRank}_${secondRank}_`;
 					let secondComplementaryIndex = this.cubeSize - secondRank - 1;
 					if (firstRank <= secondRank) {
@@ -549,7 +550,7 @@ class CubePlanDrawer extends CubeDrawer {
 			switch (orbit.type) {
 				case CornerCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 20, 21]; break;
 				case MidgeCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 8, 16, 20]; break;
-				case CenterCubeOrbit.type: slotIndexList = this.blankPuzzle instanceof BlankCube1x1x1 ? [0, 1, 2, 4, 5] : [0]; break;
+				case CenterCubeOrbit.type: slotIndexList = this.puzzleClass.puzzleSize === 1 ? [0, 1, 2, 4, 5] : [0]; break;
 				case WingCubeOrbit.type:
 					slotIndexList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 17, 32, 33, 40, 41];
 					selectorBegin += `${orbit.rank}_`;
@@ -562,8 +563,10 @@ class CubePlanDrawer extends CubeDrawer {
 					this.runner.throwError(`Unknown cube orbit type "${orbit.type}"`);
 			}
 			for (let slotIndex of slotIndexList) {
-				this.svgDrawer.fill(svg.querySelector(`${selectorBegin}${slotIndex}`),
-					orbit.slotList[slotIndex].getContent().color);
+				this.svgDrawer.fill(
+					svg.querySelector(`${selectorBegin}${slotIndex}`),
+					orbit.slotList[slotIndex].getContent().color
+				);
 			}
 		}
 		return svg;
@@ -851,12 +854,12 @@ class CubeMove extends Move {
 		this.sliceBegin = sliceBegin;
 		this.sliceEnd = sliceEnd;
 		this.turnCount = turnCount;
-		this.cube = this.runner.blankPuzzle;
-		let isBigCube = this.cube instanceof BlankCubeBig;
+		this.puzzleClass = this.runner.puzzle.class;
+		let isBigCube = this.puzzleClass.puzzleSize >= 4;
 		if (this.sliceBegin < 1) {
 			this.runner.throwError("Creating move with sliceBegin < 1.");
 		}
-		if (this.sliceEnd > this.cube.puzzleSize) {
+		if (this.sliceEnd > this.puzzleClass.puzzleSize) {
 			this.runner.throwError("Creating move with sliceEnd > cube size.");
 		}
 		if (this.sliceBegin > this.sliceEnd) {
@@ -866,17 +869,17 @@ class CubeMove extends Move {
 			this.treatFirstLayer(isBigCube);
 		}
 		if (isBigCube && this.sliceEnd > 1) { // between first layer and middle layer
-			this.treatBetweenFirstAndMiddleLayer(Math.max(1, this.sliceBegin - 1), Math.min(this.sliceEnd - 1, this.cube.maxRankWithoutMiddle));
+			this.treatBetweenFirstAndMiddleLayer(Math.max(1, this.sliceBegin - 1), Math.min(this.sliceEnd - 1, this.puzzleClass.maxRankWithoutMiddle));
 		}
-		if ((this.cube.puzzleSize === 3 && this.sliceBegin <= 2 && this.sliceEnd >= 2)
-			|| (this.cube.middleSlice && this.sliceBegin <= this.cube.middleSlice && this.sliceEnd >= this.cube.middleSlice)) { // middle layer
+		if ((this.puzzleClass.puzzleSize === 3 && this.sliceBegin <= 2 && this.sliceEnd >= 2)
+			|| (this.puzzleClass.middleSlice && this.sliceBegin <= this.puzzleClass.middleSlice && this.sliceEnd >= this.puzzleClass.middleSlice)) { // middle layer
 			this.treatMiddleLayer(isBigCube);
 		}
-		if (isBigCube && this.sliceEnd > this.cube.maxRankWithMiddle + 1) { // between middle layer and last layer
-			this.treatBetweenMiddleAndLastLayer(Math.max(1, this.cube.puzzleSize - this.sliceEnd),
-				Math.min(this.cube.puzzleSize - this.sliceBegin, this.cube.maxRankWithoutMiddle));
+		if (isBigCube && this.sliceEnd > this.puzzleClass.maxRankWithMiddle + 1) { // between middle layer and last layer
+			this.treatBetweenMiddleAndLastLayer(Math.max(1, this.puzzleClass.puzzleSize - this.sliceEnd),
+				Math.min(this.puzzleClass.puzzleSize - this.sliceBegin, this.puzzleClass.maxRankWithoutMiddle));
 		}
-		if (this.sliceEnd === this.cube.puzzleSize) { // last layer
+		if (this.sliceEnd === this.puzzleClass.puzzleSize) { // last layer
 			this.treatLastLayer(isBigCube);
 		}
 	};
@@ -884,9 +887,9 @@ class CubeMove extends Move {
 		this.addCornerElementaryCycles();
 		this.addMidgeElementaryCycles(CubeMove.externalMode);
 		if (isBigCube) {
-			for (let firstRank = 1; firstRank <= this.cube.maxRankWithoutMiddle; firstRank++) {
+			for (let firstRank = 1; firstRank <= this.puzzleClass.maxRankWithoutMiddle; firstRank++) {
 				this.addWingElementaryCycles(CubeMove.externalMode, firstRank);
-				for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+				for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 					if (firstRank === secondRank) {
 						this.addXCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
 					} else {
@@ -894,14 +897,14 @@ class CubeMove extends Move {
 					}
 				}
 			}
-		} else if (this.cube instanceof BlankCube1x1x1) {
+		} else if (this.puzzleClass.puzzleSize === 1) {
 			this.addCenterElementaryCycles();
 		}
 	};
 	treatBetweenFirstAndMiddleLayer = (firstRankBegin, firstRankEnd) => {
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) { // between first layer and middle layer
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank);
-			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+			for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 				if (firstRank === secondRank) {
 					this.addXCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank]);
 				} else if (firstRank > secondRank) {
@@ -918,9 +921,9 @@ class CubeMove extends Move {
 		this.addCenterElementaryCycles();
 		this.addMidgeElementaryCycles(CubeMove.internalMode);
 		if (isBigCube) {
-			for (let centerRank = 1; centerRank <= this.cube.maxRankWithoutMiddle; centerRank++) {
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [centerRank, this.cube.middleSlice - 1]);
-				this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [centerRank, this.cube.middleSlice - 1]);
+			for (let centerRank = 1; centerRank <= this.puzzleClass.maxRankWithoutMiddle; centerRank++) {
+				this.addCenterBigCubeElementaryCycles(CubeMove.internalDirectMode, [centerRank, this.puzzleClass.middleSlice - 1]);
+				this.addCenterBigCubeElementaryCycles(CubeMove.internalIndirectMode, [centerRank, this.puzzleClass.middleSlice - 1]);
 			}
 		}
 	};
@@ -929,7 +932,7 @@ class CubeMove extends Move {
 		let oppositeFace = CubeMoveParser.getOppositeFace(this.face);
 		for (let firstRank = firstRankBegin; firstRank <= firstRankEnd; firstRank++) {
 			this.addWingElementaryCycles(CubeMove.internalMode, firstRank, oppositeFace, oppositeTurnCount);
-			for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+			for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 				if (firstRank === secondRank) {
 					this.addXCenterBigCubeElementaryCycles(CubeMove.semiExternalMode, [firstRank, secondRank], oppositeFace, oppositeTurnCount);
 				} else if (firstRank > secondRank) {
@@ -948,9 +951,9 @@ class CubeMove extends Move {
 		this.addCornerElementaryCycles(oppositeFace, oppositeTurnCount);
 		this.addMidgeElementaryCycles(CubeMove.externalMode, oppositeFace, oppositeTurnCount);
 		if (isBigCube) {
-			for (let firstRank = 1; firstRank <= this.cube.maxRankWithoutMiddle; firstRank++) {
+			for (let firstRank = 1; firstRank <= this.puzzleClass.maxRankWithoutMiddle; firstRank++) {
 				this.addWingElementaryCycles(CubeMove.externalMode, firstRank, oppositeFace, oppositeTurnCount);
-				for (let secondRank = 1; secondRank <= this.cube.maxRankWithMiddle; secondRank++) {
+				for (let secondRank = 1; secondRank <= this.puzzleClass.maxRankWithMiddle; secondRank++) {
 					if (firstRank === secondRank) {
 						this.addXCenterBigCubeElementaryCycles(CubeMove.externalMode, [firstRank, secondRank]);
 					} else {
@@ -961,18 +964,18 @@ class CubeMove extends Move {
 		}
 	};
 	addCornerElementaryCycles = (face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(CornerCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CornerCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][CubeMove.externalMode][face][turnCount], CornerCubeOrbit.type);
 			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], CornerCubeOrbit.type);
 		}
 	};
 	addCenterElementaryCycles = () => {
-		if (this.cube.hasOrbitType(CenterCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CenterCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[CenterCubeOrbit.type][CubeMove.internalMode][this.face][this.turnCount], CenterCubeOrbit.type);
 		}
 	};
 	addMidgeElementaryCycles = (midgeMode, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(MidgeCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(MidgeCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[MidgeCubeOrbit.type][midgeMode][face][turnCount], MidgeCubeOrbit.type);
 			if (midgeMode === CubeMove.externalMode) {
 				this.pushCycles(CubeMove.elementaryCycles[MidgeCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], MidgeCubeOrbit.type);
@@ -980,7 +983,7 @@ class CubeMove extends Move {
 		}
 	};
 	addWingElementaryCycles = (wingMode, wingRank, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(WingCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(WingCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[WingCubeOrbit.type][wingMode][face][turnCount], WingCubeOrbit.type, wingRank);
 			if (wingMode === CubeMove.externalMode) {
 				this.pushCycles(CubeMove.elementaryCycles[WingCubeOrbit.type][CubeMove.semiExternalMode][face][turnCount], WingCubeOrbit.type, wingRank);
@@ -988,12 +991,12 @@ class CubeMove extends Move {
 		}
 	};
 	addXCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(CenterBigCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) {
 			this.pushCycles(CubeMove.elementaryCycles[CornerCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
 		}
 	};
 	addCenterBigCubeElementaryCycles = (centerMode, centerRanks, face = this.face, turnCount = this.turnCount) => {
-		if (this.cube.hasOrbitType(CenterBigCubeOrbit.type)) {
+		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) {
 			if (centerMode === CubeMove.internalDirectMode || centerMode === CubeMove.internalIndirectMode) {
 				this.pushCycles(CubeMove.elementaryCycles[CenterBigCubeOrbit.type][centerMode][face][turnCount], CenterBigCubeOrbit.type, centerRanks);
 			} else {
@@ -1009,13 +1012,13 @@ class MoveSequenceParser {
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.generalLog("Creating new MoveSequenceParser.");
-		switch(this.runner.blankPuzzle.shape) {
+		switch(this.runner.puzzle.class.shape) {
 			case Cube.shape:
 				this.moveParser = new CubeMoveParser(this.runner);
 				this.runner.logger.debugLog("Attaching CubeMoveParser to MoveSequenceParser.");
 				break;
 			default:
-				this.runner.throwError(`Cannot parse move sequence for puzzle type "${this.runner.blankPuzzle.shape}."`);
+				this.runner.throwError(`Cannot parse move sequence for puzzle type "${this.runner.puzzleClass.shape}."`);
 		}
 	};
 	parseMoveSequence = moveSequenceInput => {
@@ -1034,7 +1037,6 @@ class MoveParser {
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new MoveParser.");
-		this.blankPuzzle = runner.blankPuzzle;
 	};
 }
 
@@ -1059,7 +1061,7 @@ class CubeMoveParser extends MoveParser {
 	constructor(runner) {
 		super(runner);
 		this.runner.logger.generalLog("Creating new CubeMoveParser.");
-		this.cubeSize = this.blankPuzzle.puzzleSize;
+		this.cubeSize = this.runner.puzzle.class.puzzleSize;
 	};
 	parseMove = moveString => {
 		this.runner.logger.detailedLog(`Parsing move "${moveString}".`);
@@ -1190,11 +1192,31 @@ class Orbit {
 	getSize = () => {
 		return this.slotList?.length ?? null;
 	};
-	buildSlotList(slotsPerColor) {
+	clone = () => {
+		this.runner.logger.debugLog(`Cloning orbit of type ${this.type}.`);
+		let clone = Object.create(this.constructor.prototype);
+		Object.assign(clone, this);
+		clone.slotList = this.slotList.map(slot => slot.clone());
+		return clone;
+	};
+	buildSlotList(slotsPerColor, colorScheme, mask) {
+		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.type);
 		let slotList = [];
-		for (let color of this.runner.puzzle.colorScheme) {
-			for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
-				slotList.push(new Slot(new Sticker(color)));
+		if (matchingOrbitMask) {
+			for (let colorIndex in colorScheme) {
+				for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
+					slotList.push(new Slot(new Sticker(
+						matchingOrbitMask.stickers[colorIndex * slotsPerColor + slotIndexForColor]
+							? colorScheme[colorIndex]
+							: Color.blank
+					)));
+				}
+			}
+		} else {
+			for (let color of colorScheme) {
+				for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
+					slotList.push(new Slot(new Sticker(color)));
+				}
 			}
 		}
 		return slotList;
@@ -1202,7 +1224,7 @@ class Orbit {
 }
 
 class CubeOrbit extends Orbit {
-	constructor (runner) {
+	constructor(runner) {
 		super(runner);
 		this.runner.logger.debugLog("Creating new CubeOrbit.");
 	};
@@ -1210,177 +1232,135 @@ class CubeOrbit extends Orbit {
 
 class CenterCubeOrbit extends CubeOrbit {
 	static type = "centerCubeOrbit";
-	constructor(runner) {
+	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CenterCubeOrbit.");
-		this.slotList = this.buildSlotList(1);
 		this.type = CenterCubeOrbit.type;
+		this.slotList = this.buildSlotList(1, colorScheme, mask);
 	};
 }
 
 class CornerCubeOrbit extends CubeOrbit {
 	static type = "cornerCubeOrbit";
-	constructor(runner) {
+	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CornerCubeOrbit.");
-		this.slotList = this.buildSlotList(4);
 		this.type = CornerCubeOrbit.type;
+		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
 
 class MidgeCubeOrbit extends CubeOrbit {
 	static type = "midgeCubeOrbit";
-	constructor(runner) {
+	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new MidgeCubeOrbit.");
-		this.slotList = this.buildSlotList(4);
 		this.type = MidgeCubeOrbit.type;
+		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
 
 class WingCubeOrbit extends CubeOrbit {
 	static type = "wingCubeOrbit";
-	constructor(runner, rank) {
+	constructor(runner, rank, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
-		this.slotList = this.buildSlotList(8);
-		this.rank = rank;
 		this.type = WingCubeOrbit.type;
+		this.rank = rank;
+		this.slotList = this.buildSlotList(8, colorScheme, mask);
 	};
 }
 
 class CenterBigCubeOrbit extends CubeOrbit {
 	static type = "centerBigCubeOrbit";
-	constructor(runner, ranks) {
+	constructor(runner, ranks, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
-		this.slotList = this.buildSlotList(4);
-		this.ranks = ranks;
 		this.type = CenterBigCubeOrbit.type;
+		this.ranks = ranks;
+		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
 
 // Represents the information of a twisty puzzle.
-// Every puzzle class inherits a "blank" puzzle class, which contains no orbit.
 
 class TwistyPuzzle {
+	static orbitTypes = [];
+	static hasOrbitType(orbitType) {
+		return this.orbitTypes[orbitType];
+	};
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new Puzzle.");
-		this.fullName = this.runner.puzzle.fullName;
 		this.orbitList = [];
-		this.orbitTypes = [];
 	};
-	addOrbit = orbit => {
-		this.orbitList.push(orbit);
+	addOrbits = orbitList => {
+		this.orbitList = orbitList.map(orbit => orbit.clone());
 	};
 	hasOrbitType = orbitType => {
-		return this.orbitTypes.includes(orbitType);
+		return this.constructor.orbitTypes[orbitType];
 	};
-	static getBlankParentClass = childClass => {
-		return Object.getPrototypeOf(childClass);
+	getOrbitMask = orbitType => {
+		return this.runner.puzzle.masks.find(orbitMask => orbitMask.orbitType === orbitType);
 	};
 }
 
 class Cube extends TwistyPuzzle {
+	static shape = "cube";
+	static buildCustomClass = (runner, puzzleSize, colorScheme, mask) => {
+		let className = `Cube${Array(3).fill(puzzleSize).join("x")}`;
+		runner.logger.debugLog(`Building dynamic class ${className}.`);
+		let orbitList = [];
+		let orbitTypes = {};
+		let pushOrbit = orbit => {
+			orbitList.push(orbit);
+			orbitTypes[orbit.type] = true;
+		};
+		let middleSlice = null;
+		let maxRankWithMiddle = null;
+		let maxRankWithoutMiddle = null;
+		if (puzzleSize % 2 === 1) {
+			middleSlice = (puzzleSize + 1) / 2;
+			maxRankWithoutMiddle = (puzzleSize - 3) / 2;
+			maxRankWithMiddle = (puzzleSize - 1) / 2;
+			pushOrbit(new CenterCubeOrbit(runner, colorScheme, mask));
+			if (puzzleSize >= 3) {
+				pushOrbit(new MidgeCubeOrbit(runner, colorScheme, mask));
+			}
+		} else {
+			maxRankWithoutMiddle = puzzleSize / 2 - 1;
+			maxRankWithMiddle = puzzleSize / 2 - 1;
+		}
+		if (puzzleSize >= 2) {
+			pushOrbit(new CornerCubeOrbit(runner, colorScheme, mask));
+		}
+		for (let wingRank = 1; wingRank <= maxRankWithoutMiddle; wingRank++) {
+			pushOrbit(new WingCubeOrbit(runner, wingRank, colorScheme, mask));
+		}
+		for (let centerFirstRank = 1; centerFirstRank <= maxRankWithoutMiddle; centerFirstRank++) {
+			for (let centerSecondRank = 1; centerSecondRank <= maxRankWithMiddle; centerSecondRank++) {
+				pushOrbit(new CenterBigCubeOrbit(runner, [centerFirstRank, centerSecondRank], colorScheme, mask));
+			}
+		}
+		return class CustomCubeClass extends Cube {
+			static className = className;
+			static puzzleSize = puzzleSize;
+			static orbitList = orbitList;
+			static orbitTypes = orbitTypes;
+			static middleSlice = middleSlice;
+			static maxRankWithMiddle = maxRankWithMiddle;
+			static maxRankWithoutMiddle = maxRankWithoutMiddle;
+			constructor(runner) {
+				super(runner);
+				this.runner.logger.generalLog(`Creating new ${this.constructor.className}.`);
+				this.addOrbits(this.constructor.orbitList);
+			};
+		};
+	};
 	constructor(runner) {
 		super(runner);
 		this.runner.logger.debugLog("Creating new Cube.");
 		this.shape = Cube.shape;
-	};
-	static shape = "cube";
-}
-
-class BlankCube1x1x1 extends Cube {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.debugLog("Creating new BlankCube1x1x1.");
-		this.puzzleSize = 1;
-		this.orbitTypes = [CenterCubeOrbit.type];
-	};
-}
-
-class Cube1x1x1 extends BlankCube1x1x1 {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.generalLog("Creating new Cube1x1x1.");
-		this.addOrbit(new CenterCubeOrbit(this.runner));
-	};
-}
-
-class BlankCube2x2x2 extends Cube {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.debugLog("Creating new BlankCube2x2x2.");
-		this.puzzleSize = 2;
-		this.orbitTypes = [CornerCubeOrbit.type];
-	};
-}
-
-class Cube2x2x2 extends BlankCube2x2x2 {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.generalLog("Creating new Cube2x2x2.");
-		this.addOrbit(new CornerCubeOrbit(this.runner));
-	};
-}
-
-class BlankCube3x3x3 extends Cube {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.debugLog("Creating new BlankCube3x3x3.");
-		this.puzzleSize = 3;
-		this.orbitTypes = [CenterCubeOrbit.type, MidgeCubeOrbit.type, CornerCubeOrbit.type];
-	};
-}
-
-class Cube3x3x3 extends BlankCube3x3x3 {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.generalLog("Creating new Cube3x3x3.");
-		this.addOrbit(new CenterCubeOrbit(this.runner));
-		this.addOrbit(new MidgeCubeOrbit(this.runner));
-		this.addOrbit(new CornerCubeOrbit(this.runner));
-	};
-}
-
-class BlankCubeBig extends Cube {
-	constructor(runner) {
-		super(runner);
-		this.puzzleSize = this.runner.puzzle.size;
-		this.runner.logger.debugLog(`Creating new BlankCubeBig (puzzleSize = ${this.puzzleSize}).`);
-		this.orbitTypes = [CornerCubeOrbit.type, WingCubeOrbit.type, CenterBigCubeOrbit.type];
-		if (this.puzzleSize % 2) { // puzzle is odd
-			this.middleSlice = (this.puzzleSize + 1) / 2;
-			this.maxRankWithoutMiddle = (this.puzzleSize - 3) / 2;
-			this.maxRankWithMiddle = (this.puzzleSize - 1) / 2;
-			this.orbitTypes.push(MidgeCubeOrbit.type);
-			this.orbitTypes.push(CenterCubeOrbit.type);
-		} else { // puzzle is even
-			this.middleSlice = null;
-			this.maxRankWithoutMiddle = this.puzzleSize / 2 - 1;
-			this.maxRankWithMiddle = this.puzzleSize / 2 - 1;
-		}
-	};
-}
-
-class CubeBig extends BlankCubeBig {
-	constructor(runner) {
-		super(runner);
-		this.runner.logger.generalLog(`Creating new CubeBig (puzzleSize = ${this.puzzleSize}).`);
-		this.addOrbit(new CornerCubeOrbit(this.runner));
-		if (this.puzzleSize % 2) { // puzzle is odd
-			this.addOrbit(new MidgeCubeOrbit(this.runner));
-			this.addOrbit(new CenterCubeOrbit(this.runner));
-		}
-		for (let wingRank = 1; wingRank <= this.maxRankWithoutMiddle; wingRank++) {
-			this.addOrbit(new WingCubeOrbit(this.runner, wingRank));
-		}
-		for (let centerFirstRank = 1; centerFirstRank <= this.maxRankWithoutMiddle; centerFirstRank++) {
-			for (let centerSecondRank = 1; centerSecondRank <= this.maxRankWithMiddle; centerSecondRank++) {
-				this.addOrbit(new CenterBigCubeOrbit(this.runner, [centerFirstRank, centerSecondRank]));
-			}
-		}
 	};
 }
 
@@ -1407,8 +1387,16 @@ Object structure to give to Runner class :
 {
 	puzzle: {
 		fullName: string,
-		stage: string, // stage to show (OLL, PLL, CMLL, F2L, ...)
-		colorScheme: array of colors
+		colorScheme: array of colors,
+		mask: {
+			stage: string, // stage to show (OLL, PLL, CMLL, F2L, ...)
+			custom: [
+				{
+					orbitType: string, // type of the orbit
+					stickers: array of bools // tells for each individual sticker if it must be shown or not
+				}
+			]
+		}
 	},
 	drawingOptions: {
 		imageHeight: number, // height of the image in px, default value is 100
@@ -1440,10 +1428,8 @@ class Runner {
 		this.setLogger(inputObject);
 		this.logger.generalLog("Creating new Runner.");
 		this.setPuzzle(inputObject);
-		this.setDrawingOptions(inputObject);
-		this.setPuzzleClass();
-		this.setBlankPuzzle();
 		this.setMoveSequenceParser();
+		this.setDrawingOptions(inputObject);
 		this.setPuzzleDrawer();
 		this.logger.generalLog("End of initialization phase.");
 		this.closeInitializationPhase();
@@ -1495,7 +1481,7 @@ class Runner {
 		let previousPartialLogs = this.logger.inOutput ? this.logs.partial : null;
 		this.logger.resetPartialLogs();
 		try {
-			let puzzle = new this.puzzleClass(this);
+			let puzzle = new this.puzzle.class(this);
 			this.moveSequenceParser.parseMoveSequence(moveSequence).applyOnPuzzle(puzzle);
 			let svg = this.puzzleDrawer.drawPuzzle(puzzle);
 			if (isMultiple) { // multiple move sequences
@@ -1613,22 +1599,6 @@ class Runner {
 		this.logger.detailedLog("Reading input : drawingOptions.");
 		this.drawingOptions = new DrawingOptionsRunnerInput(inputObject.drawingOptions, this);
 	};
-	setPuzzleClass = () => {
-		this.logger.debugLog("Setting puzzle class.");
-		switch(this.puzzle.shape) {
-			case "cube": switch(this.puzzle.fullName) {
-				case "cube1x1x1": this.puzzleClass = Cube1x1x1; break;
-				case "cube2x2x2": this.puzzleClass = Cube2x2x2; break;
-				case "cube3x3x3": this.puzzleClass = Cube3x3x3; break;
-				default: this.puzzleClass = CubeBig;
-			}; break;
-			default: this.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
-		}
-	};
-	setBlankPuzzle = () => { // blank puzzle is an instance of the blank parent class, which has the same structure without the orbits
-		this.logger.debugLog("Creating the blank puzzle.");
-		this.blankPuzzle = new (TwistyPuzzle.getBlankParentClass(this.puzzleClass))(this);
-	};
 	setMoveSequenceParser = () => {
 		this.moveSequenceParser = new MoveSequenceParser(this);
 	};
@@ -1638,7 +1608,7 @@ class Runner {
 		this.puzzleDrawer.createSvgSkeletton();
 	};
 	getPuzzleDrawerClass = () => {
-		switch(this.puzzle.shape) {
+		switch(this.puzzle.class.shape) {
 			case "cube": switch(this.drawingOptions.view) {
 				case TwistyPuzzleDrawer.planView: return CubePlanDrawer;
 				case TwistyPuzzleDrawer.isometricView: return CubeIsometricDrawer;
@@ -1669,11 +1639,12 @@ class PuzzleRunnerInput {
 		} else if (!Utils.isObject(puzzle)) {
 			this.runner.throwError("Property puzzle must be an object.");
 		}
-		this.setPuzzleGeneral(puzzle);
-		this.setStage(puzzle);
-		this.setColorScheme(puzzle);
+		let {puzzleShape, puzzleSize} = this.getPuzzleGeneral(puzzle);
+		let mask = this.getMask(puzzle);
+		let colorScheme = this.getColorScheme(puzzle, puzzleShape);
+		this.class = this.getPuzzleClass(puzzleShape, puzzleSize, colorScheme, mask);
 	};
-	setPuzzleGeneral = puzzle => {
+	getPuzzleGeneral = puzzle => {
 		if (Utils.isUndefinedOrNull(puzzle.fullName)) {
 			this.runner.throwError("Property puzzle.fullName is required.");
 		} else if (!Utils.isString(puzzle.fullName)) {
@@ -1683,50 +1654,268 @@ class PuzzleRunnerInput {
 		} else if (!/^cube\d+x\d+x\d+$/.test(puzzle.fullName) || new Set(puzzle.fullName.substring(4).split("x")).size !== 1) {
 			this.runner.throwError("Unrecognized or unsupported puzzle name. Available names are of the form cubeNxNxN, where N has to be replaced with the cube size.");
 		}
-		this.fullName = puzzle.fullName;
-		this.shape = "cube";
-		this.size = parseInt(puzzle.fullName.match(/\d+$/)[0]);
-		if (this.size === 0) {
+		let puzzleSize = parseInt(puzzle.fullName.match(/\d+$/)[0]);
+		if (puzzleSize === 0) {
 			this.runner.throwError(`Creating cube with no layer.`);
-		} else if (this.size > 13) {
-			this.runner.logger.warningLog(`Creating cube with large number of layers (${this.size}).`);
+		} else if (puzzleSize > 13) {
+			this.runner.logger.warningLog(`Creating cube with large number of layers (${puzzleSize}).`);
+		}
+		return {
+			puzzleShape: Cube.shape,
+			puzzleSize: puzzleSize,
 		}
 	};
-	setStage = puzzle => {
-		if (!Utils.isUndefinedOrNull(puzzle.stage)) {
-			if (!Utils.isString(puzzle.stage)) {
-				this.runner.throwError("Property puzzle.stage must be a string.");
-			} else {
-				this.runner.logger.warningLog("Stage option is not yet supported, current stage shows all stickers.");
-				this.stage = puzzle.stage;
+	getMask = puzzle => {
+		let mask = [];
+		if (!Utils.isUndefinedOrNull(puzzle.mask)) {
+			// mask aliases
+			if (!Utils.isUndefinedOrNull(puzzle.mask.stage)) {
+				if (!Utils.isString(puzzle.mask.stage)) {
+					this.runner.throwError("Property puzzle.mask.stage must be a string.");
+				} else {
+					mask = this.getMaskFromAlias(puzzle.mask.stage);
+					if (mask === null) {
+						this.runner.throwError(`Invalid or unrecognized value for puzzle.mask.stage : ${puzzle.mask.stage}.`);
+					}
+				}
+			}
+			// custom masks
+			if (!Utils.isUndefinedOrNull(puzzle.mask.custom)) {
+				if (!Utils.isArray(puzzle.mask.custom)) {
+					this.runner.throwError("Property puzzle.mask.custom must be an array.");
+				}
+				for (let orbitMask of puzzle.mask.custom) {
+					if (Utils.isUndefinedOrNull(orbitMask.orbitType)) {
+						this.runner.throwError("Property orbitType is required to define custom masks.");
+					} else if (!Utils.isString(orbitMask.orbitType)) {
+						this.runner.throwError("Property orbitType under puzzle.mask.custom is required.");
+					}
+					let existingMatchingOrbitMask = mask.find(existingOrbitMask => existingOrbitMask.orbitType === orbitMask.orbitType);
+					if (existingMatchingOrbitMask) {
+						existingMatchingOrbitMask = orbitMask; // replace orbit mask
+					} else {
+						mask.push(orbitMask); // add orbit mask
+					}
+				}
 			}
 		}
-		this.stage = puzzle.stage ?? "full";
+		return mask;
 	};
-	setColorScheme = puzzle => {
-		this.colorScheme = [];
+	getMaskFromAlias = stage => {
+		switch (stage) {
+			case "PLL": case "ZBLL": case "ELL": case "1LLL": case "LSE": case "LSEP": case "L4C": case "ZZLL":
+				return [];
+			case "OLLCP": case "COLL": case "CPEOLL":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "OLL": case "OCLL": case "VLS": case "HLS": case "OLS": case "WV": case "SV": case "MW": case "CLS": case "JTLE":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [true, true, true, true, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "ZBLS": case "EOLS": case "VHLS": case "ELS": case "EOLL":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "LLEF":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}
+				];
+			case "CLL":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "CMLL":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, false, true, false, true, true, true,
+							false, true, false, true, false, true, false, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true,
+							false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true]
+					}, {
+						orbitType: CenterCubeOrbit.type,
+						stickers: [false, false, true,
+							false, false, true]
+					}, {
+						orbitType: CenterBigCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, false, true, false, true, true, true,
+							false, true, false, true, false, true, false, true, false, true, true, true]
+					}
+				];
+			case "EOLR":
+				return [
+					{
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [true, true, true, true, false, true, false, true, true, true, true, true,
+							true, true, true, true, false, true, false, true, true, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [true, true, true, true, true, true, true, true, false, false, true, true, false, false, true, true, true, true, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, false, false, true, true, true, true, true, true, true, true, true, true]
+					}
+				];
+			case "Cross": case "cross":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, false, false, false, true, false,
+							true, true, true, true, false, false, false, true, false, false, false, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false,
+							true, true, true, true, true, true, true, true, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false]
+					}
+				];
+			case "FB":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, true, false, false, false, false,
+							true, false, false, true, false, false, false, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, true, false, false, false, false,
+							false, false, false, true, false, true, false, false, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, true, true, false, false, true, true, false, false, false, false, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "SB":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, false, true, false, true, true, true,
+							false, true, false, true, false, true, false, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true,
+							false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
+			case "FL":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, false, false, false, true, false,
+							true, true, true, true, false, false, false, true, false, false, false, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false,
+							true, true, true, true, true, true, true, true, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false]
+					}
+				];
+			case "L2C":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+					}
+				];
+			case "L2E":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, false, false,
+							false, false, false, false, false, false, false, false, false, false, false, false]
+					}
+				];
+			default: return null; // unrecognized alias
+		};
+	};
+	getColorScheme = (puzzle, puzzleShape) => {
+		let colorScheme = [];
+		let defaultColorScheme = this.getDefaultColorSchemeFromShape(puzzleShape);
 		if (Utils.isUndefinedOrNull(puzzle.colorScheme)) {
-			let defaultColorScheme = this.getDefaultColorSchemeFromShape(this.shape);
 			for (let color of defaultColorScheme) {
-				this.colorScheme.push(new Color(color));
+				colorScheme.push(new Color(color));
 			}
 			this.runner.logger.detailedLog(`Property puzzle.colorScheme was not provided, using default color scheme ["${defaultColorScheme.join('", "')}"].`);
 		} else {
 			if (!Utils.isArrayOfStrings(puzzle.colorScheme)) {
 				this.runner.throwError("Property puzzle.colorScheme must be an array of strings.");
-			} else if (puzzle.colorScheme.length !== this.getColorSchemeLengthFromShape(this.shape)) {
+			} else if (puzzle.colorScheme.length !== defaultColorScheme.length) {
 				this.runner.throwError("Property puzzle.colorScheme doesn't have the correct number of values "
-					+ `(expected value = ${this.getColorSchemeLengthFromShape(puzzleShape)} because puzzle shape is ${this.puzzle.shape}, `
+					+ `(expected value = ${defaultColorScheme.length} because puzzle shape is ${puzzleShape}, `
 					+ `actual = ${puzzle.colorScheme.length}).`);
-			} else {
-				for (let color of puzzle.colorScheme) {
-					if (!Color.checkFormat(color)) {
-						this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
-					}
-					this.colorScheme.push(new Color(color));
+			}
+			for (let color of puzzle.colorScheme) {
+				if (!Color.checkFormat(color)) {
+					this.runner.throwError(`Invalid or unrecognized color in puzzle.colorScheme property : ${color}.`);
 				}
+				colorScheme.push(new Color(color));
 			}
 		}
+		return colorScheme;
 	};
 	getDefaultColorSchemeFromShape = puzzleShape => {
 		switch (puzzleShape) {
@@ -1762,14 +1951,16 @@ class PuzzleRunnerInput {
 					"pink"
 				];
 			default:
-				this.runner.throwError(`Getting default color scheme from invalid puzzle shape ${puzzleShape}.`);
+				this.runner.throwError(`Getting default color scheme from invalid puzzle shape "${puzzleShape}".`);
 		}
 	};
-	getColorSchemeLengthFromShape = puzzleShape => {
-		try {
-			return this.getDefaultColorSchemeFromShape(puzzleShape).length;
-		} catch {
-			this.runner.throwError(`Getting length of color scheme from invalid puzzle shape ${puzzleShape}.`);
+	getPuzzleClass = (puzzleShape, puzzleSize, colorScheme, mask) => {
+		this.runner.logger.debugLog("Getting puzzle class.");
+		switch(puzzleShape) {
+			case Cube.shape:
+				return Cube.buildCustomClass(this.runner, puzzleSize, colorScheme, mask);
+			default:
+				this.runner.throwError("Getting puzzle class for a non-cubic shaped puzzle.");
 		}
 	};
 }
@@ -1902,6 +2093,12 @@ class Slot {
 	constructor(sticker) {
 		this.content = sticker;
 	};
+	clone = () => {
+		let clone = Object.create(this.constructor.prototype);
+		Object.assign(clone, this);
+		clone.content = this.content.clone();
+		return clone;
+	};
 	getContent = () => {
 		return this.content;
 	};
@@ -1915,6 +2112,9 @@ class Slot {
 class Sticker {
 	constructor(color) {
 		this.color = color;
+	};
+	clone = () => {
+		return new Sticker(this.color);
 	};
 }
 
@@ -1934,11 +2134,7 @@ class Utils {
 	static isObject = object => {
 		return typeof object === "object";
 	};
-	static isArray = object => {
-		return !Utils.isUndefinedOrNull(object)
-			&& typeof object === "object"
-			&& typeof object[Symbol.iterator] === "function";
-	};
+	static isArray = Array.isArray;
 	static isArrayOfStrings = object => {
 		return Utils.isArray(object)
 			&& !object.find(element => !Utils.isString(element));
