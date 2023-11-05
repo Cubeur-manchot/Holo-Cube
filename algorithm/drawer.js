@@ -334,13 +334,14 @@ class CubePlanDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbit.type}`
-				+ (orbit.type === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
-				+ (orbit.type === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
+			let orbitType = orbit.getType();
+			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbitType}`
+				+ (orbitType === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
+				+ (orbitType === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
 				+ ".");
 			let slotIndexList = [];
-			let selectorBegin = `rect#sticker_${orbit.type}_`;
-			switch (orbit.type) {
+			let selectorBegin = `rect#sticker_${orbitType}_`;
+			switch (orbitType) {
 				case CornerCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 20, 21]; break;
 				case MidgeCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 8, 16, 20]; break;
 				case CenterCubeOrbit.type: slotIndexList = this.puzzleClass.puzzleSize === 1 ? [0, 1, 2, 4, 5] : [0]; break;
@@ -353,7 +354,7 @@ class CubePlanDrawer extends CubeDrawer {
 					selectorBegin += `${orbit.ranks[0]}_${orbit.ranks[1]}_`;
 					break;
 				default:
-					this.runner.throwError(`Unknown cube orbit type "${orbit.type}"`);
+					this.runner.throwError(`Unknown cube orbit type "${orbitType}"`);
 			}
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(
