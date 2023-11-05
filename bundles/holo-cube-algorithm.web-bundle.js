@@ -521,13 +521,14 @@ class CubePlanDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbit.type}`
-				+ (orbit.type === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
-				+ (orbit.type === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
+			let orbitType = orbit.getType();
+			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbitType}`
+				+ (orbitType === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
+				+ (orbitType === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
 				+ ".");
 			let slotIndexList = [];
-			let selectorBegin = `rect#sticker_${orbit.type}_`;
-			switch (orbit.type) {
+			let selectorBegin = `rect#sticker_${orbitType}_`;
+			switch (orbitType) {
 				case CornerCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 20, 21]; break;
 				case MidgeCubeOrbit.type: slotIndexList = [0, 1, 2, 3, 4, 8, 16, 20]; break;
 				case CenterCubeOrbit.type: slotIndexList = this.puzzleClass.puzzleSize === 1 ? [0, 1, 2, 4, 5] : [0]; break;
@@ -540,7 +541,7 @@ class CubePlanDrawer extends CubeDrawer {
 					selectorBegin += `${orbit.ranks[0]}_${orbit.ranks[1]}_`;
 					break;
 				default:
-					this.runner.throwError(`Unknown cube orbit type "${orbit.type}"`);
+					this.runner.throwError(`Unknown cube orbit type "${orbitType}"`);
 			}
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(
@@ -713,7 +714,7 @@ class Move {
 		this.runner.logger.detailedLog("Applying move on puzzle.");
 		for (let cycle of this.getCycleList()) {
 			for (let orbit of puzzle.orbitList) {
-				if (cycle.orbitType === orbit.type) {
+				if (cycle.orbitType === orbit.getType()) {
 					cycle.applyOnOrbit(orbit);
 				}
 			}
@@ -1167,20 +1168,22 @@ class Orbit {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new Orbit.");
 		this.slotList = undefined;
-		this.type = Orbit.type;
 	};
 	getSize = () => {
 		return this.slotList?.length ?? null;
 	};
+	getType = () => {
+		return this.constructor.type;
+	};
 	clone = () => {
-		this.runner.logger.debugLog(`Cloning orbit of type ${this.type}.`);
+		this.runner.logger.debugLog(`Cloning orbit of type ${this.getType()}.`);
 		let clone = Object.create(this.constructor.prototype);
 		Object.assign(clone, this);
 		clone.slotList = this.slotList.map(slot => slot.clone());
 		return clone;
 	};
 	buildSlotList(slotsPerColor, colorScheme, mask) {
-		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.type);
+		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.getType());
 		let slotList = [];
 		if (matchingOrbitMask) {
 			for (let colorIndex in colorScheme) {
@@ -1215,7 +1218,6 @@ class CenterCubeOrbit extends CubeOrbit {
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CenterCubeOrbit.");
-		this.type = CenterCubeOrbit.type;
 		this.slotList = this.buildSlotList(1, colorScheme, mask);
 	};
 }
@@ -1225,7 +1227,6 @@ class CornerCubeOrbit extends CubeOrbit {
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CornerCubeOrbit.");
-		this.type = CornerCubeOrbit.type;
 		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
@@ -1235,7 +1236,6 @@ class MidgeCubeOrbit extends CubeOrbit {
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new MidgeCubeOrbit.");
-		this.type = MidgeCubeOrbit.type;
 		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
 }
@@ -1245,7 +1245,6 @@ class WingCubeOrbit extends CubeOrbit {
 	constructor(runner, rank, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
-		this.type = WingCubeOrbit.type;
 		this.rank = rank;
 		this.slotList = this.buildSlotList(8, colorScheme, mask);
 	};
@@ -1256,7 +1255,6 @@ class CenterBigCubeOrbit extends CubeOrbit {
 	constructor(runner, ranks, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
-		this.type = CenterBigCubeOrbit.type;
 		this.ranks = ranks;
 		this.slotList = this.buildSlotList(4, colorScheme, mask);
 	};
@@ -1294,7 +1292,7 @@ class Cube extends TwistyPuzzle {
 		let orbitTypes = {};
 		let pushOrbit = orbit => {
 			orbitList.push(orbit);
-			orbitTypes[orbit.type] = true;
+			orbitTypes[orbit.getType()] = true;
 		};
 		let middleSlice = null;
 		let maxRankWithMiddle = null;
