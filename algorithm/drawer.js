@@ -377,3 +377,11 @@ class CubeNetDrawer extends CubeDrawer {
 	createSvgSkeletton = () => { // todo
 	};
 }
+
+class CubeTopDownDrawer extends CubeDrawer {
+	constructor(runner) {
+		super(runner);
+	};
+	createSvgSkeletton = () => { // todo
+	};
+}
