@@ -178,12 +178,16 @@ class CubeIsometricDrawer extends CubeDrawer {
 		this.options.stickerCornerRadius = 10 / this.cubeSize;
 		this.options.stickerMargin = 5 / (this.cubeSize + 1);
 		// derived dimensions
-		this.options.stickerAcuteAngleCornerRadius = this.options.stickerCornerRadius / Math.sqrt(3);
-		this.options.stickerObtuseAngleCornerRadius = this.options.stickerCornerRadius * Math.sqrt(3);
 		this.options.stickerOffsets = [...Array(this.cubeSize + 1).keys()].map(index => {
 			let value = this.options.stickerMargin + (this.options.stickerSize + this.options.stickerMargin) * index;
 			return {normal: value, projectionBig: value * Math.sqrt(3) / 2, projectionSmall: value / 2};
 		});
+		this.options.stickerAcuteAngleCornerRadius = this.options.stickerCornerRadius / Math.sqrt(3);
+		this.options.stickerObtuseAngleCornerRadius = this.options.stickerCornerRadius * Math.sqrt(3);
+		this.options.stickerSizeProjectionBig = this.options.stickerSize * Math.sqrt(3) / 2;
+		this.options.stickerSizeProjectionSmall = this.options.stickerSize / 2;
+		this.options.stickerCornerRadiusProjectionBig = this.options.stickerCornerRadius * Math.sqrt(3) / 2;
+		this.options.stickerCornerRadiusProjectionSmall = this.options.stickerCornerRadius / 2;
 	};
 	createSvgSkeletton = () => {
 		this.runner.logger.debugLog("Creating puzzle image skeletton");
@@ -400,11 +404,11 @@ class CubeIsometricDrawer extends CubeDrawer {
 	};
 	createSticker = (id, referenceX, referenceY, face) => {
 		let size = this.options.stickerSize;
-		let sizeProjectionBig = size * Math.sqrt(3) / 2;
-		let sizeProjectionSmall = size / 2;
+		let sizeProjectionBig = this.options.stickerSizeProjectionBig;
+		let sizeProjectionSmall = this.options.stickerSizeProjectionSmall;
 		let cornerPseudoRadius = this.options.stickerCornerRadius;
-		let radiusProjectionBig = cornerPseudoRadius * Math.sqrt(3) / 2;
-		let radiusProjectionSmall = cornerPseudoRadius / 2;
+		let radiusProjectionBig = this.options.stickerCornerRadiusProjectionBig;
+		let radiusProjectionSmall = this.options.stickerCornerRadiusProjectionSmall;
 		let acuteAngleCornerRadius = this.options.stickerAcuteAngleCornerRadius;
 		let obtuseAngleCornerRadius = this.options.stickerObtuseAngleCornerRadius;
 		switch (face) {
