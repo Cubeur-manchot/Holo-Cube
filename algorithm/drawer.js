@@ -98,10 +98,12 @@ class TwistyPuzzleDrawer {
 	static planView = "plan";
 	static isometricView = "isometric";
 	static netView = "net";
+	static topDownView = "top-down";
 	static views = [
 		TwistyPuzzleDrawer.planView,
 		TwistyPuzzleDrawer.isometricView,
-		TwistyPuzzleDrawer.netView
+		TwistyPuzzleDrawer.netView,
+		TwistyPuzzleDrawer.topDown
 	];
 	constructor(runner) {
 		this.runner = runner;
