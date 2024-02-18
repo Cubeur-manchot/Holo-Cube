@@ -105,6 +105,10 @@ class TwistyPuzzleDrawer {
 		TwistyPuzzleDrawer.netView,
 		TwistyPuzzleDrawer.topDown
 	];
+	static supportedViews = [
+		TwistyPuzzleDrawer.planView,
+		TwistyPuzzleDrawer.isometricView
+	];
 	constructor(runner) {
 		this.runner = runner;
 		this.runner.logger.debugLog("Creating new TwistyPuzzleDrawer.");
