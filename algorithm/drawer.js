@@ -202,7 +202,7 @@ class CubePlanDrawer extends CubeDrawer {
 		bFace.appendChild(this.createAdjacentFaceBackground("B"));
 		let lFace = this.svgDrawer.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
-		if (this.puzzleClass.hasOrbitType(CenterCubeOrbit.type)) { // sticker of type CenterCubeOrbit
+		if (this.puzzleClass.hasOrbitType(CenterCubeOrbit.type)) {
 			this.runner.logger.debugLog("Creating centers stickers skeletton.");
 			let startingValueIndex = (this.cubeSize - 1) / 2;
 			let idBegin = `sticker_${CenterCubeOrbit.type}_`;
@@ -214,7 +214,7 @@ class CubePlanDrawer extends CubeDrawer {
 				lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}5`, 0));
 			}
 		}
-		if (this.puzzleClass.hasOrbitType(CornerCubeOrbit.type)) { // stickers of type CornerCubeOrbit
+		if (this.puzzleClass.hasOrbitType(CornerCubeOrbit.type)) {
 			this.runner.logger.debugLog("Creating corners stickers skeletton.");
 			let highIndex = this.cubeSize - 1;
 			let idBegin = `sticker_${CornerCubeOrbit.type}_`;
@@ -231,7 +231,7 @@ class CubePlanDrawer extends CubeDrawer {
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}20`, 0));
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}21`, highIndex));
 		}
-		if (this.puzzleClass.hasOrbitType(MidgeCubeOrbit.type)) { // stickers of type MidgeCubeOrbit
+		if (this.puzzleClass.hasOrbitType(MidgeCubeOrbit.type)) {
 			this.runner.logger.debugLog("Creating midges stickers skeletton.");
 			let middleIndex = (this.cubeSize - 1) / 2;
 			let highIndex = this.cubeSize - 1;
@@ -245,7 +245,7 @@ class CubePlanDrawer extends CubeDrawer {
 			bFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}16`, middleIndex));
 			lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}20`, middleIndex));
 		}
-		if (this.puzzleClass.hasOrbitType(WingCubeOrbit.type)) { // stickers of type WingCubeOrbit
+		if (this.puzzleClass.hasOrbitType(WingCubeOrbit.type)) {
 			this.runner.logger.debugLog("Creating wings stickers skeletton.");
 			let highIndex = this.cubeSize - 1;
 			let wingMaxIndex = this.puzzleClass.maxRankWithoutMiddle;
@@ -270,7 +270,7 @@ class CubePlanDrawer extends CubeDrawer {
 				lFace.appendChild(this.createAdjacentFaceSticker(`${idBegin}41`, middleComplementaryIndex));
 			}
 		}
-		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) { // stickers of type CenterBigCubeOrbit
+		if (this.puzzleClass.hasOrbitType(CenterBigCubeOrbit.type)) {
 			this.runner.logger.debugLog("Creating big cube centers stickers skeletton.");
 			for (let firstRank = 1; firstRank <= this.puzzleClass.maxRankWithoutMiddle; firstRank++) {
 				let firstComplementaryIndex = this.cubeSize - firstRank - 1;
