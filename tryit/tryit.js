@@ -144,7 +144,8 @@ const updateResults = () => { // update code and Holo-Cube results
 		{name: "puzzleHeight", type: "number"},
 		{name: "puzzleWidth", type: "number"},
 		{name: "puzzleScale", type: "number"},
-		{name: "puzzleColor", type: "color"}
+		{name: "puzzleColor", type: "color"},
+		{name: "view", type: "string"}
 	];
 	for (let property of drawingOptionsProperties) {
 		let fieldValueNotDefault;
@@ -160,6 +161,13 @@ const updateResults = () => { // update code and Holo-Cube results
 					document.querySelector(`div.pickr[data-colorPickerId=${property.name}]`).getAttribute("data-color"),
 					DrawingOptionsRunnerInput.defaultDrawingOptions[property.name]
 				);
+				break;
+			case "string":
+				fieldValueNotDefault = getStringFieldDefault(
+					document.querySelector(`select#${property.name}`).value,
+					DrawingOptionsRunnerInput.defaultDrawingOptions[property.name]
+				);
+				break;
 		}
 		if (fieldValueNotDefault) { // append the property only if value is different from default value
 			drawingOptions[property.name] = fieldValueNotDefault;

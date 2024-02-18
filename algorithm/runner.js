@@ -233,6 +233,7 @@ class Runner {
 				case TwistyPuzzleDrawer.planView: return CubePlanDrawer;
 				case TwistyPuzzleDrawer.isometricView: return CubeIsometricDrawer;
 				case TwistyPuzzleDrawer.netView: return CubeNetDrawer;
+				case TwistyPuzzleDrawer.topDownView: return CubeTopDownDrawer;
 			}
 			default: this.throwError("Getting puzzle drawer class for a non-cubic shaped puzzle.");
 		}
@@ -626,10 +627,12 @@ class DrawingOptionsRunnerInput {
 				if (!Utils.isString(drawingOptionsObject.view)) {
 					this.runner.throwError("Property drawingOptions.view must be a string.");
 				} else if (!TwistyPuzzleDrawer.views.includes(drawingOptionsObject.view)) {
-					this.runner.throwError(`Property view only accept values "${TwistyPuzzleDrawer.view.join("\", \"")}" (received value = ${drawingOptionsObject.view}).`);
-				} else {
-					this.runner.logger.warningLog("View option is not yet supported, using plan view by default");
+					this.runner.throwError(`Property view only accept values "${TwistyPuzzleDrawer.views.join("\", \"")}" (received value = ${drawingOptionsObject.view}).`);
+				} else if (!TwistyPuzzleDrawer.supportedViews.includes(drawingOptionsObject.view)) {
+					this.runner.logger.warningLog(`Value "${drawingOptionsObject.view}" of view option is not yet supported, using default value "${DrawingOptionsRunnerInput.defaultDrawingOptions.view}".`);
 					this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
+				} else {
+					this.view = drawingOptionsObject.view;
 				}
 			} else {
 				this.view = DrawingOptionsRunnerInput.defaultDrawingOptions.view;
