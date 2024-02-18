@@ -173,7 +173,7 @@ class CubeIsometricDrawer extends CubeDrawer {
 		this.runner.logger.generalLog("Creating new CubeIsometricDrawer.");
 		this.runner.logger.debugLog("Initializing dimensions.");
 		// general dimensions
-		this.options.faceCornerPseudoRadius = 8 / this.cubeSize;
+		this.options.faceCornerPseudoRadius = 10 / this.cubeSize;
 		this.options.stickerSize = 45 / this.cubeSize;
 		this.options.stickerCornerRadius = 10 / this.cubeSize;
 		this.options.stickerMargin = 5 / (this.cubeSize + 1);
