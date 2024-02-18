@@ -144,7 +144,8 @@ const updateResults = () => { // update code and Holo-Cube results
 		{name: "puzzleHeight", type: "number"},
 		{name: "puzzleWidth", type: "number"},
 		{name: "puzzleScale", type: "number"},
-		{name: "puzzleColor", type: "color"}
+		{name: "puzzleColor", type: "color"},
+		{name: "view", type: "string"}
 	];
 	for (let property of drawingOptionsProperties) {
 		let fieldValueNotDefault;
