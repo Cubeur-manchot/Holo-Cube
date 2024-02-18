@@ -65,7 +65,7 @@ class SvgDrawer {
 				case SvgDrawer.pathElementVerticalLineTo:
 					dElements.push(`V ${pathElement.y}`); break;
 				case SvgDrawer.pathElementArc:
-					dElements.push(`A ${pathElement.rx} ${pathElement.ry} ${pathElement.rotation ?? 0} ${pathElement.large ? 1 : 0} ${pathElement.sweep} ${pathElement.x} ${pathElement.y}`); break;
+					dElements.push(`A ${pathElement.rx} ${pathElement.ry} ${pathElement.rotation ?? 0} ${pathElement.large ? 1 : 0} ${pathElement.sweep ? 1 : 0} ${pathElement.x} ${pathElement.y}`); break;
 				case SvgDrawer.pathElementClose:
 					dElements.push("Z"); break;
 				default: this.runner.throwError(`Unknown path element type ${pathElement.type}.`);
