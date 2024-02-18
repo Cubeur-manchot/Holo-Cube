@@ -145,6 +145,20 @@ class CubeDrawer extends TwistyPuzzleDrawer {
 		this.runner.logger.debugLog("Creating new CubeDrawer.");
 		this.cubeSize = this.runner.puzzle.class.puzzleSize;
 	};
+	createSvgRootWithBackground = () => {
+		let svg = this.svgDrawer.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
+		let background = this.svgDrawer.createRectNode(
+			"background",
+			-this.options.imageWidth / 2,
+			-this.options.imageHeight / 2,
+			this.options.imageWidth,
+			this.options.imageHeight,
+			0,
+			0,
+			this.options.imageBackgroundColor);
+		svg.appendChild(background);
+		return svg;
+	};
 }
 
 class CubeIsometricDrawer extends CubeDrawer {
@@ -172,21 +186,11 @@ class CubePlanDrawer extends CubeDrawer {
 	};
 	createSvgSkeletton = () => {
 		this.runner.logger.debugLog("Creating puzzle image skeletton");
-		let svg = this.svgDrawer.createSvgRootNode(this.options.imageHeight, this.options.imageWidth);
-		let background = this.svgDrawer.createRectNode(
-			"background",
-			-this.options.imageWidth / 2,
-			-this.options.imageHeight / 2,
-			this.options.imageWidth,
-			this.options.imageHeight,
-			0,
-			0,
-			this.options.imageBackgroundColor);
-		svg.appendChild(background);
 		let puzzleGroup = this.svgDrawer.createGroupNode({
 			id: "puzzle",
 			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
 		});
+		let svg = this.createSvgRootWithBackground();
 		this.runner.logger.debugLog("Creating faces skeletton.");
 		let scale = this.cubeSize / (this.cubeSize + 1);
 		let uFace = this.svgDrawer.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
