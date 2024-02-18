@@ -197,21 +197,14 @@ class CubePlanDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Creating faces skeletton.");
 		let scale = this.cubeSize / (this.cubeSize + 1);
 		let uFace = this.svgDrawer.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
-		uFace.appendChild(this.svgDrawer.createSquareNode( // face background
-			"face_U_background",
-			-50,
-			-50,
-			100,
-			0,
-			this.options.puzzleColor
-		));
 		let fFace = this.svgDrawer.createGroupNode({id: "face_F", transform: `scale(${scale}, ${scale})`});
-		fFace.appendChild(this.createAdjacentFaceBackground("F"));
 		let rFace = this.svgDrawer.createGroupNode({id: "face_R", transform: `scale(${scale}, ${scale}) rotate(-90 0 0)`});
-		rFace.appendChild(this.createAdjacentFaceBackground("R"));
 		let bFace = this.svgDrawer.createGroupNode({id: "face_B", transform: `scale(${scale}, ${scale}) rotate(180 0 0)`});
-		bFace.appendChild(this.createAdjacentFaceBackground("B"));
 		let lFace = this.svgDrawer.createGroupNode({id: "face_L", transform: `scale(${scale}, ${scale}) rotate(90 0 0)`});
+		uFace.appendChild(this.svgDrawer.createSquareNode("face_U_background", -50, -50, 100, 0, this.options.puzzleColor));
+		fFace.appendChild(this.createAdjacentFaceBackground("F"));
+		rFace.appendChild(this.createAdjacentFaceBackground("R"));
+		bFace.appendChild(this.createAdjacentFaceBackground("B"));
 		lFace.appendChild(this.createAdjacentFaceBackground("L"));
 		if (this.puzzleClass.hasOrbitType(CenterCubeOrbit.type)) {
 			this.runner.logger.debugLog("Creating centers stickers skeletton.");
