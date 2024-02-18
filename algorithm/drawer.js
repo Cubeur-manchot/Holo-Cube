@@ -72,7 +72,9 @@ class SvgDrawer {
 			}
 		}
 		let pathTag = this.createNode("path", {id: id, d: dElements.join(" ")});
-		this.fill(pathTag, fillingColor);
+		if (fillingColor) {
+			this.fill(pathTag, fillingColor);
+		}
 		return pathTag;
 	};
 	createGroupNode = properties => {
