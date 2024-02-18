@@ -159,6 +159,12 @@ class CubeDrawer extends TwistyPuzzleDrawer {
 		svg.appendChild(background);
 		return svg;
 	};
+	createPuzzleGroup = () => {
+		return this.svgDrawer.createGroupNode({
+			id: "puzzle",
+			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
+		});
+	};
 }
 
 class CubeIsometricDrawer extends CubeDrawer {
@@ -186,11 +192,8 @@ class CubePlanDrawer extends CubeDrawer {
 	};
 	createSvgSkeletton = () => {
 		this.runner.logger.debugLog("Creating puzzle image skeletton");
-		let puzzleGroup = this.svgDrawer.createGroupNode({
-			id: "puzzle",
-			transform: `scale(${this.options.puzzleWidth / 100}, ${this.options.puzzleHeight / 100})` // scale from (100, 100) to desired puzzle dimensions
-		});
 		let svg = this.createSvgRootWithBackground();
+		let puzzleGroup = this.createPuzzleGroup();
 		this.runner.logger.debugLog("Creating faces skeletton.");
 		let scale = this.cubeSize / (this.cubeSize + 1);
 		let uFace = this.svgDrawer.createGroupNode({id: "face_U", transform: `scale(${scale}, ${scale})`});
