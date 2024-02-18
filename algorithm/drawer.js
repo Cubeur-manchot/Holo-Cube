@@ -309,7 +309,6 @@ class CubePlanDrawer extends CubeDrawer {
 		);
 	};
 	createAdjacentFaceBackground = faceName => {
-		this.options.faceCornerRadius
 		return this.svgDrawer.createPathNode(`face_${faceName}_background`,
 			[
 				{type: SvgDrawer.pathElementMoveTo, x: -50, y: 50},
