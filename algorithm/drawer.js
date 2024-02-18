@@ -180,7 +180,7 @@ class CubePlanDrawer extends CubeDrawer {
 		super(runner);
 		this.runner.logger.generalLog("Creating new CubePlanDrawer.");
 		this.runner.logger.debugLog("Initializing dimensions.");
-		this.options.faceCornerRadius = 20 / this.cubeSize;
+		this.options.adjacentFaceCornerRadius = 20 / this.cubeSize;
 		this.options.stickerSize = 90 / this.cubeSize;
 		this.options.stickerCornerRadius = 20 / this.cubeSize;
 		this.options.uFaceStickerMargin = 10 / (this.cubeSize + 1);
@@ -316,10 +316,10 @@ class CubePlanDrawer extends CubeDrawer {
 		return this.svgDrawer.createPathNode(`face_${faceName}_background`,
 			[
 				{type: SvgDrawer.pathElementMoveTo, x: -50, y: 50},
-				{type: SvgDrawer.pathElementVerticalLineTo, y: 50 + 50 / this.cubeSize - this.options.faceCornerRadius / 2},
-				{type: SvgDrawer.pathElementArc, x: - 50 + this.options.faceCornerRadius, y: 50 + 50 / this.cubeSize, rx: this.options.faceCornerRadius, ry: this.options.faceCornerRadius / 2, sweep: 0, large: false},
-				{type: SvgDrawer.pathElementHorizontalLineTo, x: 50 - this.options.faceCornerRadius},
-				{type: SvgDrawer.pathElementArc, x: 50, y: 50 + 50 / this.cubeSize - this.options.faceCornerRadius / 2, rx: this.options.faceCornerRadius, ry: this.options.faceCornerRadius / 2, sweep: 0, large: false},
+				{type: SvgDrawer.pathElementVerticalLineTo, y: 50 + 50 / this.cubeSize - this.options.adjacentFaceCornerRadius / 2},
+				{type: SvgDrawer.pathElementArc, x: - 50 + this.options.adjacentFaceCornerRadius, y: 50 + 50 / this.cubeSize, rx: this.options.adjacentFaceCornerRadius, ry: this.options.adjacentFaceCornerRadius / 2, sweep: false, large: false},
+				{type: SvgDrawer.pathElementHorizontalLineTo, x: 50 - this.options.adjacentFaceCornerRadius},
+				{type: SvgDrawer.pathElementArc, x: 50, y: 50 + 50 / this.cubeSize - this.options.adjacentFaceCornerRadius / 2, rx: this.options.adjacentFaceCornerRadius, ry: this.options.adjacentFaceCornerRadius / 2, sweep: false, large: false},
 				{type: SvgDrawer.pathElementVerticalLineTo, y: 50},
 				{type: SvgDrawer.pathElementClose}
 			],
