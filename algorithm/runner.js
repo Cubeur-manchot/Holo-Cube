@@ -406,6 +406,22 @@ class PuzzleRunnerInput {
 							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
 					}
 				];
+			case "F2L":
+				return [
+					{
+						orbitType: CornerCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, true, true, false, false, true, true,
+							true, true, true, true, false, false, true, true, false, false, true, true]
+					}, {
+						orbitType: MidgeCubeOrbit.type,
+						stickers: [false, false, false, false, false, true, true, true, false, true, true, true,
+							true, true, true, true, false, true, true, true, false, true, true, true]
+					}, {
+						orbitType: WingCubeOrbit.type,
+						stickers: [false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
+							true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, false, false, true, true, true, true, true, true]
+					}
+				];
 			case "CMLL":
 				return [
 					{
