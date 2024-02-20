@@ -2322,7 +2322,7 @@ class DrawingOptionsRunnerInput {
 		puzzleWidth: 100,
 		puzzleScale: 1,
 		puzzleColor: "black",
-		view: "plan"
+		view: TwistyPuzzleDrawer.planView
 	};
 	constructor(drawingOptionsObject, runner) {
 		this.runner = runner;
