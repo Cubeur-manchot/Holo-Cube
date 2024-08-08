@@ -201,8 +201,6 @@ class CubeMove extends Move {
 					}
 				}
 			}
-		} else if (this.puzzleClass.puzzleSize === 1) {
-			this.addCenterElementaryCycles();
 		}
 	};
 	treatBetweenFirstAndMiddleLayer = (firstRankBegin, firstRankEnd) => {
