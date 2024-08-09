@@ -648,7 +648,7 @@ class CubeIsometricDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			let orbitType = orbit.getType();
+			let orbitType = Orbit.getType(orbit);
 			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbitType}`
 				+ (orbitType === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
 				+ (orbitType === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
@@ -847,7 +847,7 @@ class CubePlanDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			let orbitType = orbit.getType();
+			let orbitType = Orbit.getType(orbit);
 			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbitType}`
 				+ (orbitType === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
 				+ (orbitType === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
@@ -1048,7 +1048,7 @@ class Move {
 		this.runner.logger.detailedLog("Applying move on puzzle.");
 		for (let cycle of this.getCycleList()) {
 			for (let orbit of puzzle.orbitList) {
-				if (cycle.orbitType === orbit.getType()) {
+				if (cycle.orbitType === Orbit.getType(orbit)) {
 					cycle.applyOnOrbit(orbit);
 				}
 			}
@@ -1496,32 +1496,18 @@ class CubeMoveParser extends MoveParser {
 
 class Orbit {
 	static type = "unknown";
-	constructor(runner) {
-		this.runner = runner;
-		this.runner.logger.debugLog("Creating new Orbit.");
-		this.slotList = undefined;
-	};
-	getSize = () => {
-		return this.slotList?.length ?? null;
-	};
-	getType = () => {
-		return this.constructor.type;
-	};
-	clone = () => {
-		this.runner.logger.debugLog(`Cloning orbit of type ${this.getType()}.`);
-		let clone = Object.create(this.constructor.prototype);
-		Object.assign(clone, this);
-		clone.slotList = this.slotList.map(slot => slot.clone());
-		return clone;
-	};
-	buildSlotList(slotsPerColor, colorScheme, mask) {
-		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.getType());
+	static slotsCountPerColor = null;
+	static getType = orbit => orbit.constructor.type;
+	static buildSlotList(colorScheme, mask) {
+		let orbitType = this.type;
+		let slotsCountPerColor = this.slotsCountPerColor;
+		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === orbitType);
 		let slotList = [];
 		if (matchingOrbitMask) {
 			for (let colorIndex in colorScheme) {
-				for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
+				for (let slotIndexForColor = 0; slotIndexForColor < slotsCountPerColor; slotIndexForColor++) {
 					slotList.push(new Slot(new Sticker(
-						matchingOrbitMask.stickers[colorIndex * slotsPerColor + slotIndexForColor]
+						matchingOrbitMask.stickers[colorIndex * slotsCountPerColor + slotIndexForColor]
 							? colorScheme[colorIndex]
 							: Color.blank
 					)));
@@ -1529,12 +1515,24 @@ class Orbit {
 			}
 		} else {
 			for (let color of colorScheme) {
-				for (let slotIndexForColor = 0; slotIndexForColor < slotsPerColor; slotIndexForColor++) {
+				for (let slotIndexForColor = 0; slotIndexForColor < slotsCountPerColor; slotIndexForColor++) {
 					slotList.push(new Slot(new Sticker(color)));
 				}
 			}
 		}
 		return slotList;
+	};
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new Orbit.");
+		this.slotList = undefined;
+	};
+	clone = () => {
+		this.runner.logger.debugLog(`Cloning orbit of type ${Orbit.getType(this)}.`);
+		let clone = Object.create(this.constructor.prototype);
+		Object.assign(clone, this);
+		clone.slotList = this.slotList.map(slot => slot.clone());
+		return clone;
 	};
 }
 
@@ -1547,48 +1545,53 @@ class CubeOrbit extends Orbit {
 
 class CenterCubeOrbit extends CubeOrbit {
 	static type = "centerCubeOrbit";
+	static slotsCountPerColor = 1;
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CenterCubeOrbit.");
-		this.slotList = this.buildSlotList(1, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(colorScheme, mask);
 	};
 }
 
 class CornerCubeOrbit extends CubeOrbit {
 	static type = "cornerCubeOrbit";
+	static slotsCountPerColor = 4;
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CornerCubeOrbit.");
-		this.slotList = this.buildSlotList(4, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(colorScheme, mask);
 	};
 }
 
 class MidgeCubeOrbit extends CubeOrbit {
 	static type = "midgeCubeOrbit";
+	static slotsCountPerColor = 4;
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new MidgeCubeOrbit.");
-		this.slotList = this.buildSlotList(4, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(colorScheme, mask);
 	};
 }
 
 class WingCubeOrbit extends CubeOrbit {
 	static type = "wingCubeOrbit";
+	static slotsCountPerColor = 8;
 	constructor(runner, rank, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
 		this.rank = rank;
-		this.slotList = this.buildSlotList(8, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(colorScheme, mask);
 	};
 }
 
 class CenterBigCubeOrbit extends CubeOrbit {
 	static type = "centerBigCubeOrbit";
+	static slotsCountPerColor = 4;
 	constructor(runner, ranks, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
 		this.ranks = ranks;
-		this.slotList = this.buildSlotList(4, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(colorScheme, mask);
 	};
 }
 
@@ -1624,7 +1627,7 @@ class Cube extends TwistyPuzzle {
 		let orbitTypes = {};
 		let pushOrbit = orbit => {
 			orbitList.push(orbit);
-			orbitTypes[orbit.getType()] = true;
+			orbitTypes[Orbit.getType(orbit)] = true;
 		};
 		let middleSlice = null;
 		let maxRankWithMiddle = null;
