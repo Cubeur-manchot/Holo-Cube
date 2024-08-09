@@ -1527,7 +1527,7 @@ class Orbit {
 		this.runner.logger.debugLog("Creating new Orbit.");
 		this.slotList = undefined;
 	};
-	clone = () => {
+	clone() {
 		this.runner.logger.debugLog(`Cloning orbit of type ${Orbit.getType(this)}.`);
 		let clone = Object.create(this.constructor.prototype);
 		Object.assign(clone, this);
@@ -2441,11 +2441,8 @@ class Slot {
 	constructor(sticker) {
 		this.content = sticker;
 	};
-	clone = () => {
-		let clone = Object.create(this.constructor.prototype);
-		Object.assign(clone, this);
-		clone.content = this.content.clone();
-		return clone;
+	clone() {
+		return new Slot(this.content.clone());
 	};
 }
 
@@ -2455,7 +2452,7 @@ class Sticker {
 	constructor(color) {
 		this.color = color;
 	};
-	clone = () => {
+	clone() {
 		return new Sticker(this.color);
 	};
 }
