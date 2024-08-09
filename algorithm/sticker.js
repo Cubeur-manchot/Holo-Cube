@@ -6,7 +6,7 @@ class Sticker {
 	constructor(color) {
 		this.color = color;
 	};
-	clone = () => {
+	clone() {
 		return new Sticker(this.color);
 	};
 }
