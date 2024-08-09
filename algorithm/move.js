@@ -37,7 +37,7 @@ class Move {
 		this.runner.logger.detailedLog("Applying move on puzzle.");
 		for (let cycle of this.getCycleList()) {
 			for (let orbit of puzzle.orbitList) {
-				if (cycle.orbitType === orbit.getType()) {
+				if (cycle.orbitType === Orbit.getType(orbit)) {
 					cycle.applyOnOrbit(orbit);
 				}
 			}

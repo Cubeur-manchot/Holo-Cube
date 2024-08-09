@@ -4,23 +4,9 @@
 
 class Orbit {
 	static type = "unknown";
-	constructor(runner) {
-		this.runner = runner;
-		this.runner.logger.debugLog("Creating new Orbit.");
-		this.slotList = undefined;
-	};
-	getType = () => {
-		return this.constructor.type;
-	};
-	clone = () => {
-		this.runner.logger.debugLog(`Cloning orbit of type ${this.getType()}.`);
-		let clone = Object.create(this.constructor.prototype);
-		Object.assign(clone, this);
-		clone.slotList = this.slotList.map(slot => slot.clone());
-		return clone;
-	};
 	buildSlotList(slotsPerColor, colorScheme, mask) {
 		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.getType());
+	static getType = orbit => orbit.constructor.type;
 		let slotList = [];
 		if (matchingOrbitMask) {
 			for (let colorIndex in colorScheme) {
@@ -40,6 +26,18 @@ class Orbit {
 			}
 		}
 		return slotList;
+	};
+	constructor(runner) {
+		this.runner = runner;
+		this.runner.logger.debugLog("Creating new Orbit.");
+		this.slotList = undefined;
+	};
+	clone = () => {
+		this.runner.logger.debugLog(`Cloning orbit of type ${Orbit.getType(this)}.`);
+		let clone = Object.create(this.constructor.prototype);
+		Object.assign(clone, this);
+		clone.slotList = this.slotList.map(slot => slot.clone());
+		return clone;
 	};
 }
 

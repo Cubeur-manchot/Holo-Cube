@@ -32,7 +32,7 @@ class Cube extends TwistyPuzzle {
 		let orbitTypes = {};
 		let pushOrbit = orbit => {
 			orbitList.push(orbit);
-			orbitTypes[orbit.getType()] = true;
+			orbitTypes[Orbit.getType(orbit)] = true;
 		};
 		let middleSlice = null;
 		let maxRankWithMiddle = null;

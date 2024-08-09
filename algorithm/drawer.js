@@ -461,7 +461,7 @@ class CubeIsometricDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			let orbitType = orbit.getType();
+			let orbitType = Orbit.getType(orbit);
 			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbitType}`
 				+ (orbitType === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
 				+ (orbitType === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
@@ -660,7 +660,7 @@ class CubePlanDrawer extends CubeDrawer {
 		this.runner.logger.debugLog("Cloning skeletton.");
 		let svg = this.svgDrawer.clone(this.skeletton);
 		for (let orbit of puzzle.orbitList) {
-			let orbitType = orbit.getType();
+			let orbitType = Orbit.getType(orbit);
 			this.runner.logger.detailedLog(`Coloring stickers of orbit type ${orbitType}`
 				+ (orbitType === WingCubeOrbit.type ? ` (rank = ${orbit.rank})` : "")
 				+ (orbitType === CenterBigCubeOrbit.type ? ` (ranks = [${orbit.ranks.join(", ")}])` : "")
