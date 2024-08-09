@@ -179,11 +179,11 @@ class Cycle {
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
 			+ ".");
-		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()].getContent();
+		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()].content;
 		for (let cycleElementIndex = this.getLength() - 1; cycleElementIndex > 0; cycleElementIndex--) {
-			orbit.slotList[this.slotIndexList[cycleElementIndex]].setContent(orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].getContent());
+			orbit.slotList[this.slotIndexList[cycleElementIndex]].content = orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].content;
 		}
-		orbit.slotList[this.slotIndexList[0]].setContent(cycleEndSlotContent);
+		orbit.slotList[this.slotIndexList[0]].content = cycleEndSlotContent;
 	};
 }
 
@@ -673,7 +673,7 @@ class CubeIsometricDrawer extends CubeDrawer {
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(
 					svg.querySelector(`${selectorBegin}${slotIndex}`),
-					orbit.slotList[slotIndex].getContent().color
+					orbit.slotList[slotIndex].content.color
 				);
 			}
 		}
@@ -872,7 +872,7 @@ class CubePlanDrawer extends CubeDrawer {
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(
 					svg.querySelector(`${selectorBegin}${slotIndex}`),
-					orbit.slotList[slotIndex].getContent().color
+					orbit.slotList[slotIndex].content.color
 				);
 			}
 		}
@@ -2443,12 +2443,6 @@ class Slot {
 		Object.assign(clone, this);
 		clone.content = this.content.clone();
 		return clone;
-	};
-	getContent = () => {
-		return this.content;
-	};
-	setContent = sticker => {
-		this.content = sticker;
 	};
 }
 
