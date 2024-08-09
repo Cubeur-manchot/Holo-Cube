@@ -486,7 +486,7 @@ class CubeIsometricDrawer extends CubeDrawer {
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(
 					svg.querySelector(`${selectorBegin}${slotIndex}`),
-					orbit.slotList[slotIndex].getContent().color
+					orbit.slotList[slotIndex].content.color
 				);
 			}
 		}
@@ -685,7 +685,7 @@ class CubePlanDrawer extends CubeDrawer {
 			for (let slotIndex of slotIndexList) {
 				this.svgDrawer.fill(
 					svg.querySelector(`${selectorBegin}${slotIndex}`),
-					orbit.slotList[slotIndex].getContent().color
+					orbit.slotList[slotIndex].content.color
 				);
 			}
 		}

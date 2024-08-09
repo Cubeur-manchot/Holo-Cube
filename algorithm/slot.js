@@ -12,10 +12,4 @@ class Slot {
 		clone.content = this.content.clone();
 		return clone;
 	};
-	getContent = () => {
-		return this.content;
-	};
-	setContent = sticker => {
-		this.content = sticker;
-	};
 }
