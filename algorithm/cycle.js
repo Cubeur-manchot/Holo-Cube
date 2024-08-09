@@ -32,10 +32,10 @@ class Cycle {
 			+ (orbit.rank ? ` (rank = ${orbit.rank})` : "")
 			+ (orbit.ranks ? ` (ranks = [${orbit.ranks}])` : "")
 			+ ".");
-		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()].getContent();
+		let cycleEndSlotContent = orbit.slotList[this.getLastSlot()].content;
 		for (let cycleElementIndex = this.getLength() - 1; cycleElementIndex > 0; cycleElementIndex--) {
-			orbit.slotList[this.slotIndexList[cycleElementIndex]].setContent(orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].getContent());
+			orbit.slotList[this.slotIndexList[cycleElementIndex]].content = orbit.slotList[this.slotIndexList[cycleElementIndex - 1]].content;
 		}
-		orbit.slotList[this.slotIndexList[0]].setContent(cycleEndSlotContent);
+		orbit.slotList[this.slotIndexList[0]].content = cycleEndSlotContent;
 	};
 }
