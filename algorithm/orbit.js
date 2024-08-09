@@ -4,9 +4,10 @@
 
 class Orbit {
 	static type = "unknown";
-	buildSlotList(slotsPerColor, colorScheme, mask) {
-		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === this.getType());
 	static getType = orbit => orbit.constructor.type;
+	static buildSlotList(slotsPerColor, colorScheme, mask) {
+		let orbitType = this.type;
+		let matchingOrbitMask = mask.find(orbitMask => orbitMask.orbitType === orbitType);
 		let slotList = [];
 		if (matchingOrbitMask) {
 			for (let colorIndex in colorScheme) {
@@ -53,7 +54,7 @@ class CenterCubeOrbit extends CubeOrbit {
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CenterCubeOrbit.");
-		this.slotList = this.buildSlotList(1, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(1, colorScheme, mask);
 	};
 }
 
@@ -62,7 +63,7 @@ class CornerCubeOrbit extends CubeOrbit {
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new CornerCubeOrbit.");
-		this.slotList = this.buildSlotList(4, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(4, colorScheme, mask);
 	};
 }
 
@@ -71,7 +72,7 @@ class MidgeCubeOrbit extends CubeOrbit {
 	constructor(runner, colorScheme, mask) {
 		super(runner);
 		this.runner.logger.detailedLog("Creating new MidgeCubeOrbit.");
-		this.slotList = this.buildSlotList(4, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(4, colorScheme, mask);
 	};
 }
 
@@ -81,7 +82,7 @@ class WingCubeOrbit extends CubeOrbit {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new WingCubeOrbit (rank = ${rank}).`);
 		this.rank = rank;
-		this.slotList = this.buildSlotList(8, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(8, colorScheme, mask);
 	};
 }
 
@@ -91,6 +92,6 @@ class CenterBigCubeOrbit extends CubeOrbit {
 		super(runner);
 		this.runner.logger.detailedLog(`Creating new CenterBigCubeOrbit (ranks = [${ranks.join(", ")}]).`);
 		this.ranks = ranks;
-		this.slotList = this.buildSlotList(4, colorScheme, mask);
+		this.slotList = this.constructor.buildSlotList(4, colorScheme, mask);
 	};
 }
