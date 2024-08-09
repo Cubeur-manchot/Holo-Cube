@@ -9,9 +9,6 @@ class Orbit {
 		this.runner.logger.debugLog("Creating new Orbit.");
 		this.slotList = undefined;
 	};
-	getSize = () => {
-		return this.slotList?.length ?? null;
-	};
 	getType = () => {
 		return this.constructor.type;
 	};
