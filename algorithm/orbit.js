@@ -35,7 +35,7 @@ class Orbit {
 		this.runner.logger.debugLog("Creating new Orbit.");
 		this.slotList = undefined;
 	};
-	clone = () => {
+	clone() {
 		this.runner.logger.debugLog(`Cloning orbit of type ${Orbit.getType(this)}.`);
 		let clone = Object.create(this.constructor.prototype);
 		Object.assign(clone, this);
