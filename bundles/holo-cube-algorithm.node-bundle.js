@@ -1403,8 +1403,8 @@ class CubeMoveParser extends MoveParser {
 		} else if (new RegExp(`^${faceListSubRegExp.toLowerCase()}${directionListSubRegExp}$`).test(moveString)) { // r, u', f2
 			return new CubeMove({
 				face: CubeMoveParser.parseFace(moveString[0]),
-				sliceBegin: this.cubeSize === 3 ? 1 : 2,
-				sliceEnd: 2,
+				sliceBegin: 1,
+				sliceEnd: this.cubeSize - 1,
 				turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(1)),
 				runner: this.runner
 			});
