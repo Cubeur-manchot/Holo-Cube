@@ -89,7 +89,7 @@ class CubeMoveParser extends MoveParser {
 				turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(1)),
 				runner: this.runner
 			});
-		} else if (new RegExp(`^\\d*[MES]${directionListSubRegExp}$`, "i").test(moveString)) { // M, E', S2
+		} else if (new RegExp(`^\\d*[MES]${directionListSubRegExp}$`).test(moveString)) { // M, E', S2
 			let middleSliceCountMatch = moveString.match(/^\d*/)[0];
 			let middleSliceCount = middleSliceCountMatch === "" ? 1 : parseInt(middleSliceCountMatch);
 			if ((middleSliceCount + this.cubeSize) % 2) {
@@ -122,6 +122,14 @@ class CubeMoveParser extends MoveParser {
 			} else {
 				this.runner.throwError(`Applying an outer slice move involving ${numberOfSlices} slices on a ${this.cubeSize}x${this.cubeSize}x${this.cubeSize} cube.`);
 			}
+		} else if (new RegExp(`^[mes]${directionListSubRegExp}$`, "i").test(moveString)) { // m, e', s2
+			return new CubeMove({
+				face: CubeMoveParser.getExternalFace(moveString[0].toUpperCase()),
+				sliceBegin: 2,
+				sliceEnd: this.cubeSize - 1,
+				turnCount: CubeMoveParser.parseTurnCountFromSuffix(moveString.substring(1)),
+				runner: this.runner
+			});
 		} else if (new RegExp(`^\\d+${faceListSubRegExp}${directionListSubRegExp}$`, "i").test(moveString)) { // 2R, 3U', 4F2
 			let sliceNumber = moveString.match(/\d+/)[0];
 			let turnCount = CubeMoveParser.parseTurnCountFromSuffix(moveString.replace(/^\d+/, "").substring(1));
