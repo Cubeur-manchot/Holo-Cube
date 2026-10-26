@@ -17,7 +17,7 @@ const createColorPickers = () => {
 		let colorPickerId = colorPickerPlaceholder.getAttribute("data-colorPickerId");
 		let hexColor = new Color(face ? defaultColorScheme[face] : colorPickerPlaceholder.getAttribute("data-color")).getRgbHex();
 		Pickr.create({
-			el: `div.colorPicker[data-colorPickerId=${colorPickerId}`,
+			el: `div.colorPicker[data-colorPickerId=${colorPickerId}]`,
 			theme: 'classic',
 			default: hexColor,
 			swatches: Object.keys(ColorCollection).map(colorName => new Color(colorName).getRgbHex()),
@@ -39,7 +39,7 @@ const createColorPickers = () => {
 		}).on('save', (color, instance) => {
 			let colorHexa = color.toHEXA();
 			let colorPickerId = instance.options.el.getAttribute("data-colorPickerId");
-			let colorPicker = document.querySelector(`div.pickr[data-colorPickerId=${colorPickerId}`);
+			let colorPicker = document.querySelector(`div.pickr[data-colorPickerId=${colorPickerId}]`);
 			applyColorToColorPicker("#"
 				+ colorHexa[0]
 				+ colorHexa[1]
