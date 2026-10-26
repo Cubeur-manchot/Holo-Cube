@@ -1,15 +1,6 @@
 "use strict";
 
-const defaultColorScheme = [
-	{face: "U", color: "white"},
-	{face: "F", color: "green"},
-	{face: "R", color: "red"},
-	{face: "D", color: "blue"},
-	{face: "B", color: "orange"},
-	{face: "L", color: "yellow"}
-];
-
-const defaultColorScheme2 = {
+const defaultColorScheme = {
 	U: "white",
 	F: "green",
 	R: "red",
@@ -24,7 +15,7 @@ const createColorPickers = () => {
 		let face = colorPickerPlaceholder.getAttribute("data-face");
 		let parentNode = colorPickerPlaceholder.parentNode;
 		let colorPickerId = colorPickerPlaceholder.getAttribute("data-colorPickerId");
-		let hexColor = new Color(face ? defaultColorScheme2[face] : colorPickerPlaceholder.getAttribute("data-color")).getRgbHex();
+		let hexColor = new Color(face ? defaultColorScheme[face] : colorPickerPlaceholder.getAttribute("data-color")).getRgbHex();
 		Pickr.create({
 			el: `div.colorPicker[data-colorPickerId=${colorPickerId}`,
 			theme: 'classic',
@@ -117,12 +108,12 @@ const updateResults = () => { // update code and Holo-Cube results
 	};
 	// Puzzle color scheme, optional
 	let colorScheme = [];
-	for (let face in defaultColorScheme2) {
+	for (let face in defaultColorScheme) {
 		let color = document.querySelector(`div.pickr[data-colorPickerId=colorScheme${face}Face]`).getAttribute("data-color");
-		colorScheme.push(getColorFieldDefault(color, defaultColorScheme2[face])
-			?? defaultColorScheme2[face]);
+		colorScheme.push(getColorFieldDefault(color, defaultColorScheme[face])
+			?? defaultColorScheme[face]);
 	}
-	if (Object.values(defaultColorScheme2).map((color, index) => colorScheme[index] === color).includes(false)) {
+	if (Object.values(defaultColorScheme).map((color, index) => colorScheme[index] === color).includes(false)) {
 		puzzle.colorScheme = colorScheme;
 	}
 	// Puzzle mask, aliases only (no custom mask here)
