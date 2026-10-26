@@ -86,22 +86,22 @@ div.pickr[data-fontColor=black] button.pcr-button::after {
 
 div#colorScheme {
 	margin-top: 10px;
-}
-
-div#colorScheme div.pickr {
-	display: inline-block;
+	display: grid;
+	grid-template-columns: repeat(4, auto);
+	gap: 5px;
+	justify-content: start;
 }
 
 div#colorScheme div.pickr:has(button.pcr-button[data-face=U]),
 div#colorScheme div.pickr:has(button.pcr-button[data-face=D]) {
-	margin: 2px 0px 2px 32px;
+	grid-column: 2;
 }
 
 div#colorScheme :has(button.pcr-button[data-face=L]),
 div#colorScheme :has(button.pcr-button[data-face=F]),
 div#colorScheme :has(button.pcr-button[data-face=R]),
 div#colorScheme :has(button.pcr-button[data-face=B]) {
-	margin: 0px;
+	grid-row: 2;
 }
 
 /* Input fields */
