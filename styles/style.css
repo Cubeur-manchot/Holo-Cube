@@ -1,5 +1,3 @@
-/* General */
-
 body {
 	margin: 0;
 	background-color: rgb(245, 245, 245);
@@ -7,6 +5,10 @@ body {
 
 h1 {
 	margin: 1rem;
+}
+
+p {
+	margin-bottom: 0;
 }
 
 img.logo {
@@ -25,11 +27,4 @@ a.link-with-logo {
 
 :disabled:hover {
 	cursor: not-allowed;
-}
-
-/* Code blocks */
-
-.hljs { /* syntax highlighting from Highlight.js */
-	border-radius: 5px;
-	background-color: #333333;
 }

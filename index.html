@@ -7,10 +7,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap remote -->
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap remote -->
-		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="/styles/style.css">
+		<script src="buildCodeBlocks.js" defer></script>
+		<link rel="stylesheet" href="styles/codeBlocks.css">
 		<!-- Highlight.js -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js" defer></script>
 	</head>
 	<body onload="hljs.highlightAll();">
 		<h1>Holo-Cube</h1>
@@ -21,7 +23,7 @@
 				<li><a href="https://cubeur-manchot.github.io/Les-Algos-d-un-Manchot/">Les Algos d'un Manchot</a> (web page, frontend)</li>
 				<li><a href="https://github.com/Cubeur-manchot/AlgBot">AlgBot</a> (NodeJS bot, backend)</li>
 			</ul>
-			<a href="https://github.com/Cubeur-manchot/Holo-Cube" class="link-with-logo"><img src="GitHub_Invertocat_Black.svg" class="logo">GitHub repository</a>
+			<a href="https://github.com/Cubeur-manchot/Holo-Cube" class="link-with-logo"><img src="/images/GitHub_Invertocat_Black.svg" class="logo">GitHub repository</a>
 		</div>
 		<div class="card bg-white m-3 p-3">
 			<h2>Try it yourself</h2>
@@ -46,7 +48,7 @@
 			<pre><code class="javascript">import { Runner } from "https://cubeur-manchot.github.io/Holo-Cube/bundles/holo-cube-algorithm.module.js";</code></pre>
 			<p>Option 2: classic bundle</p>
 			<pre><code class="html">&lt;script src="https://cubeur-manchot.github.io/Holo-Cube/bundles/holo-cube-algorithm.classic.js"&gt;&lt;/script&gt;</code></pre>
-			<h3>Instanciate a <code>Run</code> object</h3>
+			<h3>Instanciate a Runner object</h3>
 			<pre><code class="javascript">const runner = new Runner({
     puzzle: {
         fullName: "cube3x3x3"
