@@ -16,21 +16,21 @@
 	</head>
 	<body onload="hljs.highlightAll();">
 		<h1>Holo-Cube</h1>
-		<div class="card bg-white m-3 p-3">
-			<h2>What is Holo-Cube ?</h2>
+		<section class="card bg-white m-3 p-3" aria-labelledby="title-what-is">
+			<h2 id="title-what-is">What is Holo-Cube ?</h2>
 			<p>Holo-Cube is a JavaScript library to build images of NxNxN cubes. These are already using it:</p>
 			<ul>
 				<li><a href="https://cubeur-manchot.github.io/Les-Algos-d-un-Manchot/">Les Algos d'un Manchot</a> (web page, frontend)</li>
 				<li><a href="https://github.com/Cubeur-manchot/AlgBot">AlgBot</a> (NodeJS bot, backend)</li>
 			</ul>
 			<a href="https://github.com/Cubeur-manchot/Holo-Cube" class="link-with-logo"><img src="/images/GitHub_Invertocat_Black.svg" class="logo">GitHub repository</a>
-		</div>
-		<div class="card bg-white m-3 p-3">
-			<h2>Try it yourself</h2>
+		</section>
+		<section class="card bg-white m-3 p-3" aria-labelledby="title-try-it">
+			<h2 id="title-try-it">Try it yourself</h2>
 			<p>Play with it on the <a href="tryit/tryit.html">Try It Yourself</a> page.</p>
-		</div>
-		<div class="card bg-white m-3 p-3">
-			<h2>Options</h2>
+		</section>
+		<section class="card bg-white m-3 p-3" aria-labelledby="title-options">
+			<h2 id="title-options">Options</h2>
 			<p>All cubes from 1x1x1 to 34x34x34 can be displayed. Although 34x34x34 <i>should</i> be enough, higher is still possible as there is no strict limitation.
 				AlgBot has shown <a href="https://discord.com/channels/329175643877015553/655557115557183518/1277706423358459956">an image of a 100x100x100 cube</a>.</p>
 			<p>Apart from the cube size, all other options have default values, which could be overriden if desired.
@@ -40,9 +40,9 @@
 				<li>Drawing options: Image dimensions, Puzzle dimensions</li>
 				<li>Logger: Mode (Console, HTML tag, None), In Output or not, Verbosity</li>
 			</ul>
-		</div>
-		<div class="card bg-white m-3 p-3">
-			<h2>How to use Holo-Cube in a website ?</h2>
+		</section>
+		<section class="card bg-white m-3 p-3 counter-h3" aria-labelledby="title-how-to">
+			<h2 id="title-how-to">How to use Holo-Cube in a website ?</h2>
 			<h3>Import the library</h3>
 			<p>Option 1: ES module bundle</p>
 			<pre><code class="javascript">import { Runner } from "https://cubeur-manchot.github.io/Holo-Cube/bundles/holo-cube-algorithm.module.js";</code></pre>
@@ -65,6 +65,6 @@ document.querySelector("#imageContainer").appendChild(result.svg); // adjust to 
 // multiple algs
 const imageContainers = document.querySelectorAll(".imageContainer");
 resultMultiple.results.forEach((svg, index) => imageContainer[index].appendChild(svg)); // adjust to your own HTML</code></pre>
-		</div>
+		</section>
     </body>
 </html>
