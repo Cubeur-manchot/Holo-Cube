@@ -66,6 +66,7 @@
 	border-radius: inherit;
 	background-color: #353a43;
 	color: #d8dce4;
+	color: white;
 	font-size: .8rem;
 	white-space: nowrap;
 	visibility: hidden;
@@ -81,12 +82,12 @@
 
 .code-block .copy-button.success::after {
 	content: attr(data-tooltip-success);
-	background-color: #356b57;
+	background-color: oklch(70% 0.2 155);
 }
 
 .code-block .copy-button.failed::after {
 	content: attr(data-tooltip-failed);
-	background-color: #843f46;
+	background-color: oklch(70% 0.2 25);
 }
 
 .code-block .copy-button:is(:hover, .success, .failed)::after {
