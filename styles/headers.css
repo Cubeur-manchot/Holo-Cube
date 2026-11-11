@@ -1,0 +1,55 @@
+h1, h2, h3 {
+	font-family: system-ui, sans-serif;
+	text-box: trim-both cap alphabetic;
+	white-space: nowrap;
+	font-size: 2rem;
+	font-weight: 500;
+}
+
+h2, h3 {
+	margin-bottom: 1rem;
+}
+
+:is(h1, h2, h3)[data-initial-letter] {
+	translate: var(--offset-x, 0) 0; /* fix initial offset due to font inner spacing */
+	&:is(
+		[data-initial-letter="B"],
+		[data-initial-letter="D"],
+		[data-initial-letter="E"],
+		[data-initial-letter="F"],
+		[data-initial-letter="H"],
+		[data-initial-letter="I"],
+		[data-initial-letter="K"],
+		[data-initial-letter="L"],
+		[data-initial-letter="M"],
+		[data-initial-letter="N"],
+		[data-initial-letter="P"],
+		[data-initial-letter="R"],
+		[data-initial-letter="U"]
+	) {
+		--offset-x: -0.08em;
+	}
+	&:is(
+		[data-initial-letter="C"],
+		[data-initial-letter="G"],
+		[data-initial-letter="O"],
+		[data-initial-letter="Q"],
+		[data-initial-letter="S"]
+	) {
+		--offset-x: -0.04em;
+	}
+}
+
+.counter-h3 {
+	counter-reset: counter-h3;
+	& h3 {
+		position: relative;
+		counter-increment: counter-h3;
+		--offset-x: 0; /* cancel the alignment fix according to first letter */
+	}
+	& h3::before {
+		content: counter(counter-h3) ".";
+		opacity: 0.25;
+		margin-right: 0.25em;
+	}
+}
