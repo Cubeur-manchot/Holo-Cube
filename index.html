@@ -5,15 +5,18 @@
 		<title>Holo-Cube</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- styles (except code blocks) -->
 		<link rel="stylesheet" href="/styles/style.css">
 		<link rel="stylesheet" href="/styles/headers.css">
-		<script src="buildCodeBlocks.js" defer></script>
+		<!-- code blocks -->
+		<link rel="modulepreload" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/es/core.min.js">
+		<link rel="modulepreload" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/es/languages/javascript.min.js">
+		<link rel="modulepreload" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/es/languages/xml.min.js">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/styles/atom-one-dark.min.css">
 		<link rel="stylesheet" href="styles/codeBlocks.css">
-		<!-- Highlight.js -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js" defer></script>
+		<script type="module" src="buildCodeBlocks.js"></script>
 	</head>
-	<body onload="hljs.highlightAll();">
+	<body>
 		<h1 data-initial-letter="H">Holo-Cube</h1>
 		<section class="card" aria-labelledby="title-what-is">
 			<h2 id="title-what-is" data-initial-letter="W">What is Holo-Cube ?</h2>

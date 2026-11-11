@@ -1,4 +1,9 @@
-"use strict";
+import hljs from "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/es/core.min.js";
+import javascriptLanguage from "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/es/languages/javascript.min.js";
+import xmlLanguage from "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/es/languages/xml.min.js";
+
+hljs.registerLanguage("javascript", javascriptLanguage);
+hljs.registerLanguage("xml", xmlLanguage); // used for HTML
 
 const createCodeBlock = () => {
 	const codeBlock = document.createElement("div");
@@ -42,3 +47,5 @@ document.querySelectorAll("pre:has(code)").forEach(pre => {
 	const button = createCopyButton();
 	codeBlock.appendChild(button);
 });
+
+hljs.highlightAll();
