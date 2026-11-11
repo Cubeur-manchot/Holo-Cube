@@ -87,3 +87,17 @@ ul {
 a {
 	color: #0d6efd;
 }
+
+.counter-h3 {
+	counter-reset: counter-h3;
+	& h3 {
+		position: relative;
+		counter-increment: counter-h3;
+		--offset-x: 0; /* cancel the alignment fix according to first letter */
+	}
+	& h3::before {
+		content: counter(counter-h3) ".";
+		opacity: 0.25;
+		margin-right: 0.25em;
+	}
+}
