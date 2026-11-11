@@ -1,10 +1,45 @@
 body {
 	margin: 0;
 	background-color: rgb(245, 245, 245);
+	font-family: system-ui, sans-serif;
+	& *:is([data-initial-letter]) {
+		translate: var(--offset-x, 0) 0; /* fix initial offset due to font inner spacing */
+	}
+	& *:is(
+		[data-initial-letter="B"],
+		[data-initial-letter="D"],
+		[data-initial-letter="E"],
+		[data-initial-letter="F"],
+		[data-initial-letter="H"],
+		[data-initial-letter="I"],
+		[data-initial-letter="K"],
+		[data-initial-letter="L"],
+		[data-initial-letter="M"],
+		[data-initial-letter="N"],
+		[data-initial-letter="P"],
+		[data-initial-letter="R"],
+		[data-initial-letter="U"]
+	) {
+		--offset-x: -0.08em;
+	}
+	& *:is(
+		[data-initial-letter="C"],
+		[data-initial-letter="G"],
+		[data-initial-letter="O"],
+		[data-initial-letter="Q"],
+		[data-initial-letter="S"]
+	) {
+		--offset-x: -0.04em;
+	}
 }
 
 h1 {
 	margin: 1rem;
+}
+
+h1, h2, h3 {
+	text-box: trim-both cap alphabetic;
+	white-space: nowrap;
 }
 
 p {
