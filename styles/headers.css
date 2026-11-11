@@ -51,5 +51,9 @@ h2, h3 {
 		content: counter(counter-h3) ".";
 		opacity: 0.25;
 		margin-right: 0.25em;
+		transition: opacity 100ms;
+	}
+	& h3:hover::before {
+		opacity: 0.5;
 	}
 }
