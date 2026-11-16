@@ -32,7 +32,6 @@ a {
 		margin-left: 0.25em;
 		background-color: grey;
 		mask-image: url("../images/external-link.svg");
-		vertical-align: baseline;
 	}
 }
 
