@@ -43,7 +43,6 @@ h2, h3 {
 .counter-h3 {
 	counter-reset: counter-h3;
 	& h3 {
-		position: relative;
 		counter-increment: counter-h3;
 		--offset-x: 0; /* cancel the alignment fix according to first letter */
 	}
