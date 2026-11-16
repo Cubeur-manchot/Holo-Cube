@@ -24,6 +24,16 @@ a {
 		height: calc(1lh + 10px);
 		border-radius: 10px;
 	}
+	&[href^=http]::after {
+		content: "";
+		display: inline-block;
+		aspect-ratio: 1;
+		width: 0.4lh;
+		margin-left: 0.25em;
+		background-color: grey;
+		mask-image: url("../images/external-link.svg");
+		vertical-align: baseline;
+	}
 }
 
 img.logo {

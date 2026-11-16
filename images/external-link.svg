@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 512 512"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="57"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+>
+	<path d="
+		M199 85
+		H85
+		A57 57 0 0 0 28 142
+		V426
+		A57 57 0 0 0 85 483
+		H370
+		A57 57 0 0 0 427 426
+		V313
+	"/>
+	<path d="
+		M199 313
+		L483 28
+		H313
+		M483 28
+		V199
+	"/>
+</svg>
