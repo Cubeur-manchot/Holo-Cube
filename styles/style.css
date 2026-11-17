@@ -15,28 +15,28 @@ body {
 
 a {
 	color: #0d6efd;
+	&:is(.link-with-logo, [href^=http]) {
+		display: inline-flex;
+		align-items: baseline;
+		gap: .4em;
+		white-space: nowrap;
+	}
 	&.link-with-logo {
-		width: max-content;
-		display: flex;
-		align-items: center;
-		gap: .25lh;
-		padding-inline: 5px;
-		height: calc(1lh + 10px);
+		padding: 5px;
 		border-radius: 10px;
+		& > img.logo {
+			width: 1lh;
+			aspect-ratio: 1;
+			align-self: center;
+		}
 	}
 	&[href^=http]::after {
 		content: "";
-		display: inline-block;
 		aspect-ratio: 1;
-		width: 0.4lh;
-		margin-left: 0.25em;
 		background-color: grey;
-		mask-image: url("../images/external-link.svg");
+		width: .5em;
+		mask: url("../images/external-link.svg") center / contain no-repeat;
 	}
-}
-
-img.logo {
-	width: 1lh;
 }
 
 ul {
