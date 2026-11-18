@@ -16,10 +16,11 @@
 	font-size: 0.875rem;
 }
 
-.code-block code {
+.code-block code.hljs {
 	border-radius: 10px;
 	min-height: calc(var(--copy-button-size) + 2 * var(--copy-botton-margin));
 	box-sizing: border-box;
+	padding-inline: 1.5em;
 }
 
 /* "Copy to clipboard" button */
