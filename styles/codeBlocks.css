@@ -7,6 +7,8 @@
 	&:not(:last-child) {
 		margin-bottom: 1rem;
 	}
+	--copy-button-size: 35px;
+	--copy-botton-margin: 7px;
 }
 
 .code-block pre {
@@ -16,6 +18,8 @@
 
 .code-block code {
 	border-radius: 10px;
+	min-height: calc(var(--copy-button-size) + 2 * var(--copy-botton-margin));
+	box-sizing: border-box;
 }
 
 /* "Copy to clipboard" button */
@@ -24,8 +28,8 @@
 	justify-self: end;
 	align-self: start;
 	aspect-ratio: 1;
-	width: 35px;
-	margin: 7px;
+	width: var(--copy-button-size);
+	margin: var(--copy-botton-margin);
 	border-radius: 5px;
 	border: none;
 	background: none;
