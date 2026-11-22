@@ -12,6 +12,9 @@ body {
 	font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
 	line-height: 1.6;
 	font-family: system-ui, sans-serif;
+	@media (prefers-reduced-motion: no-preference) {
+		scroll-behavior: smooth;
+	}
 }
 
 a {
