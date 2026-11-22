@@ -11,6 +11,9 @@ h1, h2, h3 {
 
 h1 {
 	font-size: clamp(1.9375rem, 1.642rem + 1.477vw, 2.75rem);
+	&:has(+ .card) {
+		margin-bottom: 0;
+	}
 }
 
 h2 {
