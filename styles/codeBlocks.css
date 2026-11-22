@@ -1,4 +1,5 @@
 .code-block {
+	margin-top: 0.5rem;
 	display: grid;
 	grid-template-areas: "stack";
 	& > * {
@@ -102,4 +103,3 @@
 		opacity var(--fade-duration),
 		content var(--fade-duration);
 }
-
