@@ -9,6 +9,7 @@ body {
 	display: grid;
 	padding: 1rem;
 	gap: 1rem;
+	font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
 	line-height: 1.6;
 	font-family: system-ui, sans-serif;
 }
