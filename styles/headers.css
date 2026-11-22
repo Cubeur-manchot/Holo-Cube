@@ -1,6 +1,5 @@
 h1, h2, h3 {
 	font-family: system-ui, sans-serif;
-	text-box: trim-both cap alphabetic;
 	font-weight: 500;
 	text-wrap: balance;
 	line-height: 1.2;
