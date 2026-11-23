@@ -29,9 +29,10 @@ a {
 		padding: 5px;
 		border-radius: 10px;
 		& > img.logo {
-			width: 1lh;
+			width: 1em;
 			aspect-ratio: 1;
 			align-self: center;
+			margin-top: 2px; /* vertical alignment between middle of icon and middle of uppercase letters */
 		}
 	}
 	&[href^=http]::after {
