@@ -56,19 +56,20 @@ h3 {
 	}
 }
 
-.counter-h3 {
-	counter-reset: counter-h3;
-	& h3 {
-		counter-increment: counter-h3;
+.counter {
+	counter-reset: counter;
+	&[data-counter-tag=h2] h2,
+	&[data-counter-tag=h3] h3 {
+		counter-increment: counter;
 		--offset-x: 0; /* cancel the alignment fix according to first letter */
-	}
-	& h3::before {
-		content: counter(counter-h3) ".";
-		opacity: 0.25;
-		margin-right: 0.25em;
-		transition: opacity 100ms;
-	}
-	& h3:hover::before {
-		opacity: 0.5;
+		&::before {
+			content: counter(counter) ".";
+			opacity: 0.25;
+			margin-right: 0.25em;
+			transition: opacity 100ms;
+		}
+		&:hover::before {
+			opacity: 0.5;
+		}
 	}
 }
